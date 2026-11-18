@@ -8,8 +8,16 @@ static const char* DLYDIV[8] = { "1/32", "1/16", "1/16T", "1/8", "1/8T", "1/8.",
 static const char* STUT[4] = { "1/8", "1/16", "1/32", "1/48" };
 static constexpr int USER_FLOATS = 8 * 1024 * 1024;              // room for your own samples: ~3 min at 44.1 kHz
 
+// the main stereo output and eight more (off until you turn them on in the DAW): a track whose OUT is BUS n plays there
+juce::AudioProcessor::BusesProperties PulsarProcessor::busesProps() {
+  auto b = BusesProperties().withOutput("Main", juce::AudioChannelSet::stereo(), true);
+  for (int k = 1; k <= NBUS; k++) b = b.withOutput("Bus " + juce::String(k), juce::AudioChannelSet::stereo(), false);
+  return b;
+}
+
 PulsarProcessor::PulsarProcessor()
-  : AudioProcessor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true)) {
+  : AudioProcessor(busesProps()) {
+  learn.fill(-1); offs.reserve(2048);
   // ---- the library, in the same slots the web page gives it
   juce::MemoryInputStream gz(BinaryData::sounds_bin_gz, (size_t)BinaryData::sounds_bin_gzSize, false);
   juce::GZIPDecompressorInputStream in(&gz, false, juce::GZIPDecompressorInputStream::gzipFormat);
@@ -42,6 +50,7 @@ PulsarProcessor::PulsarProcessor()
   g(G_DLYTIME, "dlytime", "Delay Time", 0, 7, 8); g(G_DLYFB, "dlyfb", "Delay Feedback", 0, 0.95f); g(G_DLYTONE, "dlytone", "Delay Tone", 0, 1);
   g(G_DUCKTIME, "ducktime", "Duck Time", 0.02f, 1); g(G_STUTLEN, "stutlen", "Stutter Length", 0, 3, 4);
   defs.push_back({ "pattern", "Pattern", { -100, 0, 15, 16 } });
+  // PULSAR 2: the performance pad, note repeat and pad velocity (appended: the older parameters keep their places)
   for (int k = 0; k < 16; k++) defs.push_back({ "fx" + juce::String(k), juce::String("FX ") + FXN[k], { -1 - k, 0, 1, 2 } });
   struct TK { int k; const char* key; const char* name; float lo, hi; };
   const TK tks[] = { { T_LEVEL, "lvl", "Level", 0, 1 }, { T_PAN, "pan", "Pan", -1, 1 }, { T_TUNE, "tune", "Tune", -24, 24 }, { T_DECAY, "dec", "Decay", 0, 1 },
@@ -49,6 +58,15 @@ PulsarProcessor::PulsarProcessor()
                      { T_SENDR, "rev", "Reverb Send", 0, 1 }, { T_SENDD, "dly", "Delay Send", 0, 1 } };
   for (int t = 0; t < NT; t++) for (auto& k : tks)
     defs.push_back({ "t" + juce::String(t + 1) + k.key, "Track " + juce::String(t + 1) + " " + k.name, { TPID(t, k.k), k.lo, k.hi, 0 } });
+  g(XG_ID(XG_XYON), "xyon", "XY Pad On", 0, 1, 2); g(XG_ID(XG_XYX), "xyx", "XY Pad X (Filter)", -1, 1); g(XG_ID(XG_XYY), "xyy", "XY Pad Y (Space)", 0, 1);
+  g(XG_ID(XG_REPEAT), "repeat", "Note Repeat", 0, 4, 5);
+  for (int t = 0; t < NT; t++) {
+    const juce::String n = "Track " + juce::String(t + 1);
+    defs.push_back({ "t" + juce::String(t + 1) + "punch", n + " Punch", { TXID(t, XT_PUNCH), 0, 1, 0 } });
+    defs.push_back({ "t" + juce::String(t + 1) + "comp", n + " Comp", { TXID(t, XT_COMP), 0, 1, 0 } });
+    defs.push_back({ "t" + juce::String(t + 1) + "low", n + " Low", { TXID(t, XT_LOW), -1, 1, 0 } });
+    defs.push_back({ "t" + juce::String(t + 1) + "high", n + " High", { TXID(t, XT_HIGH), -1, 1, 0 } });
+  }
 
   lastHost = std::make_unique<std::atomic<float>[]>(defs.size());
   for (size_t i = 0; i < defs.size(); i++) {
@@ -61,6 +79,9 @@ PulsarProcessor::PulsarProcessor()
       if (h.eng == -100) return juce::String::charToString((juce::juce_wchar)('A' + (int)x));
       if (h.eng == G_DLYTIME) return juce::String(DLYDIV[juce::jlimit(0, 7, (int)x)]);
       if (h.eng == G_STUTLEN) return juce::String(STUT[juce::jlimit(0, 3, (int)x)]);
+      if (h.eng == XG_ID(XG_REPEAT)) { static const char* R[5] = { "OFF", "1/8", "1/16", "1/32", "1/16T" }; return juce::String(R[juce::jlimit(0, 4, (int)x)]); }
+      if (h.eng == XG_ID(XG_XYON)) return juce::String(x >= 0.5f ? "ON" : "OFF");
+      if (h.eng >= X_BASE + XG_NGLOBAL && ((h.eng - X_BASE - XG_NGLOBAL) % XT_NPARAM == XT_LOW || (h.eng - X_BASE - XG_NGLOBAL) % XT_NPARAM == XT_HIGH)) return (x > 0 ? "+" : "") + juce::String(x * 12.f, 1) + " dB";
       if (h.eng >= G_NGLOBAL && (h.eng - G_NGLOBAL) % T_NPARAM == T_TUNE) return (x > 0 ? "+" : "") + juce::String(x, 1) + " st";
       if (h.eng >= G_NGLOBAL && (h.eng - G_NGLOBAL) % T_NPARAM == T_PAN) return std::abs(x) < 0.02f ? juce::String("C") : (x < 0 ? "L" : "R") + juce::String(juce::roundToInt(std::abs(x) * 100));
       return juce::String(juce::roundToInt(v * 100)) + "%"; });
@@ -71,7 +92,11 @@ PulsarProcessor::PulsarProcessor()
   }
 }
 
-bool PulsarProcessor::isBusesLayoutSupported(const BusesLayout& l) const { return l.getMainOutputChannelSet() == juce::AudioChannelSet::stereo(); }
+bool PulsarProcessor::isBusesLayoutSupported(const BusesLayout& l) const {
+  if (l.getMainOutputChannelSet() != juce::AudioChannelSet::stereo()) return false;
+  for (int k = 1; k < l.outputBuses.size(); k++) { const auto& c = l.outputBuses.getReference(k); if (!c.isDisabled() && c != juce::AudioChannelSet::stereo()) return false; }
+  return true;
+}
 
 void PulsarProcessor::prepareToPlay(double rate, int) {
   if (std::abs(rate - sr) < 1) return;
@@ -80,6 +105,7 @@ void PulsarProcessor::prepareToPlay(double rate, int) {
   auto keep = std::make_unique<Engine>(*eng);
   eng->init((float)rate, pool.data()); sr = rate;
   std::copy(keep->params, keep->params + P_COUNT, eng->params);
+  eng->held = 0;
   std::memcpy(eng->pat, keep->pat, sizeof(eng->pat)); std::memcpy(eng->song, keep->song, sizeof(eng->song));
   eng->songLen = keep->songLen; eng->songOn = keep->songOn; eng->cur = keep->cur; eng->liveFX = keep->liveFX;
 }
@@ -130,18 +156,57 @@ void PulsarProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiB
   else if (!hpl && hostWasPlaying && hostStarted) { E.stop(); hostStarted = false; }
   hostWasPlaying = hpl; lastPpq = ppq; lastBlockBeats = n / sr * bpm / 60.0;
 
-  float* L = buffer.getWritePointer(0); float* R = buffer.getNumChannels() > 1 ? buffer.getWritePointer(1) : nullptr;
+  // the main output and the buses the DAW has turned on
+  auto main = getBusBuffer(buffer, false, 0);
+  float* L = main.getWritePointer(0); float* R = main.getNumChannels() > 1 ? main.getWritePointer(1) : nullptr;
   std::vector<float> tmp; float* RR = R; if (!RR) { tmp.resize((size_t)n); RR = tmp.data(); }
+  float* bl[NBUS] = {}; float* br[NBUS] = {}; bool anyBus = false;
+  for (int k = 0; k < NBUS && k + 1 < getBusCount(false); k++) {
+    if (!getBus(false, k + 1)->isEnabled()) continue;
+    auto b = getBusBuffer(buffer, false, k + 1); if (b.getNumChannels() < 2) continue;
+    b.clear(); bl[k] = b.getWritePointer(0); br[k] = b.getWritePointer(1); anyBus = true;
+  }
+  float** BL = anyBus ? bl : nullptr; float** BR = anyBus ? br : nullptr;
+  juce::MidiBuffer out;
+  auto run = [&](int from, int len) {
+    if (len <= 0) return;
+    float* pl[NBUS]; float* pr[NBUS]; for (int k = 0; k < NBUS; k++) { pl[k] = bl[k] ? bl[k] + from : nullptr; pr[k] = br[k] ? br[k] + from : nullptr; }
+    E.nev = 0; E.process(L + from, RR + from, len, BL ? pl : nullptr, BR ? pr : nullptr);
+    if (rsLen > 0 && !rsDone.load()) {                         // RESAMPLE: one loop of the main output, from the pattern's start
+      int i0 = len; if (rsArm) { if (E.loopAt >= 0) { rsArm = false; i0 = E.loopAt; } } else i0 = 0;
+      for (int i = i0; i < len && rsN < rsLen; i++) rsBuf[(size_t)rsN++] = (L[from + i] + RR[from + i]) * 0.5f;
+      if (!rsArm && rsN >= rsLen) rsDone = true; }
+    // what played goes out as MIDI too (note 36 + track, channel 10): drive other instruments or record it in the DAW
+    for (int e = 0; e < E.nev; e++) { const int at = from + juce::jlimit(0, len - 1, E.ev[e].at), note = 36 + E.ev[e].t;
+      out.addEvent(juce::MidiMessage::noteOn(10, note, (juce::uint8)E.ev[e].vel), at);
+      if (offs.size() < 2000) offs.push_back({ note, at + (int)(sr * 0.06) }); }
+    E.nev = 0;
+  };
   int done = 0;
   for (const auto meta : midi) {
     const int at = juce::jlimit(0, n, meta.samplePosition);
-    if (at > done) { E.process(L + done, RR + done, at - done); done = at; }
+    if (at > done) { run(done, at - done); done = at; }
     const auto m = meta.getMessage();
-    if (m.isNoteOn() && m.getNoteNumber() >= 36 && m.getNoteNumber() < 36 + NT) E.pad(m.getNoteNumber() - 36, m.getVelocity());
+    if (m.isNoteOn() && m.getNoteNumber() >= 36 && m.getNoteNumber() < 36 + NT) E.padDown(m.getNoteNumber() - 36, m.getVelocity());
+    else if (m.isNoteOff() && m.getNoteNumber() >= 36 && m.getNoteNumber() < 36 + NT) E.padUp(m.getNoteNumber() - 36);
+    else if (m.isController()) midiCC(m.getControllerNumber(), m.getControllerValue());
   }
-  if (n > done) E.process(L + done, RR + done, n - done);
-  for (int ch = 2; ch < buffer.getNumChannels(); ch++) buffer.clear(ch, 0, n);
-  midi.clear();
+  if (n > done) run(done, n - done);
+  // note-offs due in this block; the rest wait for the next ones
+  for (size_t i = 0; i < offs.size();) { if (offs[i].at < n) { out.addEvent(juce::MidiMessage::noteOff(10, offs[i].note), juce::jmax(0, offs[i].at)); offs[i] = offs.back(); offs.pop_back(); } else { offs[i].at -= n; i++; } }
+  midi.swapWith(out);
+}
+
+// MIDI learn: right-click a control on the page, move a knob on your controller; that CC rides it from then on
+void PulsarProcessor::midiCC(int cc, int v) {
+  if (cc < 0 || cc > 127) return;
+  if (learnArm >= 0) { for (auto& x : learn) if (x == learnArm) x = -1; learn[(size_t)cc] = learnArm; learnArm = -1; learnDone = cc; }
+  const int i = learn[(size_t)cc]; if (i < 0 || i >= (int)hp.size()) return;
+  const float x = (float)v / 127.f; const auto& h = hp[(size_t)i]; Engine& E = *eng;
+  if (h.eng >= 0) E.setParam(h.eng, denorm(i, x));
+  else if (h.eng == -100) { if (!E.songOn) E.select((int)denorm(i, x), !E.playing); }
+  else { const int k = -1 - h.eng; uiFX = (uint16_t)(x >= 0.5f ? uiFX | (1 << k) : uiFX & ~(1 << k)); E.liveFX = uiFX; if (!E.playing) E.fxNow = uiFX; }
+  ccTouched.store(i);
 }
 
 // ---------------------------------------------------------------- the page
@@ -158,7 +223,12 @@ void PulsarProcessor::message(const juce::var& m) {
     else if (t == "fx") { const int mask = (int)m["mask"]; const uint16_t old = uiFX; uiFX = (uint16_t)mask; E.liveFX = uiFX; if (!E.playing) E.fxNow = uiFX;
       for (int k = 0; k < 16; k++) if (((old ^ uiFX) >> k) & 1) for (size_t i = 0; i < hp.size(); i++) if (hp[i].eng == -1 - k) touched.push_back((int)i); }
     else if (t == "fill") { E.fillHeld = (bool)m["on"]; }
-    else if (t == "pad") { E.pad((int)m["t2"], (int)m["vel"]); }
+    else if (t == "pad") { E.padDown((int)m["t2"], (int)m["vel"]); }
+    else if (t == "padUp") { E.padUp((int)m["t2"]); }
+    else if (t == "resample") { const int len = juce::jlimit(256, (int)(sr * 30), (int)m["len"]); if (!rsDone.load()) { rsBuf.assign((size_t)len, 0.f); rsLen = len; rsN = 0; rsArm = true; } }
+    else if (t == "learn") { const juce::String key = m["key"].toString(); learnArm = -1;
+      for (size_t i = 0; i < hp.size(); i++) if (params[i]->getParameterID() == key) learnArm = (int)i;
+      if (key == "clear") { learn.fill(-1); } else if (key.startsWith("forget:")) { for (auto& x : learn) if (x >= 0 && params[(size_t)x]->getParameterID() == key.substring(7)) x = -1; } }
     else if (t == "song") {
       juce::MemoryOutputStream mo; juce::Base64::convertFromBase64(mo, m["bytes"]["u8"].toString());
       const uint8_t* d = (const uint8_t*)mo.getData(); const int nb = (int)juce::jmin<size_t>(mo.getDataSize(), sizeof(E.song));
@@ -187,6 +257,7 @@ juce::var PulsarProcessor::projectForPage() {
   for (int i = 0; i < E.songLen; i++) { juce::Array<juce::var> e; e.add((int)E.song[i].pat); e.add((int)E.song[i].rep); song.add(e); }
   for (size_t i = 0; i < user.size(); i++) { juce::DynamicObject::Ptr u = new juce::DynamicObject(); u->setProperty("name", user[i].name); u->setProperty("idx", bundled + (int)i); u->setProperty("bpm", user[i].bpm); us.add(juce::var(u.get())); }
   o->setProperty("params", ps); o->setProperty("pats", pats); o->setProperty("song", song); o->setProperty("songOn", E.songOn);
+  { juce::DynamicObject::Ptr lm = new juce::DynamicObject(); for (int c = 0; c < 128; c++) if (learn[(size_t)c] >= 0) lm->setProperty(params[(size_t)learn[(size_t)c]]->getParameterID(), c); o->setProperty("learn", juce::var(lm.get())); }
   o->setProperty("ui", uiJson); o->setProperty("user", us); o->setProperty("bundled", bundled); o->setProperty("playing", E.playing); o->setProperty("fx", (int)uiFX);
   return juce::var(o.get());
 }
@@ -219,6 +290,24 @@ juce::var PulsarProcessor::loadUserSample(const juce::File& f) {
   return juce::var(o.get());
 }
 
+juce::var PulsarProcessor::ccInfo(int i) {
+  juce::DynamicObject::Ptr o = new juce::DynamicObject(); if (i < 0 || i >= (int)hp.size()) return {};
+  const auto& h = hp[(size_t)i]; o->setProperty("key", paramKey(i)); o->setProperty("id", h.eng);
+  o->setProperty("v", h.eng >= 0 ? (double)eng->params[h.eng] : h.eng == -100 ? (double)eng->cur : 0.0); o->setProperty("fx", (int)uiFX);
+  return juce::var(o.get());
+}
+
+juce::var PulsarProcessor::takeResample() {
+  if (!rsDone.load()) return {};
+  std::vector<float> d; float bpm; { const juce::SpinLock::ScopedLockType sl(lock); d.swap(rsBuf); rsLen = 0; rsN = 0; rsArm = false; bpm = eng->bpm(); }
+  rsDone = false;
+  const double bars = d.size() / sr * bpm / 240.0; const int nb = juce::jmax(1, (int)std::lround(bars));
+  const juce::String name = "RESAMPLE " + juce::String(user.size() + 1);
+  const int idx = addUserSampleFloats(name, d.data(), (int)d.size(), (float)sr, bpm, nb * 16);
+  juce::DynamicObject::Ptr o = new juce::DynamicObject(); o->setProperty("name", name); o->setProperty("idx", idx); o->setProperty("bpm", bpm); o->setProperty("bars", nb);
+  return juce::var(o.get());
+}
+
 void PulsarProcessor::snapshot(std::vector<float>& tele, std::vector<float>& scope) {
   const juce::SpinLock::ScopedLockType sl(lock);
   tele.assign(eng->tele, eng->tele + 64);
@@ -239,6 +328,9 @@ void PulsarProcessor::getStateInformation(juce::MemoryBlock& dest) {
   o.writeInt((int)user.size());
   for (auto& u : user) { o.writeString(u.name); o.writeFloat(u.sr); o.writeFloat(u.bpm); o.writeInt(u.slices); o.writeInt((int)u.d.size());
     for (float s : u.d) o.writeShort((short)juce::jlimit(-32768, 32767, (int)std::lround(s * 32767.f))); }
+  // 2.0: the MIDI learn map (CC -> parameter ID), after everything 1.0 wrote
+  o.writeInt(0x4c524e32); int nl = 0; for (int x : learn) if (x >= 0) nl++; o.writeInt(nl);
+  for (int c = 0; c < 128; c++) if (learn[(size_t)c] >= 0) { o.writeInt(c); o.writeString(params[(size_t)learn[(size_t)c]]->getParameterID()); }
 }
 void PulsarProcessor::setStateInformation(const void* data, int size) {
   juce::MemoryInputStream in(data, (size_t)size, false);
@@ -253,11 +345,15 @@ void PulsarProcessor::setStateInformation(const void* data, int size) {
   for (int i = 0; i < nu && !in.isExhausted(); i++) {
     UserSample u; u.name = in.readString(); u.sr = in.readFloat(); u.bpm = in.readFloat(); u.slices = in.readInt(); const int len = juce::jmax(0, in.readInt());
     u.d.resize((size_t)len); for (auto& s : u.d) s = in.readShort() / 32768.f; us.push_back(std::move(u)); }
+  std::array<int, 128> lm; lm.fill(-1);
+  if (!in.isExhausted() && in.readInt() == 0x4c524e32) { const int nl = in.readInt();
+    for (int i = 0; i < nl && !in.isExhausted(); i++) { const int c = in.readInt(); const juce::String id = in.readString();
+      for (size_t k = 0; k < params.size(); k++) if (params[k]->getParameterID() == id && c >= 0 && c < 128) lm[(size_t)c] = (int)k; } }
   { const juce::SpinLock::ScopedLockType sl(lock); Engine& E = *eng;
     E.stop(); for (int i = 0; i < juce::jmin(np, P_COUNT); i++) E.params[i] = ps[(size_t)i];
     std::memcpy(E.pat, pats.get(), sizeof(E.pat)); std::memcpy(E.song, song, sizeof(song)); E.songLen = juce::jlimit(0, SONGMAX, songLen); E.songOn = songOn;
     E.cur = juce::jlimit(0, NPAT - 1, cur); uiFX = (uint16_t)fx; E.liveFX = uiFX; E.fxNow = uiFX; uiJson = ui;
-    E.nSmp = bundled; E.poolUsed = bundledUsed; user.clear(); }
+    E.nSmp = bundled; E.poolUsed = bundledUsed; user.clear(); learn = lm; E.held = 0; }
   for (auto& u : us) addUserSampleFloats(u.name, u.d.data(), (int)u.d.size(), u.sr, u.bpm, u.slices);
   for (size_t i = 0; i < hp.size(); i++) setHostFromEngine((int)i, false);
 }

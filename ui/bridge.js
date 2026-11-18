@@ -22,6 +22,8 @@ class PulsarProc extends AudioWorkletProcessor {
       case 'fx': X.px_fx(d.mask); break;
       case 'fill': X.px_fill(d.on ? 1 : 0); break;
       case 'pad': X.px_pad(d.t2, d.vel); break;
+      case 'padUp': X.px_pad_up(d.t2); break;
+      case 'resample': this.rs = { arm: true, len: d.len, buf: new Float32Array(d.len), n: 0 }; break;
       case 'host': X.px_host(d.playing ? 1 : 0, d.bpm, d.sync ? 1 : 0); break;
       case 'getPats': { const sz = X.px_pattern_size(), out = new Uint8Array(sz * 16); for (let p = 0; p < 16; p++) out.set(new Uint8Array(this.mem(), X.px_pattern(p), sz), p * sz); this.port.postMessage({ t: 'pats', id: d.id, bytes: out, size: sz }, [out.buffer]); break; }
       case 'getPat': { const sz = X.px_pattern_size(); const b = new Uint8Array(this.mem(), X.px_pattern(d.p), sz).slice(); this.port.postMessage({ t: 'pat', id: d.id, p: d.p, bytes: b }, [b.buffer]); break; }
@@ -38,6 +40,9 @@ class PulsarProc extends AudioWorkletProcessor {
     const L = new Float32Array(this.mem(), X.px_out_l(), n), R = new Float32Array(this.mem(), X.px_out_r(), n);
     o[0].set(L); if (o[1]) o[1].set(R);
     if (this.rec) { this.recL.push(L.slice()); this.recR.push(R.slice()); }
+    if (this.rs) { const rs = this.rs; let from = 0; if (rs.arm) { const at = X.px_loop_at(); if (at < 0) from = n; else { rs.arm = false; from = at; } }
+      for (let i = from; i < n && rs.n < rs.len; i++) rs.buf[rs.n++] = (L[i] + R[i]) * 0.5;
+      if (!rs.arm && rs.n >= rs.len) { this.port.postMessage({ t: 'resampled', data: rs.buf }, [rs.buf.buffer]); this.rs = null; } }
     if (++this.n % 6 === 0) {
       const tele = new Float32Array(this.mem(), X.px_tele(), 64).slice();
       const sw = X.px_scope_w(), sc = new Float32Array(this.mem(), X.px_scope(), 512), scope = new Float32Array(256);
@@ -66,6 +71,7 @@ const Bridge = {
   },
   _msg(d) {
     if (d.t === 'tele') this.onTele && this.onTele(d.tele, d.scope);
+    else if (d.t === 'resampled') this.onResampled && this.onResampled(d.data);
     else if (d.t === 'recdata') this.recCb && this.recCb(d.L, d.R);
     else { const f = this._wait[d.id]; delete this._wait[d.id]; f && f(d); }
   },
@@ -84,6 +90,9 @@ const Bridge = {
   async startPlugin() {
     this.kind = 'plugin'; const B = window.__JUCE__.backend;
     B.addEventListener('tele', d => this.onTele && this.onTele(Float32Array.from(d.tele), Float32Array.from(d.scope)));
+    B.addEventListener('learned', d => this.onLearned && this.onLearned(d));
+    B.addEventListener('ccMoved', d => this.onCcMoved && this.onCcMoved(d));
+    B.addEventListener('resampled', d => this.onResampledPlugin && this.onResampledPlugin(d));
     this.ready = true; this.sampleRate = await this._call('sampleRate', []);
   },
   _call(name, args) {

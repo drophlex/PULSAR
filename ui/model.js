@@ -5,6 +5,13 @@ const NGLOBAL = 16, NTP = 24;
 const T = { MODE: 0, SYN: 1, SMP: 2, TUNE: 3, DECAY: 4, TONE: 5, SNAP: 6, DRIVE: 7, ERA: 8, STRETCH: 9, START: 10, REV: 11, CUT: 12, RES: 13, FTYPE: 14,
   LEVEL: 15, PAN: 16, SENDR: 17, SENDD: 18, CHOKE: 19, DUCK: 20, SWING: 21, ROLE: 22, ATK: 23 };
 const TPID = (t, k) => NGLOBAL + t * NTP + k;
+// PULSAR 2: parameters appended after the original 400 (older projects keep their numbers)
+const X_BASE = NGLOBAL + NT * NTP, NXG = 8, NXT = 8;
+const XG = { XYON: 0, XYX: 1, XYY: 2, REPEAT: 3, VELSENS: 4 };
+const XT = { PUNCH: 0, COMP: 1, LOW: 2, HIGH: 3, OUT: 4, LOCK: 5 };
+const XGID = k => X_BASE + k, TXID = (t, k) => X_BASE + NXG + t * NXT + k;
+const P_COUNT = X_BASE + NXG + NT * NXT;
+const REPEATS = ['OFF', '1/8', '1/16', '1/32', '1/16T'];
 const MODES = ['SYNTH', 'SAMPLE', 'BREAK'];
 const SYNS = ['KICK', 'BOOM', 'HARD KICK', 'SNARE', 'CLAP', 'HAT', 'OPEN HAT', 'RIDE', 'TOM', 'RIM', 'COWBELL', 'FM PERC', 'ZAP', 'NOISE'];
 const SYN = Object.fromEntries(SYNS.map((n, i) => [n, i]));
@@ -229,16 +236,16 @@ function buildSong(style, seed, complexity) {
 // ------------------------------------------------------------------ MIDI export (General MIDI drums on channel 10, one note per track)
 const GM = { KICK: 36, SNARE: 38, HAT: 42, PERC: 39, BREAK: 40, CYMBAL: 46 };
 const TRACK_NOTES = [36, 38, 39, 42, 46, 40, 41, 37, 45, 51, 35, 56, 62, 54, 49, 75];
-function midiFile(patList, bpm, names) {   // patList: [{bytes, rep}]
+function midiFile(patList, bpm, names, own, only) {   // patList: [{bytes, rep}]; own: PULSAR's own notes (36 + track), only: one track
   const PPQ = 96, perStep = PPQ / 4, ev = [];
   let t0 = 0; const sm = [2, 1, .5, 2 / 3, 4 / 3, .25];
   for (const { bytes, rep } of patList) {
     const plen = bytes[0] || 16;
     for (let k = 0; k < (rep || 1); k++) {
-      for (let t = 0; t < NT; t++) { const L = trkLen(bytes, t), spd = sm[trkSpeed(bytes, t)] || 1, stepT = perStep * spd, total = plen * perStep;
+      for (let t = 0; t < NT; t++) { if (only !== undefined && t !== only) continue; if (trkMute(bytes, t)) continue; const note = own ? 36 + t : TRACK_NOTES[t]; const L = trkLen(bytes, t), spd = sm[trkSpeed(bytes, t)] || 1, stepT = perStep * spd, total = plen * perStep;
         for (let i = 0; i * stepT < total; i++) { const st = getStep(bytes, t, i % L); if (!st.vel) continue;
           const n = Math.max(1, st.rat); for (let j = 0; j < n; j++) { const at = t0 + i * stepT + st.mic / 100 * stepT * 0.5 + j * stepT / n; const v = Math.max(1, Math.min(127, st.vel * (st.rmode === 1 ? .35 + .65 * (j + 1) / n : 1)));
-            ev.push([Math.max(0, Math.round(at)), 0x99, TRACK_NOTES[t] + 0, Math.round(v)], [Math.round(at + Math.max(2, stepT / n * .8)), 0x89, TRACK_NOTES[t], 0]); } } }
+            ev.push([Math.max(0, Math.round(at)), 0x99, note, Math.round(v)], [Math.round(at + Math.max(2, stepT / n * .8)), 0x89, note, 0]); } } }
       t0 += plen * perStep;
     }
   }

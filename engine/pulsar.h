@@ -27,7 +27,14 @@ enum GP {   // global
   G_BPM, G_SWING, G_MASTER, G_REVSIZE, G_REVTONE, G_DLYTIME, G_DLYFB, G_DLYTONE, G_COMP, G_DRIVE, G_DUCKSRC, G_DUCKTIME,
   G_STUTLEN, G_HUMAN, G_WIDTH, G_NGLOBAL = 16 };
 inline int TPID(int t, int k) { return G_NGLOBAL + t * T_NPARAM + k; }
-constexpr int P_COUNT = G_NGLOBAL + NT * T_NPARAM;
+// v2 parameters, appended after the original 400 so older projects, sets and automation keep their numbers
+constexpr int X_BASE = G_NGLOBAL + NT * T_NPARAM;
+enum XG { XG_XYON, XG_XYX, XG_XYY, XG_REPEAT, XG_VELSENS, XG_NGLOBAL = 8 };     // performance pad, note repeat rate, pad velocity
+enum XT { XT_PUNCH, XT_COMP, XT_LOW, XT_HIGH, XT_OUT, XT_LOCK, XT_NPARAM = 8 };  // per track: transient, glue, EQ, output bus, generator lock
+inline int XG_ID(int k) { return X_BASE + k; }
+inline int TXID(int t, int k) { return X_BASE + XG_NGLOBAL + t * XT_NPARAM + k; }
+constexpr int P_COUNT = X_BASE + XG_NGLOBAL + NT * XT_NPARAM;
+constexpr int NBUS = 8;                                                         // extra stereo outputs (the plug-in's multi-out)
 enum MODE { M_SYNTH, M_SAMPLE, M_BREAK };
 enum SYN { S_KICK, S_BOOM, S_HARD, S_SNARE, S_CLAP, S_HAT, S_OPEN, S_RIDE, S_TOM, S_RIM, S_COWBELL, S_FM, S_ZAP, S_NOISE, S_COUNT };
 enum ERA { E_CLEAN, E_SP12, E_S950, E_AMIGA, E_MPC, E_COUNT };
@@ -63,6 +70,15 @@ struct Engine {
   uint16_t liveFX = 0, fxNow = 0, fxPrev = 0; bool perfTake = false; bool lastCond[NT];
   // mixer state
   SVF tf[NT][2]; float tDrive[NT], tGainL[NT], tGainR[NT], meter[NT];
+  float pkFast[NT], pkSlow[NT], cpEnv[NT], eqLo[NT], eqHi[NT];                  // PUNCH, COMP, EQ state
+  // note repeat (hold a pad): the pads held, their velocity, each one's clock
+  uint16_t held = 0; int8_t heldVel[NT]; double rClock[NT];
+  // what triggered in the last process() call: the plug-in sends it as MIDI
+  struct Ev { int t, at, vel; } ev[256]; int nev = 0; int procPos = 0;
+  int loopAt = -1;                                     // where the pattern started again in the last process() call (resampling starts there), or -1
+  float xyLp[2] = {0, 0}, xyHp[2] = {0, 0}, xyAmt = 0;
+  float kAtkF = 0, kRelF = 0, kAtkS = 0, kRelS = 0, kCpA = 0, kCpR = 0, kLo = 0, kHi = 0;
+  float coef(float sec) const { return 1.f - expf_(-1.f / maxf(1.f, sec * sr)); }
   float duckEnv = 0; float hostBpm = 0; bool hostSync = false, hostPlaying = false; double hostPpq = 0;
   // fx
   static constexpr int RLEN = 1 << 15; float rv[8][RLEN / 4 * 4]; int rvLen[8], rvW = 0; float rvLp[8];
@@ -79,10 +95,19 @@ struct Engine {
     params[G_BPM] = 120; params[G_SWING] = 0; params[G_MASTER] = 0.8f; params[G_REVSIZE] = 0.5f; params[G_REVTONE] = 0.6f;
     params[G_DLYTIME] = 3; params[G_DLYFB] = 0.4f; params[G_DLYTONE] = 0.6f; params[G_COMP] = 0.3f; params[G_DRIVE] = 0.1f;
     params[G_DUCKSRC] = 0; params[G_DUCKTIME] = 0.35f; params[G_STUTLEN] = 1; params[G_HUMAN] = 0; params[G_WIDTH] = 1;
+    params[XG_ID(XG_XYON)] = 0; params[XG_ID(XG_XYX)] = 0; params[XG_ID(XG_XYY)] = 0; params[XG_ID(XG_REPEAT)] = 0; params[XG_ID(XG_VELSENS)] = 1;
+    held = 0; nev = 0;
+    kAtkF = coef(0.0003f); kRelF = coef(0.15f); kAtkS = coef(0.02f); kRelS = coef(0.15f); kCpA = 1.f; kCpR = coef(0.12f);
+    kLo = 1.f - expf_(-TAU * 120.f / sr); kHi = 1.f - expf_(-TAU * 6000.f / sr);
+    // everything that runs on survives no re-init (a new sample rate in the plug-in starts clean)
+    duckEnv = 0; compEnv = 0; fxCut = 1; fxHp = 0; fxLpZ[0] = fxLpZ[1] = fxHpZ[0] = fxHpZ[1] = 0; crushHold[0] = crushHold[1] = 0; crushPh = 0; gatePh = 0;
+    stutStart = stutLen = stutPos = revPos = 0; tapeRate = 1; tapePos = 0; xyLp[0] = xyLp[1] = xyHp[0] = xyHp[1] = 0; xyAmt = 0; hW = 0; dW = 0; rvW = 0;
     for (int t = 0; t < NT; t++) { float* p = params + TPID(t, 0);
       p[T_MODE] = M_SYNTH; p[T_SYN] = S_KICK; p[T_SMP] = -1; p[T_TUNE] = 0; p[T_DECAY] = 0.5f; p[T_TONE] = 0.5f; p[T_SNAP] = 0.5f;
       p[T_DRIVE] = 0; p[T_ERA] = E_CLEAN; p[T_STRETCH] = 1; p[T_START] = 0; p[T_REV] = 0; p[T_CUT] = 1; p[T_RES] = 0.1f; p[T_FTYPE] = 0;
       p[T_LEVEL] = 0.8f; p[T_PAN] = 0; p[T_SENDR] = 0; p[T_SENDD] = 0; p[T_CHOKE] = 0; p[T_DUCK] = 0; p[T_SWING] = 0; p[T_ROLE] = R_PERC; p[T_ATK] = 0;
+      float* x = params + TXID(t, 0); x[XT_PUNCH] = 0; x[XT_COMP] = 0; x[XT_LOW] = 0; x[XT_HIGH] = 0; x[XT_OUT] = 0; x[XT_LOCK] = 0;
+      pkFast[t] = pkSlow[t] = cpEnv[t] = eqLo[t] = eqHi[t] = 0; heldVel[t] = 0; rClock[t] = 0;
       vcur[t] = 0; for (auto& v : vo[t]) { v.sr = sr; v.t = t; v.rnd.s = 1234 + t * 77; } npend[t] = 0; lastCond[t] = true; lastTrig[t] = -1; meter[t] = 0; }
     for (int p = 0; p < NPAT; p++) clearPattern(p);
     const int rl[8] = {1557, 1617, 1491, 1422, 1277, 1356, 1188, 1116};
@@ -238,6 +263,7 @@ struct Engine {
           if (songOn && songLen > 0) { if (++songRep >= (song[songPos].rep < 1 ? 1 : song[songPos].rep)) { songRep = 0; songPos = (songPos + 1) % songLen; int np = song[songPos].pat; if (np != cur) { cur = np; for (int t = 0; t < NT; t++) { tClock[t] = 0; tStep[t] = 0; tLoop[t] = 0; } mLoop = 0; } } }
           else if (queued >= 0) { cur = queued; queued = -1; for (int t = 0; t < NT; t++) { tClock[t] = 0; tStep[t] = 0; tLoop[t] = 0; } mLoop = 0; }
         }
+        if (mStep == 0 && loopAt < 0) loopAt = procPos;
         masterStep(); mStep++; mClock += stepM;
       }
       mClock -= 1;
@@ -250,6 +276,7 @@ struct Engine {
 
   // ---------------------------------------------------------------- triggering
   void trigger(int t, float vel, int pit, int slice, bool warp) {
+    if (nev < 256) { ev[nev].t = t; ev[nev].at = procPos; ev[nev].vel = clampi((int)(vel * 127.f + 0.5f), 1, 127); nev++; }
     // chokes: an open hat is cut by a closed one in the same group
     int ch = (int)P(t, T_CHOKE);
     if (ch > 0) for (int u = 0; u < NT; u++) if (u != t && (int)P(u, T_CHOKE) == ch) for (auto& v : vo[u]) if (v.on) v.fadeK = 1.f / (0.004f * sr);
@@ -394,9 +421,15 @@ struct Engine {
   }
 
   // ---------------------------------------------------------------- audio
-  void process(float* outL, float* outR, int n) {
+  // outL / outR: the main mix. busL / busR (optional, NBUS each): a track whose OUT is 1..8 plays there, dry of the
+  // master chain (its reverb and delay sends still go to the main mix); without them every track is in the main mix.
+  void process(float* outL, float* outR, int n, float** busL = nullptr, float** busR = nullptr) {
+    const float xyOn = params[XG_ID(XG_XYON)] > 0.5f ? 1.f : 0.f, xyY = clampf(params[XG_ID(XG_XYY)], 0.f, 1.f) * xyOn;
+    loopAt = -1;
     for (int i = 0; i < n; i++) {
+      procPos = i;
       advance(1);
+      repeatTick();
       // fire due events
       for (int t = 0; t < NT; t++) {
         for (int k = 0; k < npend[t];) { Pend& e = pend[t][k];
@@ -420,12 +453,25 @@ struct Engine {
         if (cut < 0.995f || ft != 0 || p[T_RES] > 0.12f) { float fc = 30.f * powf_(600.f, ft == 1 ? 1.f - cut : cut); tf[t][0].set(fc, 0.6f + clampf(p[T_RES], 0.f, 1.f) * 12.f, sr);
           s = ft == 0 ? tf[t][0].lp(s) : ft == 1 ? tf[t][0].hp(s) : tf[t][0].bp(s) * 1.6f; }
         if ((int)p[T_MODE] == M_SYNTH && (int)p[T_ERA] != E_CLEAN) { int era = (int)p[T_ERA]; float q = era == E_AMIGA ? 128.f : 2048.f; s = floorf_(s * q + 0.5f) / q; }
+        { const float* x = params + TXID(t, 0);
+          if (x[XT_PUNCH] > 0.001f) {                                 // PUNCH: a transient shaper, the attack lifted over the body
+            float a = absf(s); pkFast[t] += (a - pkFast[t]) * (a > pkFast[t] ? kAtkF : kRelF); pkSlow[t] += (a - pkSlow[t]) * (a > pkSlow[t] ? kAtkS : kRelS);
+            float tr = pkSlow[t] > 1e-6f ? clampf(pkFast[t] / pkSlow[t] - 1.f, 0.f, 2.f) : 0.f; s *= 1.f + x[XT_PUNCH] * tr * 1.2f; }
+          if (x[XT_COMP] > 0.001f) {                                  // COMP: a fast compressor (ratio up to 8:1 from -14 dB), made up
+            float c = absf(s); cpEnv[t] += (c - cpEnv[t]) * (c > cpEnv[t] ? kCpA : kCpR);
+            const float th = 0.2f, ratio = 1.f + x[XT_COMP] * 7.f, ex = 1.f / ratio - 1.f;
+            float g = cpEnv[t] > th ? powf_(cpEnv[t] / th, ex) : 1.f; s *= g * powf_(1.f / th, -ex * 0.75f); }
+          if (x[XT_LOW] != 0.f || x[XT_HIGH] != 0.f) {                 // two shelves at 120 Hz and 6 kHz, +-12 dB
+            eqLo[t] += (s - eqLo[t]) * kLo; eqHi[t] += (s - eqHi[t]) * kHi;
+            s += eqLo[t] * (dbToGain(x[XT_LOW] * 12.f) - 1.f) + (s - eqHi[t]) * (dbToGain(x[XT_HIGH] * 12.f) - 1.f); } }
         if (p[T_DUCK] > 0.001f && (int)params[G_DUCKSRC] != t) s *= 1.f - p[T_DUCK] * duckEnv;
         float lv = p[T_LEVEL] * p[T_LEVEL] * 1.4f; s *= lv;
-        float pan = clampf(p[T_PAN], -1.f, 1.f) * params[G_WIDTH]; float gl = sqrtf_(0.5f * (1.f - pan)), gr = sqrtf_(0.5f * (1.f + pan));
-        float l = s * gl * 1.414f, r = s * gr * 1.414f; mixL += l; mixR += r;
+        float pan = clampf(clampf(p[T_PAN], -1.f, 1.f) * params[G_WIDTH], -1.f, 1.f);   /* (WIDTH above 100 % pushed it past the edge: NaN) */ float gl = sqrtf_(0.5f * (1.f - pan)), gr = sqrtf_(0.5f * (1.f + pan));
+        float l = s * gl * 1.414f, r = s * gr * 1.414f;
+        const int ob = (int)params[TXID(t, XT_OUT)];
+        if (ob >= 1 && ob <= NBUS && busL && busL[ob - 1]) { busL[ob - 1][i] += l; busR[ob - 1][i] += r; } else { mixL += l; mixR += r; }
         float sd = p[T_SENDD]; if (fxNow & (1 << F_DUB)) sd = maxf(sd, 0.7f);
-        revIn += s * p[T_SENDR]; dlyL += l * sd; dlyR += r * sd;
+        revIn += s * (p[T_SENDR] + xyY * 0.9f); sd += xyY * 0.6f; dlyL += l * sd; dlyR += r * sd;
         float a = absf(s); meter[t] = a > meter[t] ? a : meter[t] * 0.9995f;
       }
       // reverb: 8-line feedback network, a small studio room to a big hall
@@ -444,6 +490,7 @@ struct Engine {
         dl[0][dW] = tanhf_(dlyL + dLp[1] * fb); dl[1][dW] = tanhf_(dlyR + dLp[0] * fb); dW = (dW + 1) % DLEN;
         mixL += yl * 0.8f; mixR += yr * 0.8f; }
       masterFX(mixL, mixR);
+      xyFX(mixL, mixR, xyOn);
       // glue: compressor + drive + soft limit
       float lvl = maxf(absf(mixL), absf(mixR)); compEnv += (lvl - compEnv) * (lvl > compEnv ? 0.01f : 0.0002f);
       float thr = 0.5f - params[G_COMP] * 0.35f; float g = compEnv > thr ? powf_(thr / compEnv, params[G_COMP] * 0.75f) : 1.f;
@@ -473,6 +520,28 @@ struct Engine {
     if (f & (1 << F_CRUSH)) { crushPh += 8000.f / sr; if (crushPh >= 1) { crushPh -= 1; crushHold[0] = floorf_(L * 24.f + 0.5f) / 24.f; crushHold[1] = floorf_(R * 24.f + 0.5f) / 24.f; } L = crushHold[0]; R = crushHold[1]; }
   }
 
+  // the performance pad: X sweeps a DJ filter (left: low-pass, right: high-pass), Y throws everything into the space
+  void xyFX(float& L, float& R, float on) {
+    xyAmt += (on * clampf(params[XG_ID(XG_XYX)], -1.f, 1.f) - xyAmt) * 0.002f;
+    if (xyAmt < -0.01f) { float fc = 20000.f * powf_(0.0075f, -xyAmt); float a = 1.f - expf_(-TAU * fc / sr); xyLp[0] += (L - xyLp[0]) * a; xyLp[1] += (R - xyLp[1]) * a; L = xyLp[0]; R = xyLp[1]; }
+    else { xyLp[0] = L; xyLp[1] = R; }
+    if (xyAmt > 0.01f) { float fc = 20.f * powf_(300.f, xyAmt); float a = 1.f - expf_(-TAU * fc / sr); xyHp[0] += (L - xyHp[0]) * a; xyHp[1] += (R - xyHp[1]) * a; L -= xyHp[0]; R -= xyHp[1]; }
+    else { xyHp[0] = L; xyHp[1] = R; }
+  }
+  // note repeat: a held pad plays again on the grid at the chosen rate (1/8 1/16 1/32 1/16T), running or not
+  float repeatLen() const { static const float m[5] = {0.f, 2.f, 1.f, 0.5f, 2.f / 3.f}; int r = clampi((int)params[XG_ID(XG_REPEAT)], 0, 4); return m[r] * stepSamples(1); }
+  void repeatTick() {
+    if (!held) return; float L = repeatLen(); if (L <= 0) return;
+    for (int t = 0; t < NT; t++) if ((held >> t) & 1) { rClock[t] -= 1; if (rClock[t] <= 0) { rClock[t] += L; hit(t, heldVel[t]); } }
+  }
+  void padDown(int t, int vel) {      // a pad pressed: plays (and records); with repeat on it keeps playing while held
+    if (t < 0 || t >= NT) return; if (params[XG_ID(XG_VELSENS)] < 0.5f) vel = 110;
+    hit(t, vel); float L = repeatLen();
+    if (L > 0) { held |= (uint16_t)(1 << t); heldVel[t] = (int8_t)clampi(vel, 1, 127);
+      rClock[t] = playing ? (mClock > 0 ? (double)((int)(mClock) % (int)(L < 1 ? 1 : L)) : L) : L; if (rClock[t] < 1) rClock[t] = L; }
+  }
+  void padUp(int t) { if (t >= 0 && t < NT) held &= (uint16_t)~(1 << t); }
+
   void teleUpdate() {
     tele[0] = playing; tele[1] = bpm(); tele[2] = (float)cur; tele[3] = (float)(queued); tele[4] = (float)(mStep > 0 ? (mStep - 1) % NS : 0);
     tele[5] = (float)fxNow; tele[6] = (float)dirty; tele[7] = (float)songPos; tele[8] = rec;
@@ -481,7 +550,8 @@ struct Engine {
   }
 
   // live play (pads, MIDI): plays now; while recording, lands on the nearest step (quantized)
-  void pad(int t, int vel) {
+  void pad(int t, int vel) { padDown(t, vel); }
+  void hit(int t, int vel) {
     if (t < 0 || t >= NT) return;
     trigger(t, vel / 127.f, 0, 255, false);
     if ((int)params[G_DUCKSRC] == t) duckEnv = 1.f;

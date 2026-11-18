@@ -67,6 +67,15 @@ juce::WebBrowserComponent::Options PulsarEditor::makeOptions() {
         auto f = fc.getResult(); bool ok = f != juce::File() && f.replaceWithData(bytes->getData(), bytes->getDataSize());
         if (ok) f.revealToUser();
         done(ok); }); })
+    .withNativeFunction("dragMidi", [this](const juce::Array<juce::var>& a, Completion done) {
+      // a[0] file name, a[1] base64 .mid: written to a temporary folder and dragged out of the plug-in, onto a track in the DAW
+      if (a.size() < 2) { done(false); return; }
+      juce::MemoryOutputStream mo; juce::Base64::convertFromBase64(mo, a[1].toString());
+      auto dir = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("PULSAR MIDI"); dir.createDirectory();
+      auto f = dir.getChildFile(juce::File::createLegalFileName(a[0].toString()));
+      const bool ok = f.replaceWithData(mo.getData(), mo.getDataSize());
+      if (ok) juce::DragAndDropContainer::performExternalDragDropOfFiles({ f.getFullPathName() }, false, this);
+      done(ok); })
     .withNativeFunction("openUrl", [](const juce::Array<juce::var>& a, Completion done) {
       // only the donation page, the project's pages and Polaris Sound Lab open outside the plug-in
       auto url = a.size() > 0 ? a[0].toString() : juce::String();
@@ -86,4 +95,8 @@ void PulsarEditor::timerCallback() {
   for (float v : scope) s.add(v);
   o->setProperty("tele", t); o->setProperty("scope", s);
   web->emitEventIfBrowserIsVisible("tele", juce::var(o.get()));
+  // MIDI learn: a CC just bound to a control; a learned CC moved a control (the page and the DAW follow)
+  if (const int c = proc.takeLearnDone(); c >= 0) { juce::DynamicObject::Ptr l = new juce::DynamicObject(); l->setProperty("cc", c); web->emitEventIfBrowserIsVisible("learned", juce::var(l.get())); }
+  if (const int i = proc.takeCcTouched(); i >= 0) { proc.syncHost(i); web->emitEventIfBrowserIsVisible("ccMoved", proc.ccInfo(i)); }
+  if (auto r = proc.takeResample(); r.isObject()) web->emitEventIfBrowserIsVisible("resampled", r);
 }

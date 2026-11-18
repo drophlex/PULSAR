@@ -112,7 +112,23 @@ select,input{font:inherit;color:var(--text);background:var(--panel2);border:1px 
 .hint{color:var(--dim);font-size:10.5px;line-height:1.45}
 .full{width:100%}
 /* perform */
-#perf{border-top:1px solid var(--line);background:linear-gradient(#0b0d11,#07080a);padding:8px 12px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+#perf{border-top:1px solid var(--line);background:linear-gradient(#0b0d11,#07080a);padding:8px 12px;display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center}
+#perf2{display:flex;gap:10px;align-items:stretch}
+.xy{position:relative;width:220px;height:92px;border:1px solid var(--line2);border-radius:10px;overflow:hidden;touch-action:none}
+.xy canvas{width:220px;height:92px;display:block;cursor:crosshair}
+.xyL{position:absolute;left:8px;top:5px;font:700 8px var(--font);letter-spacing:.18em;color:var(--dim);pointer-events:none}
+.xyH{position:absolute;right:5px;top:4px;padding:2px 6px;font-size:8.5px}
+.rpt{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;align-content:center;width:150px}
+.rpt .lbl{grid-column:1/-1;font:700 8.5px var(--font);letter-spacing:.18em;color:var(--dim)}
+.rpt button{padding:4px 2px;font-size:9.5px}
+.rpt button:last-child{grid-column:span 2}
+.ctx{position:fixed;z-index:60;background:#141823;border:1px solid var(--line2);border-radius:9px;padding:6px;display:flex;flex-direction:column;gap:4px;min-width:180px;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.ctxT{font:700 9px var(--font);letter-spacing:.16em;color:var(--dim);padding:2px 4px}
+.ctx button{text-align:left}
+.row.locked .nm i::after{content:' &#x1f512;';font-style:normal}
+.dropping{outline:2px dashed var(--acid);outline-offset:-2px}
+button.drag{cursor:grab;border-color:var(--beam2)}
+button:disabled{opacity:.35;cursor:default}
 #fxGrid{display:grid;grid-template-columns:repeat(16,1fr);gap:5px}
 .fx{height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:800 9.5px var(--font);letter-spacing:.08em;border-radius:9px;background:#11141b;border:1px solid #232835;touch-action:none}
 .fx small{font:600 8px var(--mono);color:var(--dim)}
@@ -137,7 +153,8 @@ select,input{font:inherit;color:var(--text);background:var(--panel2);border:1px 
 #help h3{color:var(--beam);margin:14px 0 4px;font-size:12px;letter-spacing:.15em}
 #help kbd{font:600 10px var(--mono);background:#1d2230;border:1px solid var(--line2);border-radius:4px;padding:1px 5px}
 @media (max-width:1100px){#main{grid-template-columns:1fr}#side{position:fixed;right:0;top:0;bottom:0;width:340px;z-index:30;transform:translateX(100%);transition:transform .2s}#side.open{transform:none}#sideBtn{display:inline-block!important}}
-@media (max-width:760px){.row{grid-template-columns:20px 20px 74px 1fr 0}.ln{display:none}#fxGrid{grid-template-columns:repeat(8,1fr)}.fx{height:38px}#macros,#scope{display:none}#perf{grid-template-columns:1fr}}
+@media (max-width:1250px){#scope,#macros{display:none}#perf{grid-template-columns:1fr auto}}
+@media (max-width:760px){.row{grid-template-columns:20px 20px 74px 1fr 0}.ln{display:none}#fxGrid{grid-template-columns:repeat(8,1fr)}.fx{height:38px}#macros,#scope{display:none}#perf{grid-template-columns:1fr}#perf2{justify-content:center}}
 </style>
 </head>
 <body>
@@ -187,6 +204,13 @@ const NGLOBAL = 16, NTP = 24;
 const T = { MODE: 0, SYN: 1, SMP: 2, TUNE: 3, DECAY: 4, TONE: 5, SNAP: 6, DRIVE: 7, ERA: 8, STRETCH: 9, START: 10, REV: 11, CUT: 12, RES: 13, FTYPE: 14,
   LEVEL: 15, PAN: 16, SENDR: 17, SENDD: 18, CHOKE: 19, DUCK: 20, SWING: 21, ROLE: 22, ATK: 23 };
 const TPID = (t, k) => NGLOBAL + t * NTP + k;
+// PULSAR 2: parameters appended after the original 400 (older projects keep their numbers)
+const X_BASE = NGLOBAL + NT * NTP, NXG = 8, NXT = 8;
+const XG = { XYON: 0, XYX: 1, XYY: 2, REPEAT: 3, VELSENS: 4 };
+const XT = { PUNCH: 0, COMP: 1, LOW: 2, HIGH: 3, OUT: 4, LOCK: 5 };
+const XGID = k => X_BASE + k, TXID = (t, k) => X_BASE + NXG + t * NXT + k;
+const P_COUNT = X_BASE + NXG + NT * NXT;
+const REPEATS = ['OFF', '1/8', '1/16', '1/32', '1/16T'];
 const MODES = ['SYNTH', 'SAMPLE', 'BREAK'];
 const SYNS = ['KICK', 'BOOM', 'HARD KICK', 'SNARE', 'CLAP', 'HAT', 'OPEN HAT', 'RIDE', 'TOM', 'RIM', 'COWBELL', 'FM PERC', 'ZAP', 'NOISE'];
 const SYN = Object.fromEntries(SYNS.map((n, i) => [n, i]));
@@ -411,16 +435,16 @@ function buildSong(style, seed, complexity) {
 // ------------------------------------------------------------------ MIDI export (General MIDI drums on channel 10, one note per track)
 const GM = { KICK: 36, SNARE: 38, HAT: 42, PERC: 39, BREAK: 40, CYMBAL: 46 };
 const TRACK_NOTES = [36, 38, 39, 42, 46, 40, 41, 37, 45, 51, 35, 56, 62, 54, 49, 75];
-function midiFile(patList, bpm, names) {   // patList: [{bytes, rep}]
+function midiFile(patList, bpm, names, own, only) {   // patList: [{bytes, rep}]; own: PULSAR's own notes (36 + track), only: one track
   const PPQ = 96, perStep = PPQ / 4, ev = [];
   let t0 = 0; const sm = [2, 1, .5, 2 / 3, 4 / 3, .25];
   for (const { bytes, rep } of patList) {
     const plen = bytes[0] || 16;
     for (let k = 0; k < (rep || 1); k++) {
-      for (let t = 0; t < NT; t++) { const L = trkLen(bytes, t), spd = sm[trkSpeed(bytes, t)] || 1, stepT = perStep * spd, total = plen * perStep;
+      for (let t = 0; t < NT; t++) { if (only !== undefined && t !== only) continue; if (trkMute(bytes, t)) continue; const note = own ? 36 + t : TRACK_NOTES[t]; const L = trkLen(bytes, t), spd = sm[trkSpeed(bytes, t)] || 1, stepT = perStep * spd, total = plen * perStep;
         for (let i = 0; i * stepT < total; i++) { const st = getStep(bytes, t, i % L); if (!st.vel) continue;
           const n = Math.max(1, st.rat); for (let j = 0; j < n; j++) { const at = t0 + i * stepT + st.mic / 100 * stepT * 0.5 + j * stepT / n; const v = Math.max(1, Math.min(127, st.vel * (st.rmode === 1 ? .35 + .65 * (j + 1) / n : 1)));
-            ev.push([Math.max(0, Math.round(at)), 0x99, TRACK_NOTES[t] + 0, Math.round(v)], [Math.round(at + Math.max(2, stepT / n * .8)), 0x89, TRACK_NOTES[t], 0]); } } }
+            ev.push([Math.max(0, Math.round(at)), 0x99, note, Math.round(v)], [Math.round(at + Math.max(2, stepT / n * .8)), 0x89, note, 0]); } } }
       t0 += plen * perStep;
     }
   }
@@ -459,6 +483,8 @@ class PulsarProc extends AudioWorkletProcessor {
       case 'fx': X.px_fx(d.mask); break;
       case 'fill': X.px_fill(d.on ? 1 : 0); break;
       case 'pad': X.px_pad(d.t2, d.vel); break;
+      case 'padUp': X.px_pad_up(d.t2); break;
+      case 'resample': this.rs = { arm: true, len: d.len, buf: new Float32Array(d.len), n: 0 }; break;
       case 'host': X.px_host(d.playing ? 1 : 0, d.bpm, d.sync ? 1 : 0); break;
       case 'getPats': { const sz = X.px_pattern_size(), out = new Uint8Array(sz * 16); for (let p = 0; p < 16; p++) out.set(new Uint8Array(this.mem(), X.px_pattern(p), sz), p * sz); this.port.postMessage({ t: 'pats', id: d.id, bytes: out, size: sz }, [out.buffer]); break; }
       case 'getPat': { const sz = X.px_pattern_size(); const b = new Uint8Array(this.mem(), X.px_pattern(d.p), sz).slice(); this.port.postMessage({ t: 'pat', id: d.id, p: d.p, bytes: b }, [b.buffer]); break; }
@@ -475,6 +501,9 @@ class PulsarProc extends AudioWorkletProcessor {
     const L = new Float32Array(this.mem(), X.px_out_l(), n), R = new Float32Array(this.mem(), X.px_out_r(), n);
     o[0].set(L); if (o[1]) o[1].set(R);
     if (this.rec) { this.recL.push(L.slice()); this.recR.push(R.slice()); }
+    if (this.rs) { const rs = this.rs; let from = 0; if (rs.arm) { const at = X.px_loop_at(); if (at < 0) from = n; else { rs.arm = false; from = at; } }
+      for (let i = from; i < n && rs.n < rs.len; i++) rs.buf[rs.n++] = (L[i] + R[i]) * 0.5;
+      if (!rs.arm && rs.n >= rs.len) { this.port.postMessage({ t: 'resampled', data: rs.buf }, [rs.buf.buffer]); this.rs = null; } }
     if (++this.n % 6 === 0) {
       const tele = new Float32Array(this.mem(), X.px_tele(), 64).slice();
       const sw = X.px_scope_w(), sc = new Float32Array(this.mem(), X.px_scope(), 512), scope = new Float32Array(256);
@@ -503,6 +532,7 @@ const Bridge = {
   },
   _msg(d) {
     if (d.t === 'tele') this.onTele && this.onTele(d.tele, d.scope);
+    else if (d.t === 'resampled') this.onResampled && this.onResampled(d.data);
     else if (d.t === 'recdata') this.recCb && this.recCb(d.L, d.R);
     else { const f = this._wait[d.id]; delete this._wait[d.id]; f && f(d); }
   },
@@ -521,6 +551,9 @@ const Bridge = {
   async startPlugin() {
     this.kind = 'plugin'; const B = window.__JUCE__.backend;
     B.addEventListener('tele', d => this.onTele && this.onTele(Float32Array.from(d.tele), Float32Array.from(d.scope)));
+    B.addEventListener('learned', d => this.onLearned && this.onLearned(d));
+    B.addEventListener('ccMoved', d => this.onCcMoved && this.onCcMoved(d));
+    B.addEventListener('resampled', d => this.onResampledPlugin && this.onResampledPlugin(d));
     this.ready = true; this.sampleRate = await this._call('sampleRate', []);
   },
   _call(name, args) {
@@ -558,14 +591,15 @@ function applyLang() { $$('[data-i]').forEach(e => { e.textContent = tr(e.datase
 // ------------------------------------------------------------------ state
 const UI = { view: LS.get('pulsar.view') || 'LIVE', cur: 0, sel: 0, selStep: -1, page: 0, tab: 'SOUND', playing: false, rec: false, fx: 0, fillHold: false, songOn: false, song: [[0, 1]],
   style: 'BIG BEAT', cplx: 0.5, seed: 1, pats: [], kit: [], tele: null, clip: null, dirty: -1, sounds: [], soundIdx: {}, userSamples: [], wavRec: false };
-const PARAMS = new Float32Array(NGLOBAL + NT * NTP);
+const PARAMS = new Float32Array(P_COUNT);
+PARAMS[XGID(XG.VELSENS)] = 1;
 Object.entries({ BPM: 120, SWING: 0, MASTER: .8, REVSIZE: .5, REVTONE: .6, DLYTIME: 3, DLYFB: .4, DLYTONE: .6, COMP: .3, DRIVE: .1, DUCKSRC: 0, DUCKTIME: .35, STUTLEN: 1, HUMAN: 0, WIDTH: 1 }).forEach(([k, v]) => (PARAMS[G[k]] = v));
 for (let p = 0; p < NPAT; p++) UI.pats[p] = patNew();
 
-function setP(id, v, send = true) { PARAMS[id] = v; if (send && Bridge.ready) Bridge.param(id, v); }
+function setP(id, v, send = true) { PARAMS[id] = v; if (send && Bridge.ready) Bridge.param(id, v); if (window.Undo) Undo.touch(); }
 const tp = (t, k) => PARAMS[TPID(t, k)];
 const setTP = (t, k, v) => setP(TPID(t, k), v);
-const pushPat = p => Bridge.ready && Bridge.setPat(p, UI.pats[p]);
+const pushPat = p => { if (window.Undo) Undo.touch(); return Bridge.ready && Bridge.setPat(p, UI.pats[p]); };
 function pushAll() { for (let p = 0; p < NPAT; p++) pushPat(p); Bridge.params([...PARAMS].map((v, i) => [i, v])); pushSong(); }
 function pushSong() { const b = new Uint8Array(128); UI.song.forEach(([p, r], i) => { b[i * 2] = p; b[i * 2 + 1] = r; }); Bridge.post({ t: 'song', bytes: b, n: UI.song.length, on: UI.songOn }); }
 function toast(m) { const t = $('#toast'); t.textContent = m; t.style.opacity = 1; clearTimeout(toast.t); toast.t = setTimeout(() => (t.style.opacity = 0), 1600); }
@@ -611,6 +645,7 @@ function renderRows() {
     const mb = h('button', { class: 'mb', title: 'Mute' }, 'M'); mb.onclick = () => { setTrkMute(UI.pats[UI.cur], t, !trkMute(UI.pats[UI.cur], t)); pushPat(UI.cur); renderGrid(); };
     const sb = h('button', { class: 'sb', title: 'Solo' }, 'S'); sb.onclick = () => solo(t);
     const nm = h('div', { class: 'nm' }, h('i', {}, UI.kit[t] ? UI.kit[t].n : 'T' + (t + 1)), h('em', {}, ['SYN', 'SMP', 'BRK'][tp(t, T.MODE) | 0]), h('div', { class: 'mt' }));
+    nm.onpointerup = nm.onpointercancel = () => Bridge.post({ t: 'padUp', t2: t });
     nm.onpointerdown = e => { UI.sel = t; Bridge.post({ t: 'pad', t2: t, vel: 110 }); $$('.row').forEach((r, i) => r.classList.toggle('sel', i === t)); renderPanel(); };
     const steps = h('div', { class: 'steps' });
     for (let i = 0; i < 16; i++) {
@@ -673,7 +708,8 @@ function renderLive() {
     const fad = h('input', { type: 'range', class: 'fad', min: 0, max: 100, value: Math.round(tp(t, T.LEVEL) * 100), title: tr('LEVEL') });
     fad.oninput = () => setTP(t, T.LEVEL, fad.value / 100);
     const pad = h('div', { class: 'pad', title: 'PLAY' });
-    pad.onpointerdown = e => { e.preventDefault(); const r = pad.getBoundingClientRect(); const v = Math.round(60 + 67 * (1 - (e.clientY - r.top) / r.height)); Bridge.post({ t: 'pad', t2: t, vel: clamp(v, 1, 127) }); if (UI.sel !== t) { UI.sel = t; $$('.strip').forEach((x, i) => x.classList.toggle('sel', i === t)); renderTR8(); renderPanel(); } };
+    pad.onpointerup = pad.onpointercancel = pad.onpointerleave = () => Bridge.post({ t: 'padUp', t2: t });
+    pad.onpointerdown = e => { e.preventDefault(); pad.setPointerCapture(e.pointerId); const r = pad.getBoundingClientRect(); const v = Math.round(60 + 67 * (1 - (e.clientY - r.top) / r.height)); Bridge.post({ t: 'pad', t2: t, vel: clamp(v, 1, 127) }); if (UI.sel !== t) { UI.sel = t; $$('.strip').forEach((x, i) => x.classList.toggle('sel', i === t)); renderTR8(); renderPanel(); } };
     const mute = h('button', { class: 'mute' + (trkMute(b, t) ? ' on' : '') }, 'MUTE'); mute.onclick = () => { setTrkMute(UI.pats[UI.cur], t, !trkMute(UI.pats[UI.cur], t)); pushPat(UI.cur); mute.classList.toggle('on', !!trkMute(UI.pats[UI.cur], t)); };
     st.append(nm, tk(t, T.TUNE, 'TUNE', -24, 24, v => (v > 0 ? '+' : '') + v.toFixed(0), 0), tk(t, T.DECAY, 'DECAY', 0, 1, pct, tp(t, T.MODE) ? 1 : .5),
       knob('COLOR', () => tp(t, T.FTYPE) === 1 ? 1 - tp(t, T.CUT) : tp(t, T.CUT) - 1, v => { if (v >= 0) { setTP(t, T.FTYPE, 1); setTP(t, T.CUT, 1 - v); } else { setTP(t, T.FTYPE, 0); setTP(t, T.CUT, 1 + v); } }, -1, 1, v => Math.abs(v) < .02 ? '\u2014' : v < 0 ? 'LP' : 'HP', 0),
@@ -711,7 +747,8 @@ function knob(label, get, set, min, max, fmt = v => v.toFixed(2), def) {
 }
 function dragNum(el, get, set, min, max) { let st = null; el.onpointerdown = e => { st = { y: e.clientY, v: get() }; el.setPointerCapture(e.pointerId); };
   el.onpointermove = e => { if (!st) return; const v = clamp(Math.round(st.v + (st.y - e.clientY) / 8), min, max); if (v !== get()) set(v); }; el.onpointerup = () => (st = null); }
-const tk = (t, k, label, min = 0, max = 1, fmt, def) => knob(label, () => tp(t, k), v => setTP(t, k, v), min, max, fmt, def);
+const tk = (t, k, label, min = 0, max = 1, fmt, def) => { const el = knob(label, () => tp(t, k), v => setTP(t, k, v), min, max, fmt, def); el.dataset.pid = TPID(t, k); return el; };
+const gknob = (k, label, min, max, fmt, def) => { const el = knob(label, () => PARAMS[k], v => setP(k, v), min, max, fmt, def); el.dataset.pid = k; return el; };
 const pct = v => Math.round(v * 100) + '%';
 function chips(list, cur, onPick, cls = '') { const box = h('div', { class: 'chips ' + cls }); list.forEach((n, i) => { const b = h('button', { class: i === cur ? 'on' : '' }, tr(n)); b.onclick = () => onPick(i); box.append(b); }); return box; }
 
@@ -735,6 +772,7 @@ function renderPanel() {
       P.append(h('div', { style: 'display:flex;gap:4px' }, prev, sel, next));
       const up = h('button', { class: 'full', style: 'margin-top:6px' }, '\u2912 ' + tr('LOAD YOUR SAMPLE')); up.onclick = () => Bridge.kind === 'plugin' ? Bridge._call('openSample', []).then(r => r ? userSampleIn(r.name, r.idx, r.bpm, r.bars) : toast('\u2715')) : $('#smpIn').click(); P.append(up);
       P.append(h('div', { class: 'knobs' }, tk(t, T.TUNE, 'TUNE', -24, 24, v => (v > 0 ? '+' : '') + v.toFixed(1), 0), tk(t, T.DECAY, 'DECAY', 0, 1, pct, 1), tk(t, T.START, 'START POINT', 0, 1, pct, 0), tk(t, T.ATK, 'ATTACK', 0, 1, pct, 0), tk(t, T.DRIVE, 'DRIVE', 0, 1, pct, 0)));
+      if (window.Pro) Pro.soundExtras(P, t);
       if ((tp(t, T.MODE) | 0) === 2) P.append(chips(['REPITCH', 'STRETCH TO TEMPO'], tp(t, T.STRETCH) | 0, i => { setTP(t, T.STRETCH, i); renderPanel(); }));
       P.append(chips(['REVERSE'], tp(t, T.REV) > .5 ? 0 : -1, () => { setTP(t, T.REV, tp(t, T.REV) > .5 ? 0 : 1); renderPanel(); }));
     }
@@ -746,6 +784,7 @@ function renderPanel() {
       tk(t, T.CUT, 'CUTOFF', 0, 1, pct, 1), tk(t, T.RES, 'RESO', 0, 1, pct, .1), tk(t, T.DRIVE, 'DRIVE', 0, 1, pct, 0), tk(t, T.DUCK, 'DUCK', 0, 1, pct, 0), tk(t, T.SWING, 'SWING', -.5, .5, pct, 0)));
     P.append(h('div', { class: 'sec' }, tr('FILTER')), chips(['LOW PASS', 'HIGH PASS', 'BAND PASS'], tp(t, T.FTYPE) | 0, i => { setTP(t, T.FTYPE, i); renderPanel(); }));
     P.append(h('div', { class: 'sec' }, tr('CHOKE')), chips(['\u2014', 'A', 'B', 'C', 'D'], tp(t, T.CHOKE) | 0, i => { setTP(t, T.CHOKE, i); renderPanel(); }));
+    if (window.Pro) Pro.mixExtras(P, t);
     P.append(h('div', { class: 'hint' }, LANG === 'es' ? 'DUCK baja este canal cada vez que suena el bombo (sidechain). CORTE MUTUO: los sonidos del mismo grupo se cortan entre s\u00ed, como el hi-hat abierto y cerrado.' : 'DUCK dips this channel every time the kick hits (sidechain). CHOKE: sounds in the same group cut each other, like open and closed hats.'));
   } else if (UI.tab === 'STEP') {
     const s = UI.selStep, b = UI.pats[UI.cur];
@@ -777,6 +816,7 @@ function renderPanel() {
     const cp = h('button', {}, tr('COPY')); cp.onclick = () => { UI.clip = b.slice(to(t), to(t) + PAT.TRK); toast(tr('Copied')); };
     const pa = h('button', {}, tr('PASTE')); pa.onclick = () => { if (UI.clip) { b.set(UI.clip, to(t)); pushPat(UI.cur); renderGrid(); toast(tr('Pasted')); } };
     ops.append(rnd, cl, cp, pa); P.append(ops);
+    if (window.Pro) Pro.trackExtras(P, t);
     P.append(h('div', { class: 'hint' }, LANG === 'es' ? 'Cada pista tiene su propio largo y velocidad (polirritmo): un hi-hat de 7 pasos sobre un bombo de 16 nunca se repite igual. 1/16T son tresillos.' : 'Every track has its own length and speed (polymeter): a 7-step hat over a 16-step kick never repeats the same way. 1/16T are triplets.'));
   } else if (UI.tab === 'SONG') {
     const b = UI.pats[UI.cur];
@@ -792,7 +832,7 @@ function renderPanel() {
     P.append(list, add);
     P.append(h('div', { class: 'hint', style: 'margin-top:8px' }, LANG === 'es' ? 'ARMAR TEMA escribe 8 patrones (intro, groove, variaciones, break, remates) y la canci\u00f3n completa en el estilo elegido. Shift+clic en un n\u00famero de patr\u00f3n copia el actual ah\u00ed.' : 'BUILD TRACK writes 8 patterns (intro, groove, variations, break, fills) and the whole song in the chosen style. Shift-click a pattern number copies the current one there.'));
   } else if (UI.tab === 'MASTER') {
-    const gk = (k, label, min, max, fmt, def) => knob(label, () => PARAMS[k], v => setP(k, v), min, max, fmt, def);
+    const gk = gknob;
     P.append(h('div', { class: 'knobs' }, gk(G.MASTER, 'VOLUME', 0, 1, pct, .8), gk(G.DRIVE, 'DRIVE', 0, 1, pct, .1), gk(G.COMP, 'COMP', 0, 1, pct, .3), gk(G.SWING, 'SWING', 0, .6, pct, 0),
       gk(G.REVSIZE, 'REV SIZE', 0, 1, pct, .5), gk(G.REVTONE, 'TONE', 0, 1, pct, .6), gk(G.DLYTIME, 'DLY TIME', 0, 7, v => DLYDIVS[Math.round(v)], 3), gk(G.DLYFB, 'DLY FB', 0, .95, pct, .4),
       gk(G.HUMAN, 'HUMAN', 0, 1, pct, 0), gk(G.DUCKTIME, 'DUCK', 0.02, 1, v => Math.round(v * 1000) + 'ms', .35), gk(G.WIDTH, 'WIDTH', 0, 1.5, pct, 1), gk(G.STUTLEN, 'STUTTER', 0, 3, v => ['1/8', '1/16', '1/32', '1/48'][Math.round(v)], 1)));
@@ -818,7 +858,7 @@ function setFX(m) { UI.fx = m; Bridge.post({ t: 'fx', mask: m }); $$('.fx').forE
 // ------------------------------------------------------------------ macros under the grid
 function renderMacros() {
   const m = $('#macros'); m.innerHTML = '';
-  const gk = (k, label, min, max, fmt, def) => knob(label, () => PARAMS[k], v => setP(k, v), min, max, fmt, def);
+  const gk = gknob;
   m.append(gk(G.DRIVE, 'DRIVE', 0, 1, pct, .1), gk(G.COMP, 'COMP', 0, 1, pct, .3), gk(G.HUMAN, 'HUMAN', 0, 1, pct, 0), gk(G.MASTER, 'VOLUME', 0, 1, pct, .8));
 }
 
@@ -861,12 +901,12 @@ function wavDone(Ls, Rs) {
 }
 const b64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 32768) s += String.fromCharCode.apply(null, u8.subarray(i, i + 32768)); return btoa(s); };
 const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
-function projectJSON() { return JSON.stringify({ app: 'PULSAR', v: 1, params: [...PARAMS], pats: UI.pats.map(b64), song: UI.song, songOn: UI.songOn, kit: UI.kit, style: UI.style, cplx: UI.cplx,
+function projectJSON() { return JSON.stringify({ app: 'PULSAR', v: 2, params: [...PARAMS], pats: UI.pats.map(b64), song: UI.song, songOn: UI.songOn, kit: UI.kit, style: UI.style, cplx: UI.cplx,
   sampleIds: Array.from({ length: NT }, (_, t) => { const s = UI.sounds.find(x => x.idx === (tp(t, T.SMP) | 0)); return s ? s.id : null; }) }); }
 const uiJSON = () => JSON.stringify({ kit: UI.kit, style: UI.style, cplx: UI.cplx });
 function loadProject(txt) {
   const j = JSON.parse(txt); if (j.app !== 'PULSAR') throw new Error('not a PULSAR file');
-  j.params.forEach((v, i) => (PARAMS[i] = v)); UI.pats = j.pats.map(unb64); UI.song = j.song; UI.songOn = j.songOn; UI.kit = j.kit; UI.style = j.style || UI.style; UI.cplx = j.cplx ?? .5;
+  j.params.forEach((v, i) => { if (i < P_COUNT) PARAMS[i] = v; }); if (j.params.length <= X_BASE) { for (let i = X_BASE; i < P_COUNT; i++) PARAMS[i] = 0; PARAMS[XGID(XG.VELSENS)] = 1; } UI.pats = j.pats.map(unb64); UI.song = j.song; UI.songOn = j.songOn; UI.kit = j.kit; UI.style = j.style || UI.style; UI.cplx = j.cplx ?? .5;
   (j.sampleIds || []).forEach((id, t) => { if (id && UI.soundIdx[id] !== undefined) PARAMS[TPID(t, T.SMP)] = UI.soundIdx[id]; });
   pushAll(); renderAll();
 }
@@ -879,7 +919,8 @@ async function addUserSample(file) {
   const idx = await Bridge.addSample(Float32Array.from(d), sr, bpm, bars ? bars * 16 : 16, name);
   userSampleIn(name, idx, bpm, bars);
 }
-function userSampleIn(name, idx, bpm, bars) {
+function userSampleIn(name, idx, bpm, bars, track) {
+  if (track !== undefined) UI.sel = track;
   if (idx < 0) { toast('memory full'); return; }
   UI.sounds.push({ id: 'user/' + name, group: 'user', name, idx, bpm }); UI.soundIdx['user/' + name] = idx;
   const t = UI.sel; setTP(t, T.MODE, bpm ? 2 : 1); setTP(t, T.SMP, idx); setTP(t, T.DECAY, bpm ? .35 : 1); UI.kit[t].n = name.toUpperCase().slice(0, 12); refreshTrack(t); toast(tr('Sample loaded') + (bpm ? ` \u00b7 ${bpm} BPM, ${bars} bar(s)` : ''));
@@ -984,16 +1025,261 @@ async function boot() {
       const pr = await Bridge._call('getProject', []);
       (pr.user || []).forEach(u => { UI.sounds.push({ id: 'user/' + u.name, group: 'user', name: u.name, idx: u.idx, bpm: u.bpm }); UI.soundIdx['user/' + u.name] = u.idx; });
       if (pr.ui) saved = JSON.stringify(Object.assign({ app: 'PULSAR', v: 1, params: pr.params, pats: pr.pats, song: pr.song.length ? pr.song : [[0, 1]], songOn: pr.songOn }, JSON.parse(pr.ui)));
-      UI.fx = pr.fx | 0; UI.playing = !!pr.playing;
+      UI.fx = pr.fx | 0; UI.playing = !!pr.playing; UI.learn = pr.learn || {};
     }
     wire();
     if (saved) { try { loadProject(saved); } catch (e) { applyKit('BIG BEAT'); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); } }
     else { applyKit('BIG BEAT'); setP(G.BPM, 132); setP(G.DRIVE, .3); setP(G.COMP, .5); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); }
-    renderAll(); $('#splash').remove();
+    renderAll(); $('#splash').remove(); if (window.Pro) Pro.boot();
   };
 }
 boot();
 if (window.__JUCE__ && window.__JUCE__.backend) setTimeout(() => $('#splash') && $('#splash').onclick(), 400);
+
+/* ---- pro.js ---- */
+/* pro.js \u2014 PULSAR 2: undo / redo, the performance pad and note repeat, PUNCH / COMP / EQ and the outputs, locks, dice and
+   mutate, drag-out MIDI, MIDI learn, drop-in samples and resampling. Loaded after app.js; app.js calls Pro.* where these live. */
+Object.assign(ES, {
+  'UNDO': 'DESHACER', 'REDO': 'REHACER', 'Undone': 'Deshecho', 'Redone': 'Rehecho', 'PUNCH': 'GOLPE+', 'GLUE': 'COMPRESI\u00d3N', 'LOW': 'GRAVES', 'HIGH': 'AGUDOS',
+  'PUNCH & EQ': 'GOLPE Y ECUALIZADOR', 'OUTPUT': 'SALIDA', 'MAIN': 'PRINCIPAL', 'LOCK': 'CANDADO', 'LOCKED': 'CON CANDADO', 'DICE': 'DADO', 'MUTATE': 'MUTAR',
+  'DRAG MIDI': 'ARRASTRAR MIDI', 'RESAMPLE': 'RESAMPLEAR', 'NOTE REPEAT': 'REPETIR NOTA', 'VELOCITY': 'VELOCIDAD', 'XY PAD': 'PAD XY',
+  'FILTER \u25c0 \u25b6 \u00b7 SPACE \u25b2': 'FILTRO \u25c0 \u25b6 \u00b7 ESPACIO \u25b2', 'HOLD': 'FIJAR', 'MIDI LEARN': 'APRENDER MIDI', 'FORGET MIDI': 'OLVIDAR MIDI', 'Move a knob or fader on your controller': 'Mueve una perilla o fader de tu controlador',
+  'Learned': 'Aprendido', 'Resampling one loop\u2026': 'Resampleando un loop\u2026', 'Resampled into the track': 'Resampleado en la pista', 'Dropped on': 'Soltado en',
+  'GENERATOR': 'GENERADOR', 'Locked tracks keep their sound and steps': 'Las pistas con candado conservan su sonido y sus pasos'
+});
+
+// ------------------------------------------------------------------ undo / redo: every change, grouped while you keep moving
+const Undo = {
+  stack: [], redo: [], last: null, timer: 0, quiet: false,
+  snap() { const params = PARAMS.slice(); params[XGID(XG.XYON)] = params[XGID(XG.XYX)] = params[XGID(XG.XYY)] = 0;   // the pad's position is a gesture, not an edit
+    return { pats: UI.pats.map(b => b.slice()), params, song: JSON.parse(JSON.stringify(UI.song)), songOn: UI.songOn, kit: JSON.parse(JSON.stringify(UI.kit)) }; },
+  start() { this.last = this.snap(); this.stack = []; this.redo = []; this.paint(); },
+  touch() { if (this.quiet || !this.last) return; clearTimeout(this.timer); this.timer = setTimeout(() => this.commit(), 450); },
+  commit() { if (!this.last) return; const now = this.snap(); if (this.same(now, this.last)) return; this.stack.push(this.last); if (this.stack.length > 60) this.stack.shift(); this.redo = []; this.last = now; this.paint(); },
+  same(a, b) { if (a.params.some((v, i) => v !== b.params[i])) return false; for (let p = 0; p < NPAT; p++) { const x = a.pats[p], y = b.pats[p]; for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return false; } return JSON.stringify(a.song) === JSON.stringify(b.song) && a.songOn === b.songOn; },
+  apply(s) { this.quiet = true; const xy = [XG.XYON, XG.XYX, XG.XYY].map(k => PARAMS[XGID(k)]); UI.pats = s.pats.map(b => b.slice()); PARAMS.set(s.params); [XG.XYON, XG.XYX, XG.XYY].forEach((k, i) => (PARAMS[XGID(k)] = xy[i])); UI.song = JSON.parse(JSON.stringify(s.song)); UI.songOn = s.songOn; UI.kit = JSON.parse(JSON.stringify(s.kit));
+    pushAll(); renderAll(); this.quiet = false; this.last = this.snap(); this.paint(); },
+  undo() { clearTimeout(this.timer); this.commit(); if (!this.stack.length) return; this.redo.push(this.snap()); this.apply(this.stack.pop()); toast(tr('Undone')); },
+  again() { if (!this.redo.length) return; this.stack.push(this.snap()); this.apply(this.redo.pop()); toast(tr('Redone')); },
+  paint() { const u = $('#undoBtn'), r = $('#redoBtn'); if (u) u.disabled = !this.stack.length && !this.timer; if (r) r.disabled = !this.redo.length; }
+};
+window.Undo = Undo;
+
+// ------------------------------------------------------------------ MIDI learn: the plug-in's parameter IDs (what the DAW shows), the page's knobs
+const TK_KEYS = { [T.LEVEL]: 'lvl', [T.PAN]: 'pan', [T.TUNE]: 'tune', [T.DECAY]: 'dec', [T.CUT]: 'cut', [T.RES]: 'res', [T.DRIVE]: 'drv', [T.SENDR]: 'rev', [T.SENDD]: 'dly' };
+const XT_KEYS = { [XT.PUNCH]: 'punch', [XT.COMP]: 'comp', [XT.LOW]: 'low', [XT.HIGH]: 'high' };
+const G_KEYS = { [G.MASTER]: 'master', [G.DRIVE]: 'drive', [G.COMP]: 'comp', [G.SWING]: 'swing', [G.HUMAN]: 'human', [G.WIDTH]: 'width', [G.REVSIZE]: 'revsize', [G.REVTONE]: 'revtone',
+  [G.DLYTIME]: 'dlytime', [G.DLYFB]: 'dlyfb', [G.DLYTONE]: 'dlytone', [G.DUCKTIME]: 'ducktime', [G.STUTLEN]: 'stutlen', [XGID(XG.XYON)]: 'xyon', [XGID(XG.XYX)]: 'xyx', [XGID(XG.XYY)]: 'xyy', [XGID(XG.REPEAT)]: 'repeat' };
+function hostKey(pid) {
+  pid = +pid; if (G_KEYS[pid]) return G_KEYS[pid];
+  if (pid >= NGLOBAL && pid < X_BASE) { const t = Math.floor((pid - NGLOBAL) / NTP), k = (pid - NGLOBAL) % NTP; return TK_KEYS[k] ? 't' + (t + 1) + TK_KEYS[k] : null; }
+  if (pid >= X_BASE + NXG) { const t = Math.floor((pid - X_BASE - NXG) / NXT), k = (pid - X_BASE - NXG) % NXT; return XT_KEYS[k] ? 't' + (t + 1) + XT_KEYS[k] : null; }
+  return null;
+}
+const pidOfKey = key => { for (let pid = 0; pid < P_COUNT; pid++) if (hostKey(pid) === key) return pid; return -1; };
+const RANGES = {};   // what a CC's 0..127 covers on the page (the web's own learn; the plug-in uses its parameter ranges)
+function rangeOf(pid) {
+  pid = +pid; if (RANGES[pid]) return RANGES[pid];
+  if (pid >= NGLOBAL && pid < X_BASE) { const k = (pid - NGLOBAL) % NTP; return k === T.TUNE ? [-24, 24] : k === T.PAN ? [-1, 1] : [0, 1]; }
+  if (pid >= X_BASE + NXG) { const k = (pid - X_BASE - NXG) % NXT; return k === XT.LOW || k === XT.HIGH ? [-1, 1] : [0, 1]; }
+  return { [G.SWING]: [0, .6], [G.WIDTH]: [0, 1.5], [G.DLYTIME]: [0, 7], [G.DLYFB]: [0, .95], [G.DUCKTIME]: [.02, 1], [G.STUTLEN]: [0, 3], [XGID(XG.XYX)]: [-1, 1], [XGID(XG.REPEAT)]: [0, 4] }[pid] || [0, 1];
+}
+const Learn = {
+  armKey: null, web: JSON.parse(LS.get('pulsar.learn') || '{}'),        // web: {cc: key}
+  menu(e, key, label) {
+    e.preventDefault(); Learn.close();
+    const m = h('div', { class: 'ctx', style: `left:${Math.min(e.clientX, innerWidth - 190)}px;top:${Math.min(e.clientY, innerHeight - 80)}px` });
+    const cc = Learn.ccOf(key);
+    const a = h('button', {}, '\ud83c\udf9b ' + tr('MIDI LEARN') + (cc !== null ? ` (CC ${cc})` : '')); a.onclick = () => { Learn.arm(key, label); Learn.close(); };
+    m.append(h('div', { class: 'ctxT' }, label), a);
+    if (cc !== null) { const f = h('button', {}, '\u2715 ' + tr('FORGET MIDI')); f.onclick = () => { Learn.forget(key); Learn.close(); }; m.append(f); }
+    document.body.append(m); setTimeout(() => document.addEventListener('pointerdown', Learn.close, { once: true }), 0);
+  },
+  close() { $$('.ctx').forEach(x => x.remove()); },
+  ccOf(key) { if (Bridge.kind === 'plugin') { const c = (UI.learn || {})[key]; return c === undefined ? null : c; } for (const [c, k] of Object.entries(Learn.web)) if (k === key) return +c; return null; },
+  arm(key, label) { Learn.armKey = key; Learn.armLabel = label; toast('\ud83c\udf9b ' + label + ' \u00b7 ' + tr('Move a knob or fader on your controller')); if (Bridge.kind === 'plugin') Bridge.post({ t: 'learn', key }); },
+  forget(key) { if (Bridge.kind === 'plugin') { Bridge.post({ t: 'learn', key: 'forget:' + key }); if (UI.learn) delete UI.learn[key]; } else { for (const c of Object.keys(Learn.web)) if (Learn.web[c] === key) delete Learn.web[c]; LS.set('pulsar.learn', JSON.stringify(Learn.web)); } },
+  learned(cc) { if (!Learn.armKey) return; if (Bridge.kind === 'plugin') { UI.learn = UI.learn || {}; for (const k of Object.keys(UI.learn)) if (UI.learn[k] === cc) delete UI.learn[k]; UI.learn[Learn.armKey] = cc; }
+    else { Learn.web[cc] = Learn.armKey; LS.set('pulsar.learn', JSON.stringify(Learn.web)); }
+    toast(tr('Learned') + ': CC ' + cc + ' \u2192 ' + Learn.armLabel); Learn.armKey = null; },
+  webCC(cc, v) {      // the web version: CC messages from WebMIDI
+    if (Learn.armKey) { Learn.learned(cc); }
+    const key = Learn.web[cc]; if (!key) return; const u = v / 127;
+    if (key.startsWith('fx')) { const i = +key.slice(2); setFX(u >= .5 ? UI.fx | (1 << i) : UI.fx & ~(1 << i)); return; }
+    const pid = pidOfKey(key); if (pid < 0) return; const [lo, hi] = rangeOf(pid); let x = lo + (hi - lo) * u; if (pid === XGID(XG.REPEAT) || pid === G.DLYTIME || pid === G.STUTLEN) x = Math.round(x);
+    setP(pid, x); redrawPid(pid);
+  },
+  moved(d) {          // the plug-in: a learned CC moved something
+    if (d.id >= 0) { PARAMS[d.id] = d.v; redrawPid(d.id); } else if (d.id <= -1 && d.id > -100) { UI.fx = d.fx; $$('.fx').forEach((b, i) => b.classList.toggle('on', !!((UI.fx >> i) & 1))); }
+  }
+};
+function redrawPid(pid) { $$(`[data-pid="${pid}"]`).forEach(el => el.redraw && el.redraw()); if (pid === XGID(XG.XYX) || pid === XGID(XG.XYY) || pid === XGID(XG.XYON)) XY.draw(); if (pid === XGID(XG.REPEAT)) Pro.renderPerf(); }
+
+// ------------------------------------------------------------------ the performance pad: X sweeps a DJ filter, Y throws everything into reverb and delay
+const XY = {
+  hold: false, el: null,
+  build() {
+    const box = h('div', { class: 'xy', title: 'XY' }); const cv = h('canvas', { width: 220, height: 92 }); box.append(cv, h('div', { class: 'xyL' }, tr('FILTER \u25c0 \u25b6 \u00b7 SPACE \u25b2')));
+    this.el = cv; let down = false;
+    const set = e => { const r = cv.getBoundingClientRect(); const x = clamp((e.clientX - r.left) / r.width * 2 - 1, -1, 1), y = clamp(1 - (e.clientY - r.top) / r.height, 0, 1);
+      setP(XGID(XG.XYX), Math.abs(x) < .06 ? 0 : x); setP(XGID(XG.XYY), y < .05 ? 0 : y); this.draw(); };
+    cv.onpointerdown = e => { e.preventDefault(); down = true; cv.setPointerCapture(e.pointerId); setP(XGID(XG.XYON), 1); set(e); };
+    cv.onpointermove = e => { if (down) set(e); };
+    cv.onpointerup = cv.onpointercancel = () => { down = false; if (!this.hold) { setP(XGID(XG.XYON), 0); setP(XGID(XG.XYX), 0); setP(XGID(XG.XYY), 0); } this.draw(); };
+    cv.oncontextmenu = e => { if (Bridge.kind === 'plugin' || navigator.requestMIDIAccess) { const r = cv.getBoundingClientRect(); const xs = (e.clientX - r.left) < r.width / 2; Learn.menu(e, xs ? 'xyx' : 'xyy', 'XY ' + (xs ? 'X (FILTER)' : 'Y (SPACE)')); } else e.preventDefault(); };
+    const hb = h('button', { class: 'xyH' + (this.hold ? ' on' : '') }, tr('HOLD')); hb.onclick = () => { this.hold = !this.hold; hb.classList.toggle('on', this.hold); if (!this.hold) { setP(XGID(XG.XYON), 0); setP(XGID(XG.XYX), 0); setP(XGID(XG.XYY), 0); this.draw(); } };
+    box.append(hb); this.draw(); return box;
+  },
+  draw() {
+    const cv = this.el; if (!cv) return; const g = cv.getContext('2d'), W = cv.width, H = cv.height, on = PARAMS[XGID(XG.XYON)] > .5;
+    g.clearRect(0, 0, W, H); g.fillStyle = '#0c0f15'; g.fillRect(0, 0, W, H);
+    const gr = g.createLinearGradient(0, 0, W, 0); gr.addColorStop(0, 'rgba(70,224,255,.22)'); gr.addColorStop(.5, 'rgba(70,224,255,0)'); gr.addColorStop(1, 'rgba(255,90,54,.22)'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    g.strokeStyle = '#232835'; g.beginPath(); g.moveTo(W / 2, 0); g.lineTo(W / 2, H); g.moveTo(0, H - 1); g.lineTo(W, H - 1); g.stroke();
+    g.fillStyle = '#4c5466'; g.font = '700 9px ui-monospace,monospace'; g.fillText('LP', 6, H - 6); g.fillText('HP', W - 20, H - 6);
+    if (on) { const x = (PARAMS[XGID(XG.XYX)] + 1) / 2 * W, y = (1 - PARAMS[XGID(XG.XYY)]) * H;
+      const rg = g.createRadialGradient(x, y, 0, x, y, 26); rg.addColorStop(0, 'rgba(255,255,255,.95)'); rg.addColorStop(.3, 'rgba(70,224,255,.8)'); rg.addColorStop(1, 'rgba(70,224,255,0)'); g.fillStyle = rg; g.beginPath(); g.arc(x, y, 26, 0, 7); g.fill(); }
+  }
+};
+
+// ------------------------------------------------------------------ locks: Generate, Vary, Build, Dice and kits leave a locked track alone
+const isLocked = t => PARAMS[TXID(t, XT.LOCK)] > .5;
+function keepLocked(fn) {
+  const locked = []; for (let t = 0; t < NT; t++) if (isLocked(t)) locked.push(t);
+  if (!locked.length) return fn();
+  const pats = UI.pats.map(b => b.slice()), snd = locked.map(t => ({ t, p: Array.from({ length: NTP }, (_, k) => PARAMS[TPID(t, k)]), x: Array.from({ length: NXT }, (_, k) => PARAMS[TXID(t, k)]), kit: UI.kit[t] }));
+  const r = fn();
+  for (const s of snd) { s.p.forEach((v, k) => (PARAMS[TPID(s.t, k)] = v)); s.x.forEach((v, k) => (PARAMS[TXID(s.t, k)] = v)); UI.kit[s.t] = s.kit; }
+  for (let p = 0; p < NPAT; p++) for (const t of locked) UI.pats[p].set(pats[p].subarray(to(t), to(t) + PAT.TRK), to(t));
+  pushAll(); renderRows(); renderPanel(); return r;
+}
+const _gen = doGenerate, _vary = doVary, _build = doBuild;
+doGenerate = () => keepLocked(_gen); doVary = () => keepLocked(_vary); doBuild = () => keepLocked(_build);
+function diceTrack(t) {      // a new part for this track only, in the style, at the complexity
+  const b = UI.pats[UI.cur], g = generate(UI.style, genSeed(), UI.cplx);
+  const role = tp(t, T.ROLE) | 0; let src = t; for (let u = 0; u < NT; u++) if ((PARAMS[TPID(u, T.ROLE)] | 0) === role && getStep(g, u, 0) !== undefined && Array.from({ length: 16 }, (_, s) => getStep(g, u, s).vel).some(v => v)) { src = u; if (u === t) break; }
+  const before = b.slice(to(t), to(t) + PAT.TRK).join();
+  b.set(g.subarray(to(src), to(src) + PAT.TRK), to(t));
+  if (b.slice(to(t), to(t) + PAT.TRK).join() === before) { for (let k = 0; k < 8 && b.slice(to(t), to(t) + PAT.TRK).join() === before; k++) mutateTrack(t, true); }   // the style's part was this one: move it
+  pushPat(UI.cur); renderGrid(); toast(tr('DICE') + ' \u00b7 ' + (UI.kit[t] ? UI.kit[t].n : t + 1));
+}
+function mutateTrack(t, quiet) {    // the same idea, moved: a few hits shift, ghost notes come and go, a roll appears
+  const b = UI.pats[UI.cur], r = RNG(genSeed()), L = trkLen(b, t);
+  for (let s = 0; s < L; s++) { const st = getStep(b, t, s);
+    if (st.vel && s % 4 !== 0 && r.chance(.18)) { const d = r.chance(.5) ? 1 : -1, n = (s + d + L) % L; if (!getStep(b, t, n).vel) { b.set(b.slice(so(t, s), so(t, s) + 8), so(t, n)); clearStep(b, t, s); } }
+    else if (!st.vel && r.chance(.08)) setStep(b, t, s, { vel: 26 + r.int(30) });
+    else if (st.vel && st.vel < 60 && r.chance(.3)) clearStep(b, t, s);
+    else if (st.vel && r.chance(.06)) setStep(b, t, s, { rat: 2 + r.int(3), rmode: r.int(2) }); }
+  if (quiet) return; pushPat(UI.cur); renderGrid(); toast(tr('MUTATE') + ' \u00b7 ' + (UI.kit[t] ? UI.kit[t].n : t + 1));
+}
+
+// ------------------------------------------------------------------ MIDI out of the plug-in: drag the pattern (or a track) onto a DAW track
+function midiBytes(only) { const list = UI.songOn ? UI.song.map(([p, r]) => ({ bytes: UI.pats[p], rep: r })) : [{ bytes: UI.pats[UI.cur], rep: 1 }];
+  return midiFile(list, PARAMS[G.BPM], UI.kit.map(k => k.n), true, only); }
+function midiName(only) { return `PULSAR ${UI.songOn ? 'song' : 'pattern ' + (UI.cur + 1)}${only !== undefined ? ' ' + (UI.kit[only] ? UI.kit[only].n : 'T' + (only + 1)) : ''} ${Math.round(PARAMS[G.BPM])}bpm.mid`.replace(/[\/:]/g, '-'); }
+function dragMidiEl(el, only) {
+  if (Bridge.kind === 'plugin') { el.onpointerdown = e => { e.preventDefault(); Bridge._call('dragMidi', [midiName(only), b64(midiBytes(only))]); }; el.title = 'Drag onto a MIDI track in your DAW'; return el; }
+  el.draggable = true; el.title = 'Drag onto your desktop or DAW (Chrome), or click to save';
+  el.ondragstart = e => { const u = URL.createObjectURL(new Blob([midiBytes(only)], { type: 'audio/midi' })); e.dataTransfer.setData('DownloadURL', 'audio/midi:' + midiName(only) + ':' + u); };
+  el.onclick = () => download(midiName(only), midiBytes(only), 'audio/midi'); return el;
+}
+
+// ------------------------------------------------------------------ resample: one loop of what plays now becomes a sample on the chosen track
+function resample(t) {
+  const b = UI.pats[UI.cur], steps = UI.songOn ? 0 : (b[0] || 16); if (!steps) { toast('SONG OFF'); return; }
+  const len = Math.round(steps * 60 / PARAMS[G.BPM] / 4 * Bridge.sampleRate); UI.rsTrack = t;
+  if (!UI.playing) togglePlay();
+  Bridge.post({ t: 'resample', len }); toast('\u23fa ' + tr('Resampling one loop\u2026'));
+}
+async function resampledWeb(data) {
+  const t = UI.rsTrack ?? UI.sel, bpm = PARAMS[G.BPM], bars = Math.max(1, Math.round(data.length / Bridge.sampleRate * bpm / 240)), name = 'RESAMPLE ' + (UI.sounds.filter(s => s.group === 'user').length + 1);
+  const idx = await Bridge.addSample(data, Bridge.sampleRate, bpm, bars * 16, name); resampledIn({ name, idx, bpm, bars }, t);
+}
+function resampledIn(r, t) { if (r.idx < 0) { toast('memory full'); return; } userSampleIn(r.name, r.idx, r.bpm, r.bars, t ?? UI.rsTrack ?? UI.sel); setTP(UI.sel, T.STRETCH, 1); if (UI.view === 'LIVE') renderLive(); toast('\u23fa ' + tr('Resampled into the track') + ' ' + (UI.sel + 1)); }
+
+// ------------------------------------------------------------------ the panels' new parts
+const Pro = {
+  mixExtras(P, t) {
+    P.append(h('div', { class: 'sec' }, tr('PUNCH & EQ')), h('div', { class: 'knobs' },
+      tx(t, XT.PUNCH, 'PUNCH', 0, 1, pct, 0), tx(t, XT.COMP, 'GLUE', 0, 1, pct, 0), tx(t, XT.LOW, 'LOW', -1, 1, v => (v > 0 ? '+' : '') + (v * 12).toFixed(1) + 'dB', 0), tx(t, XT.HIGH, 'HIGH', -1, 1, v => (v > 0 ? '+' : '') + (v * 12).toFixed(1) + 'dB', 0)));
+    if (Bridge.kind === 'plugin') {
+      P.append(h('div', { class: 'sec' }, tr('OUTPUT')), chips(['MAIN', '1', '2', '3', '4', '5', '6', '7', '8'], PARAMS[TXID(t, XT.OUT)] | 0, i => { setP(TXID(t, XT.OUT), i); renderPanel(); }));
+      P.append(h('div', { class: 'hint' }, LANG === 'es' ? 'SALIDA: en Ableton activa las salidas extra de PULSAR (en el canal de otra pista: Audio From \u2192 PULSAR \u2192 Bus 1\u20268) y cada pista va sola a su canal para mezclarla aparte. Su reverb y delay se quedan en la principal.' : 'OUTPUT: in Ableton, on another track pick Audio From \u2192 PULSAR \u2192 Bus 1\u20268 and this track plays there alone, to mix it on its own channel. Its reverb and delay sends stay on the main output.'));
+    }
+  },
+  trackExtras(P, t) {
+    P.append(h('div', { class: 'sec' }, tr('GENERATOR')));
+    const ops = h('div', { class: 'chips' });
+    const lk = h('button', { class: isLocked(t) ? 'on' : '' }, (isLocked(t) ? '\ud83d\udd12 ' : '\ud83d\udd13 ') + tr('LOCK')); lk.onclick = () => { setP(TXID(t, XT.LOCK), isLocked(t) ? 0 : 1); renderRows(); renderPanel(); };
+    const dc = h('button', {}, '\ud83c\udfb2 ' + tr('DICE')); dc.onclick = () => diceTrack(t);
+    const mu = h('button', {}, '\ud83e\uddec ' + tr('MUTATE')); mu.onclick = () => mutateTrack(t);
+    const dm = dragMidiEl(h('button', {}, '\u21f1 ' + tr('DRAG MIDI')), t);
+    const rs = h('button', { class: 'hot' }, '\u23fa ' + tr('RESAMPLE')); rs.onclick = () => resample(t);
+    ops.append(lk, dc, mu, dm, rs); P.append(ops);
+    P.append(h('div', { class: 'hint' }, LANG === 'es' ? 'CANDADO: GENERAR, VARIAR, ARMAR TEMA y los kits no tocan esta pista. DADO: una parte nueva solo para ella. MUTAR: la misma idea, movida. ARRASTRAR MIDI: lleva solo esta pista a tu DAW. RESAMPLEAR: un loop de lo que suena se vuelve sample en esta pista (luego puedes picarlo).' : 'LOCK: GENERATE, VARY, BUILD TRACK and kits leave this track alone. DICE: a new part for it only. MUTATE: the same idea, moved. DRAG MIDI: only this track, into your DAW. RESAMPLE: one loop of what plays becomes a sample on this track (then chop it).'));
+  },
+  soundExtras() {},
+  renderPerf() {
+    let box = $('#perf2'); if (!box) { box = h('div', { id: 'perf2' }); $('#perf').insertBefore(box, $('#macros')); }
+    box.innerHTML = ''; box.append(XY.build());
+    const rp = h('div', { class: 'rpt' }, h('div', { class: 'lbl' }, tr('NOTE REPEAT')));
+    const cur = PARAMS[XGID(XG.REPEAT)] | 0;
+    REPEATS.forEach((n, i) => { const b = h('button', { class: i === cur ? 'on' : '' }, n); b.onclick = () => { setP(XGID(XG.REPEAT), i); Pro.renderPerf(); }; b.dataset.key = 'repeat'; rp.append(b); });
+    const vs = h('button', { class: PARAMS[XGID(XG.VELSENS)] > .5 ? 'on' : '' }, tr('VELOCITY')); vs.onclick = () => { setP(XGID(XG.VELSENS), PARAMS[XGID(XG.VELSENS)] > .5 ? 0 : 1); Pro.renderPerf(); };
+    rp.append(vs); box.append(rp);
+  },
+  topBar() {
+    if ($('#undoBtn')) return;
+    const u = h('button', { id: 'undoBtn', title: 'Undo (Cmd/Ctrl+Z)' }, '\u21b6'), r = h('button', { id: 'redoBtn', title: 'Redo (Shift+Cmd/Ctrl+Z)' }, '\u21b7');
+    u.onclick = () => Undo.undo(); r.onclick = () => Undo.again();
+    const dm = dragMidiEl(h('button', { id: 'dragMidi', class: 'drag' }, '\u21f1 MIDI'));
+    $('#play').before(u, r); $('#midiBtn').after(dm);
+  },
+  boot() {
+    Pro.topBar(); Pro.renderPerf(); Undo.start();
+    document.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); if (e.shiftKey) Undo.again(); else Undo.undo(); }
+      else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); Undo.again(); }
+    }, true);
+    // MIDI learn: right click a knob, an FX button or the pad
+    document.addEventListener('contextmenu', e => {
+      const k = e.target.closest('[data-pid]'), f = e.target.closest('.fx');
+      if (k) { const key = hostKey(k.dataset.pid); if (key && (Bridge.kind === 'plugin' || navigator.requestMIDIAccess)) Learn.menu(e, key, (k.querySelector('.kl') || {}).textContent || key); }
+      else if (f) { const i = $$('.fx').indexOf(f); if (i >= 0) Learn.menu(e, 'fx' + i, PERF[i]); }
+    });
+    Bridge.onLearned = d => Learn.learned(d.cc); Bridge.onCcMoved = d => Learn.moved(d);
+    Bridge.onResampled = d => resampledWeb(d); Bridge.onResampledPlugin = r => resampledIn(r);
+    if (Bridge.kind === 'web' && navigator.requestMIDIAccess) navigator.requestMIDIAccess().then(m => { const bind = () => m.inputs.forEach(i => i.addEventListener('midimessage', ev => {
+      const [s, n, v] = ev.data; if ((s & 0xf0) === 0xb0) Learn.webCC(n, v); else if (((s & 0xf0) === 0x80 || ((s & 0xf0) === 0x90 && v === 0)) && n >= 36 && n < 52) Bridge.post({ t: 'padUp', t2: n - 36 }); })); bind(); m.onstatechange = bind; }).catch(() => {});
+    // drop your samples on a track (a row in GRID, a strip in LIVE)
+    const drop = (el, t) => { el.addEventListener('dragover', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { e.preventDefault(); el.classList.add('dropping'); } });
+      el.addEventListener('dragleave', () => el.classList.remove('dropping'));
+      el.addEventListener('drop', async e => { e.preventDefault(); el.classList.remove('dropping'); const f = e.dataTransfer.files[0]; if (!f) return; UI.sel = t; try { await addUserSample(f); if (UI.view === 'LIVE') renderLive(); toast(tr('Dropped on') + ' ' + (t + 1) + ' \u00b7 ' + f.name); } catch (er) { toast('\u2715 ' + er.message); } }); };
+    const hookDrops = () => { $$('.row').forEach((r, t) => { if (!r.dataset.drop) { r.dataset.drop = 1; drop(r, t); } }); $$('.strip').forEach((r, t) => { if (!r.dataset.drop) { r.dataset.drop = 1; drop(r, t); } }); };
+    new MutationObserver(hookDrops).observe($('#seq'), { childList: true, subtree: true }); hookDrops();
+    // a lock shows on its row
+    new MutationObserver(() => $$('.row').forEach((r, t) => r.classList.toggle('locked', isLocked(t)))).observe($('#rows'), { childList: true });
+    $$('.row').forEach((r, t) => r.classList.toggle('locked', isLocked(t)));
+    // FX buttons: their learn key
+    renderHelp2();
+  }
+};
+window.Pro = Pro;
+const tx = (t, k, label, min, max, fmt, def) => { const el = knob(label, () => PARAMS[TXID(t, k)], v => setP(TXID(t, k), v), min, max, fmt, def); el.dataset.pid = TXID(t, k); return el; };
+
+// ------------------------------------------------------------------ help: what is new
+function renderHelp2() {
+  const base = renderHelp;
+  renderHelp = () => { base();
+    const en = `<h3>PULSAR 2: PLAY IT LIVE</h3><p><b>XY PAD</b> (bottom): hold and move: left a low-pass sweep, right a high-pass, up throws everything into reverb and delay; let go and it snaps back (HOLD keeps it). <b>NOTE REPEAT</b> 1/8 \u00b7 1/16 \u00b7 1/32 \u00b7 1/16T: hold a pad and it repeats on the grid, like an MPC; with REC on it writes the hits. <b>VELOCITY</b> off: every pad plays full.</p>
+<h3>SOUND AND MIX</h3><p>MIX \u203a <b>PUNCH</b> brings the attack forward, <b>GLUE</b> compresses, <b>LOW / HIGH</b> shelves \u00b112 dB. In the plug-in, <b>OUTPUT 1\u20268</b> sends a track to its own channel in your DAW (multi-out).</p>
+<h3>IDEAS</h3><p>TRACK \u203a <b>\ud83d\udd12 LOCK</b> keeps a track through GENERATE, VARY, BUILD and kits; <b>\ud83c\udfb2 DICE</b> writes a new part for one track; <b>\ud83e\uddec MUTATE</b> moves it a little; <b>\u23fa RESAMPLE</b> turns one loop of what plays into a sample on that track. Drop your own WAV / AIFF / MP3 on any track.</p>
+<h3>DAW AND CONTROLLERS</h3><p><b>\u21f1 MIDI</b>: drag the pattern (or the song) onto a MIDI track in Ableton; it plays PULSAR (notes 36\u201351). <b>Right click</b> any knob, FX button or the XY pad \u203a MIDI LEARN, then move a control on your keyboard. <kbd>Cmd</kbd>+<kbd>Z</kbd> undo, <kbd>Shift</kbd>+<kbd>Cmd</kbd>+<kbd>Z</kbd> redo.</p>`;
+    const es = `<h3>PULSAR 2: PARA TOCAR EN VIVO</h3><p><b>PAD XY</b> (abajo): mant\u00e9n y mueve: a la izquierda un filtro pasa-bajos, a la derecha un pasa-altos, hacia arriba todo se va a la reverb y al delay; al soltar regresa (FIJAR lo deja). <b>REPETIR NOTA</b> 1/8 \u00b7 1/16 \u00b7 1/32 \u00b7 1/16T: mant\u00e9n un pad y se repite en la cuadr\u00edcula, como una MPC; con REC graba los golpes. <b>VELOCIDAD</b> apagada: todos los pads suenan fuerte.</p>
+<h3>SONIDO Y MEZCLA</h3><p>MEZCLA \u203a <b>GOLPE+</b> adelanta el ataque, <b>COMPRESI\u00d3N</b> aprieta, <b>GRAVES / AGUDOS</b> \u00b112 dB. En el plugin, <b>SALIDA 1\u20268</b> manda una pista a su propio canal en tu DAW (multi-salida).</p>
+<h3>IDEAS</h3><p>PISTA \u203a <b>\ud83d\udd12 CANDADO</b> conserva una pista al GENERAR, VARIAR, ARMAR TEMA y con los kits; <b>\ud83c\udfb2 DADO</b> escribe una parte nueva para una pista; <b>\ud83e\uddec MUTAR</b> la mueve un poco; <b>\u23fa RESAMPLEAR</b> convierte un loop de lo que suena en sample en esa pista. Suelta tus WAV / AIFF / MP3 en cualquier pista.</p>
+<h3>DAW Y CONTROLADORES</h3><p><b>\u21f1 MIDI</b>: arrastra el patr\u00f3n (o la canci\u00f3n) a una pista MIDI de Ableton; toca PULSAR (notas 36\u201351). <b>Clic derecho</b> en cualquier perilla, bot\u00f3n de efecto o el pad XY \u203a APRENDER MIDI, y mueve un control de tu teclado. <kbd>Cmd</kbd>+<kbd>Z</kbd> deshacer, <kbd>Shift</kbd>+<kbd>Cmd</kbd>+<kbd>Z</kbd> rehacer.</p>`;
+    $('#helpBox').insertAdjacentHTML('beforeend', LANG === 'es' ? es : en); };
+}
 
 </script>
 </body>

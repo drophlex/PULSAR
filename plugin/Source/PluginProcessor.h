@@ -1,6 +1,8 @@
 #pragma once
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_gui_extra/juce_gui_extra.h>
+#include <array>
+#include <atomic>
 #include "pulsar.h"
 
 // PULSAR plug-in: the same header-only engine the web version runs as WebAssembly, with the library built in.
@@ -19,7 +21,7 @@ public:
   bool hasEditor() const override { return true; }
   const juce::String getName() const override { return "PULSAR"; }
   bool acceptsMidi() const override { return true; }
-  bool producesMidi() const override { return false; }
+  bool producesMidi() const override { return true; }
   bool isMidiEffect() const override { return false; }
   double getTailLengthSeconds() const override { return 4.0; }
   int getNumPrograms() override { return 1; }
@@ -39,6 +41,11 @@ public:
   juce::var loadUserSample(const juce::File& f);          // {name, idx, bpm, bars} or void
   int addUserSampleFloats(const juce::String& name, const float* d, int len, float rate, float bpm, int slices);
   void snapshot(std::vector<float>& tele, std::vector<float>& scope);
+  int takeLearnDone() { return learnDone.exchange(-1); }    // a CC just learned (for the page), or -1
+  int takeCcTouched() { return ccTouched.exchange(-1); }
+  void syncHost(int i) { if (i >= 0 && i < (int)hp.size()) setHostFromEngine(i, false); }
+  juce::var ccInfo(int i);                                    // {key, id, v, fx}: what a learned CC just moved
+  juce::String paramKey(int i) const { return i >= 0 && i < (int)params.size() ? params[(size_t)i]->getParameterID() : juce::String(); }
   double rate() const { return sr; }
 
 private:
@@ -62,6 +69,15 @@ private:
   bool hostWasPlaying = false, hostStarted = false; double lastPpq = 0, lastBlockBeats = 0;
   uint16_t uiFX = 0;
   juce::AudioFormatManager formats;
+  static BusesProperties busesProps();
   void startAt(double ppq, double bpm);
+  void midiCC(int cc, int v);
+  std::array<int, 128> learn;                                 // CC -> host parameter index, -1 none
+  int learnArm = -1; std::atomic<int> learnDone { -1 }; std::atomic<int> ccTouched { -1 };
+  struct Off { int note, at; }; std::vector<Off> offs;
+  std::vector<float> rsBuf; int rsLen = 0, rsN = 0; bool rsArm = false; std::atomic<bool> rsDone { false };
+public:
+  juce::var takeResample();                                  // message thread: a finished resample becomes one of your samples
+private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PulsarProcessor)
 };

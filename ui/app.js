@@ -26,14 +26,15 @@ function applyLang() { $$('[data-i]').forEach(e => { e.textContent = tr(e.datase
 // ------------------------------------------------------------------ state
 const UI = { view: LS.get('pulsar.view') || 'LIVE', cur: 0, sel: 0, selStep: -1, page: 0, tab: 'SOUND', playing: false, rec: false, fx: 0, fillHold: false, songOn: false, song: [[0, 1]],
   style: 'BIG BEAT', cplx: 0.5, seed: 1, pats: [], kit: [], tele: null, clip: null, dirty: -1, sounds: [], soundIdx: {}, userSamples: [], wavRec: false };
-const PARAMS = new Float32Array(NGLOBAL + NT * NTP);
+const PARAMS = new Float32Array(P_COUNT);
+PARAMS[XGID(XG.VELSENS)] = 1;
 Object.entries({ BPM: 120, SWING: 0, MASTER: .8, REVSIZE: .5, REVTONE: .6, DLYTIME: 3, DLYFB: .4, DLYTONE: .6, COMP: .3, DRIVE: .1, DUCKSRC: 0, DUCKTIME: .35, STUTLEN: 1, HUMAN: 0, WIDTH: 1 }).forEach(([k, v]) => (PARAMS[G[k]] = v));
 for (let p = 0; p < NPAT; p++) UI.pats[p] = patNew();
 
-function setP(id, v, send = true) { PARAMS[id] = v; if (send && Bridge.ready) Bridge.param(id, v); }
+function setP(id, v, send = true) { PARAMS[id] = v; if (send && Bridge.ready) Bridge.param(id, v); if (window.Undo) Undo.touch(); }
 const tp = (t, k) => PARAMS[TPID(t, k)];
 const setTP = (t, k, v) => setP(TPID(t, k), v);
-const pushPat = p => Bridge.ready && Bridge.setPat(p, UI.pats[p]);
+const pushPat = p => { if (window.Undo) Undo.touch(); return Bridge.ready && Bridge.setPat(p, UI.pats[p]); };
 function pushAll() { for (let p = 0; p < NPAT; p++) pushPat(p); Bridge.params([...PARAMS].map((v, i) => [i, v])); pushSong(); }
 function pushSong() { const b = new Uint8Array(128); UI.song.forEach(([p, r], i) => { b[i * 2] = p; b[i * 2 + 1] = r; }); Bridge.post({ t: 'song', bytes: b, n: UI.song.length, on: UI.songOn }); }
 function toast(m) { const t = $('#toast'); t.textContent = m; t.style.opacity = 1; clearTimeout(toast.t); toast.t = setTimeout(() => (t.style.opacity = 0), 1600); }
@@ -79,6 +80,7 @@ function renderRows() {
     const mb = h('button', { class: 'mb', title: 'Mute' }, 'M'); mb.onclick = () => { setTrkMute(UI.pats[UI.cur], t, !trkMute(UI.pats[UI.cur], t)); pushPat(UI.cur); renderGrid(); };
     const sb = h('button', { class: 'sb', title: 'Solo' }, 'S'); sb.onclick = () => solo(t);
     const nm = h('div', { class: 'nm' }, h('i', {}, UI.kit[t] ? UI.kit[t].n : 'T' + (t + 1)), h('em', {}, ['SYN', 'SMP', 'BRK'][tp(t, T.MODE) | 0]), h('div', { class: 'mt' }));
+    nm.onpointerup = nm.onpointercancel = () => Bridge.post({ t: 'padUp', t2: t });
     nm.onpointerdown = e => { UI.sel = t; Bridge.post({ t: 'pad', t2: t, vel: 110 }); $$('.row').forEach((r, i) => r.classList.toggle('sel', i === t)); renderPanel(); };
     const steps = h('div', { class: 'steps' });
     for (let i = 0; i < 16; i++) {
@@ -141,7 +143,8 @@ function renderLive() {
     const fad = h('input', { type: 'range', class: 'fad', min: 0, max: 100, value: Math.round(tp(t, T.LEVEL) * 100), title: tr('LEVEL') });
     fad.oninput = () => setTP(t, T.LEVEL, fad.value / 100);
     const pad = h('div', { class: 'pad', title: 'PLAY' });
-    pad.onpointerdown = e => { e.preventDefault(); const r = pad.getBoundingClientRect(); const v = Math.round(60 + 67 * (1 - (e.clientY - r.top) / r.height)); Bridge.post({ t: 'pad', t2: t, vel: clamp(v, 1, 127) }); if (UI.sel !== t) { UI.sel = t; $$('.strip').forEach((x, i) => x.classList.toggle('sel', i === t)); renderTR8(); renderPanel(); } };
+    pad.onpointerup = pad.onpointercancel = pad.onpointerleave = () => Bridge.post({ t: 'padUp', t2: t });
+    pad.onpointerdown = e => { e.preventDefault(); pad.setPointerCapture(e.pointerId); const r = pad.getBoundingClientRect(); const v = Math.round(60 + 67 * (1 - (e.clientY - r.top) / r.height)); Bridge.post({ t: 'pad', t2: t, vel: clamp(v, 1, 127) }); if (UI.sel !== t) { UI.sel = t; $$('.strip').forEach((x, i) => x.classList.toggle('sel', i === t)); renderTR8(); renderPanel(); } };
     const mute = h('button', { class: 'mute' + (trkMute(b, t) ? ' on' : '') }, 'MUTE'); mute.onclick = () => { setTrkMute(UI.pats[UI.cur], t, !trkMute(UI.pats[UI.cur], t)); pushPat(UI.cur); mute.classList.toggle('on', !!trkMute(UI.pats[UI.cur], t)); };
     st.append(nm, tk(t, T.TUNE, 'TUNE', -24, 24, v => (v > 0 ? '+' : '') + v.toFixed(0), 0), tk(t, T.DECAY, 'DECAY', 0, 1, pct, tp(t, T.MODE) ? 1 : .5),
       knob('COLOR', () => tp(t, T.FTYPE) === 1 ? 1 - tp(t, T.CUT) : tp(t, T.CUT) - 1, v => { if (v >= 0) { setTP(t, T.FTYPE, 1); setTP(t, T.CUT, 1 - v); } else { setTP(t, T.FTYPE, 0); setTP(t, T.CUT, 1 + v); } }, -1, 1, v => Math.abs(v) < .02 ? '—' : v < 0 ? 'LP' : 'HP', 0),
@@ -179,7 +182,8 @@ function knob(label, get, set, min, max, fmt = v => v.toFixed(2), def) {
 }
 function dragNum(el, get, set, min, max) { let st = null; el.onpointerdown = e => { st = { y: e.clientY, v: get() }; el.setPointerCapture(e.pointerId); };
   el.onpointermove = e => { if (!st) return; const v = clamp(Math.round(st.v + (st.y - e.clientY) / 8), min, max); if (v !== get()) set(v); }; el.onpointerup = () => (st = null); }
-const tk = (t, k, label, min = 0, max = 1, fmt, def) => knob(label, () => tp(t, k), v => setTP(t, k, v), min, max, fmt, def);
+const tk = (t, k, label, min = 0, max = 1, fmt, def) => { const el = knob(label, () => tp(t, k), v => setTP(t, k, v), min, max, fmt, def); el.dataset.pid = TPID(t, k); return el; };
+const gknob = (k, label, min, max, fmt, def) => { const el = knob(label, () => PARAMS[k], v => setP(k, v), min, max, fmt, def); el.dataset.pid = k; return el; };
 const pct = v => Math.round(v * 100) + '%';
 function chips(list, cur, onPick, cls = '') { const box = h('div', { class: 'chips ' + cls }); list.forEach((n, i) => { const b = h('button', { class: i === cur ? 'on' : '' }, tr(n)); b.onclick = () => onPick(i); box.append(b); }); return box; }
 
@@ -203,6 +207,7 @@ function renderPanel() {
       P.append(h('div', { style: 'display:flex;gap:4px' }, prev, sel, next));
       const up = h('button', { class: 'full', style: 'margin-top:6px' }, '⤒ ' + tr('LOAD YOUR SAMPLE')); up.onclick = () => Bridge.kind === 'plugin' ? Bridge._call('openSample', []).then(r => r ? userSampleIn(r.name, r.idx, r.bpm, r.bars) : toast('✕')) : $('#smpIn').click(); P.append(up);
       P.append(h('div', { class: 'knobs' }, tk(t, T.TUNE, 'TUNE', -24, 24, v => (v > 0 ? '+' : '') + v.toFixed(1), 0), tk(t, T.DECAY, 'DECAY', 0, 1, pct, 1), tk(t, T.START, 'START POINT', 0, 1, pct, 0), tk(t, T.ATK, 'ATTACK', 0, 1, pct, 0), tk(t, T.DRIVE, 'DRIVE', 0, 1, pct, 0)));
+      if (window.Pro) Pro.soundExtras(P, t);
       if ((tp(t, T.MODE) | 0) === 2) P.append(chips(['REPITCH', 'STRETCH TO TEMPO'], tp(t, T.STRETCH) | 0, i => { setTP(t, T.STRETCH, i); renderPanel(); }));
       P.append(chips(['REVERSE'], tp(t, T.REV) > .5 ? 0 : -1, () => { setTP(t, T.REV, tp(t, T.REV) > .5 ? 0 : 1); renderPanel(); }));
     }
@@ -214,6 +219,7 @@ function renderPanel() {
       tk(t, T.CUT, 'CUTOFF', 0, 1, pct, 1), tk(t, T.RES, 'RESO', 0, 1, pct, .1), tk(t, T.DRIVE, 'DRIVE', 0, 1, pct, 0), tk(t, T.DUCK, 'DUCK', 0, 1, pct, 0), tk(t, T.SWING, 'SWING', -.5, .5, pct, 0)));
     P.append(h('div', { class: 'sec' }, tr('FILTER')), chips(['LOW PASS', 'HIGH PASS', 'BAND PASS'], tp(t, T.FTYPE) | 0, i => { setTP(t, T.FTYPE, i); renderPanel(); }));
     P.append(h('div', { class: 'sec' }, tr('CHOKE')), chips(['—', 'A', 'B', 'C', 'D'], tp(t, T.CHOKE) | 0, i => { setTP(t, T.CHOKE, i); renderPanel(); }));
+    if (window.Pro) Pro.mixExtras(P, t);
     P.append(h('div', { class: 'hint' }, LANG === 'es' ? 'DUCK baja este canal cada vez que suena el bombo (sidechain). CORTE MUTUO: los sonidos del mismo grupo se cortan entre sí, como el hi-hat abierto y cerrado.' : 'DUCK dips this channel every time the kick hits (sidechain). CHOKE: sounds in the same group cut each other, like open and closed hats.'));
   } else if (UI.tab === 'STEP') {
     const s = UI.selStep, b = UI.pats[UI.cur];
@@ -245,6 +251,7 @@ function renderPanel() {
     const cp = h('button', {}, tr('COPY')); cp.onclick = () => { UI.clip = b.slice(to(t), to(t) + PAT.TRK); toast(tr('Copied')); };
     const pa = h('button', {}, tr('PASTE')); pa.onclick = () => { if (UI.clip) { b.set(UI.clip, to(t)); pushPat(UI.cur); renderGrid(); toast(tr('Pasted')); } };
     ops.append(rnd, cl, cp, pa); P.append(ops);
+    if (window.Pro) Pro.trackExtras(P, t);
     P.append(h('div', { class: 'hint' }, LANG === 'es' ? 'Cada pista tiene su propio largo y velocidad (polirritmo): un hi-hat de 7 pasos sobre un bombo de 16 nunca se repite igual. 1/16T son tresillos.' : 'Every track has its own length and speed (polymeter): a 7-step hat over a 16-step kick never repeats the same way. 1/16T are triplets.'));
   } else if (UI.tab === 'SONG') {
     const b = UI.pats[UI.cur];
@@ -260,7 +267,7 @@ function renderPanel() {
     P.append(list, add);
     P.append(h('div', { class: 'hint', style: 'margin-top:8px' }, LANG === 'es' ? 'ARMAR TEMA escribe 8 patrones (intro, groove, variaciones, break, remates) y la canción completa en el estilo elegido. Shift+clic en un número de patrón copia el actual ahí.' : 'BUILD TRACK writes 8 patterns (intro, groove, variations, break, fills) and the whole song in the chosen style. Shift-click a pattern number copies the current one there.'));
   } else if (UI.tab === 'MASTER') {
-    const gk = (k, label, min, max, fmt, def) => knob(label, () => PARAMS[k], v => setP(k, v), min, max, fmt, def);
+    const gk = gknob;
     P.append(h('div', { class: 'knobs' }, gk(G.MASTER, 'VOLUME', 0, 1, pct, .8), gk(G.DRIVE, 'DRIVE', 0, 1, pct, .1), gk(G.COMP, 'COMP', 0, 1, pct, .3), gk(G.SWING, 'SWING', 0, .6, pct, 0),
       gk(G.REVSIZE, 'REV SIZE', 0, 1, pct, .5), gk(G.REVTONE, 'TONE', 0, 1, pct, .6), gk(G.DLYTIME, 'DLY TIME', 0, 7, v => DLYDIVS[Math.round(v)], 3), gk(G.DLYFB, 'DLY FB', 0, .95, pct, .4),
       gk(G.HUMAN, 'HUMAN', 0, 1, pct, 0), gk(G.DUCKTIME, 'DUCK', 0.02, 1, v => Math.round(v * 1000) + 'ms', .35), gk(G.WIDTH, 'WIDTH', 0, 1.5, pct, 1), gk(G.STUTLEN, 'STUTTER', 0, 3, v => ['1/8', '1/16', '1/32', '1/48'][Math.round(v)], 1)));
@@ -286,7 +293,7 @@ function setFX(m) { UI.fx = m; Bridge.post({ t: 'fx', mask: m }); $$('.fx').forE
 // ------------------------------------------------------------------ macros under the grid
 function renderMacros() {
   const m = $('#macros'); m.innerHTML = '';
-  const gk = (k, label, min, max, fmt, def) => knob(label, () => PARAMS[k], v => setP(k, v), min, max, fmt, def);
+  const gk = gknob;
   m.append(gk(G.DRIVE, 'DRIVE', 0, 1, pct, .1), gk(G.COMP, 'COMP', 0, 1, pct, .3), gk(G.HUMAN, 'HUMAN', 0, 1, pct, 0), gk(G.MASTER, 'VOLUME', 0, 1, pct, .8));
 }
 
@@ -329,12 +336,12 @@ function wavDone(Ls, Rs) {
 }
 const b64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 32768) s += String.fromCharCode.apply(null, u8.subarray(i, i + 32768)); return btoa(s); };
 const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
-function projectJSON() { return JSON.stringify({ app: 'PULSAR', v: 1, params: [...PARAMS], pats: UI.pats.map(b64), song: UI.song, songOn: UI.songOn, kit: UI.kit, style: UI.style, cplx: UI.cplx,
+function projectJSON() { return JSON.stringify({ app: 'PULSAR', v: 2, params: [...PARAMS], pats: UI.pats.map(b64), song: UI.song, songOn: UI.songOn, kit: UI.kit, style: UI.style, cplx: UI.cplx,
   sampleIds: Array.from({ length: NT }, (_, t) => { const s = UI.sounds.find(x => x.idx === (tp(t, T.SMP) | 0)); return s ? s.id : null; }) }); }
 const uiJSON = () => JSON.stringify({ kit: UI.kit, style: UI.style, cplx: UI.cplx });
 function loadProject(txt) {
   const j = JSON.parse(txt); if (j.app !== 'PULSAR') throw new Error('not a PULSAR file');
-  j.params.forEach((v, i) => (PARAMS[i] = v)); UI.pats = j.pats.map(unb64); UI.song = j.song; UI.songOn = j.songOn; UI.kit = j.kit; UI.style = j.style || UI.style; UI.cplx = j.cplx ?? .5;
+  j.params.forEach((v, i) => { if (i < P_COUNT) PARAMS[i] = v; }); if (j.params.length <= X_BASE) { for (let i = X_BASE; i < P_COUNT; i++) PARAMS[i] = 0; PARAMS[XGID(XG.VELSENS)] = 1; } UI.pats = j.pats.map(unb64); UI.song = j.song; UI.songOn = j.songOn; UI.kit = j.kit; UI.style = j.style || UI.style; UI.cplx = j.cplx ?? .5;
   (j.sampleIds || []).forEach((id, t) => { if (id && UI.soundIdx[id] !== undefined) PARAMS[TPID(t, T.SMP)] = UI.soundIdx[id]; });
   pushAll(); renderAll();
 }
@@ -347,7 +354,8 @@ async function addUserSample(file) {
   const idx = await Bridge.addSample(Float32Array.from(d), sr, bpm, bars ? bars * 16 : 16, name);
   userSampleIn(name, idx, bpm, bars);
 }
-function userSampleIn(name, idx, bpm, bars) {
+function userSampleIn(name, idx, bpm, bars, track) {
+  if (track !== undefined) UI.sel = track;
   if (idx < 0) { toast('memory full'); return; }
   UI.sounds.push({ id: 'user/' + name, group: 'user', name, idx, bpm }); UI.soundIdx['user/' + name] = idx;
   const t = UI.sel; setTP(t, T.MODE, bpm ? 2 : 1); setTP(t, T.SMP, idx); setTP(t, T.DECAY, bpm ? .35 : 1); UI.kit[t].n = name.toUpperCase().slice(0, 12); refreshTrack(t); toast(tr('Sample loaded') + (bpm ? ` · ${bpm} BPM, ${bars} bar(s)` : ''));
@@ -452,12 +460,12 @@ async function boot() {
       const pr = await Bridge._call('getProject', []);
       (pr.user || []).forEach(u => { UI.sounds.push({ id: 'user/' + u.name, group: 'user', name: u.name, idx: u.idx, bpm: u.bpm }); UI.soundIdx['user/' + u.name] = u.idx; });
       if (pr.ui) saved = JSON.stringify(Object.assign({ app: 'PULSAR', v: 1, params: pr.params, pats: pr.pats, song: pr.song.length ? pr.song : [[0, 1]], songOn: pr.songOn }, JSON.parse(pr.ui)));
-      UI.fx = pr.fx | 0; UI.playing = !!pr.playing;
+      UI.fx = pr.fx | 0; UI.playing = !!pr.playing; UI.learn = pr.learn || {};
     }
     wire();
     if (saved) { try { loadProject(saved); } catch (e) { applyKit('BIG BEAT'); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); } }
     else { applyKit('BIG BEAT'); setP(G.BPM, 132); setP(G.DRIVE, .3); setP(G.COMP, .5); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); }
-    renderAll(); $('#splash').remove();
+    renderAll(); $('#splash').remove(); if (window.Pro) Pro.boot();
   };
 }
 boot();

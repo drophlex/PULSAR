@@ -35,7 +35,10 @@ EXPORT void px_select(int p, int now) { E.select(p, now); }
 EXPORT void px_rec(int on) { E.rec = on; E.perfTake = false; }
 EXPORT void px_fx(int mask) { E.liveFX = (uint16_t)mask; if (!E.playing) E.fxNow = (uint16_t)mask; }
 EXPORT void px_fill(int on) { E.fillHeld = on; }
-EXPORT void px_pad(int t, int vel) { E.pad(t, vel); }
+EXPORT void px_pad(int t, int vel) { E.padDown(t, vel); }
+EXPORT void px_pad_up(int t) { E.padUp(t); }
+EXPORT int px_x_base() { return X_BASE; }
+EXPORT int px_loop_at() { return E.loopAt; }
 EXPORT void px_clear(int p) { E.clearPattern(p); }
 EXPORT void px_host(int playing, float bpm, int sync) { E.hostSync = sync; E.hostPlaying = playing; E.hostBpm = bpm; }
 EXPORT int px_dirty() { return E.dirty; }
