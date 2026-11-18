@@ -1,0 +1,1238 @@
+[
+ {
+  "id": "70s kit/kick",
+  "group": "70s kit",
+  "name": "kick",
+  "cat": "kick",
+  "len": 1.146,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/kick",
+  "group": "70s retro",
+  "name": "kick",
+  "cat": "kick",
+  "len": 1.288,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/kick soft",
+  "group": "70s kit",
+  "name": "kick soft",
+  "cat": "kick",
+  "len": 1.156,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/snare",
+  "group": "70s kit",
+  "name": "snare",
+  "cat": "snare",
+  "len": 0.879,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/snare",
+  "group": "70s retro",
+  "name": "snare",
+  "cat": "snare",
+  "len": 1.336,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/snare ghost",
+  "group": "70s kit",
+  "name": "snare ghost",
+  "cat": "snare",
+  "len": 1.476,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/snare rim",
+  "group": "70s kit",
+  "name": "snare rim",
+  "cat": "snare",
+  "len": 1.072,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/snare rim",
+  "group": "70s retro",
+  "name": "snare rim",
+  "cat": "snare",
+  "len": 1.434,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/sidestick",
+  "group": "70s kit",
+  "name": "sidestick",
+  "cat": "rim",
+  "len": 1.738,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/sidestick",
+  "group": "70s retro",
+  "name": "sidestick",
+  "cat": "rim",
+  "len": 1.642,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/hat closed",
+  "group": "70s kit",
+  "name": "hat closed",
+  "cat": "hat",
+  "len": 0.761,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/hat closed",
+  "group": "70s retro",
+  "name": "hat closed",
+  "cat": "hat",
+  "len": 0.773,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/hat tight",
+  "group": "70s kit",
+  "name": "hat tight",
+  "cat": "hat",
+  "len": 0.707,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/hat tight",
+  "group": "70s retro",
+  "name": "hat tight",
+  "cat": "hat",
+  "len": 0.748,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/hat half",
+  "group": "70s kit",
+  "name": "hat half",
+  "cat": "hat",
+  "len": 2.084,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/hat half",
+  "group": "70s retro",
+  "name": "hat half",
+  "cat": "hat",
+  "len": 2.065,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/hat loose",
+  "group": "70s kit",
+  "name": "hat loose",
+  "cat": "hat",
+  "len": 1.136,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/hat loose",
+  "group": "70s retro",
+  "name": "hat loose",
+  "cat": "hat",
+  "len": 1.085,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/hat open",
+  "group": "70s kit",
+  "name": "hat open",
+  "cat": "open",
+  "len": 2.2,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/hat open",
+  "group": "70s retro",
+  "name": "hat open",
+  "cat": "open",
+  "len": 2.2,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/hat foot",
+  "group": "70s kit",
+  "name": "hat foot",
+  "cat": "hat",
+  "len": 0.657,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/hat foot",
+  "group": "70s retro",
+  "name": "hat foot",
+  "cat": "hat",
+  "len": 0.657,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/tom high",
+  "group": "70s kit",
+  "name": "tom high",
+  "cat": "tom",
+  "len": 1.178,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/tom high",
+  "group": "70s retro",
+  "name": "tom high",
+  "cat": "tom",
+  "len": 1.214,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/tom mid",
+  "group": "70s kit",
+  "name": "tom mid",
+  "cat": "tom",
+  "len": 1.291,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/tom mid",
+  "group": "70s retro",
+  "name": "tom mid",
+  "cat": "tom",
+  "len": 1.376,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s kit/tom low",
+  "group": "70s kit",
+  "name": "tom low",
+  "cat": "tom",
+  "len": 1.958,
+  "src": "Gogodze Phu Vol II (Karoryfer)",
+  "lic": "CC0"
+ },
+ {
+  "id": "70s retro/tom low",
+  "group": "70s retro",
+  "name": "tom low",
+  "cat": "tom",
+  "len": 2.103,
+  "src": "Gogodze Phu Vol II, retro mic",
+  "lic": "CC0"
+ },
+ {
+  "id": "breaks/brk funky 101",
+  "group": "breaks",
+  "name": "brk funky 101",
+  "cat": "break",
+  "len": 4.752,
+  "src": "played in PULSAR on the Gogodze kit (CC0)",
+  "lic": "CC0",
+  "bpm": 101,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks/brk drummer 98",
+  "group": "breaks",
+  "name": "brk drummer 98",
+  "cat": "break",
+  "len": 4.898,
+  "src": "played in PULSAR on the Gogodze kit (CC0)",
+  "lic": "CC0",
+  "bpm": 98,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks/brk hot 116",
+  "group": "breaks",
+  "name": "brk hot 116",
+  "cat": "break",
+  "len": 4.138,
+  "src": "played in PULSAR on the Gogodze kit (CC0)",
+  "lic": "CC0",
+  "bpm": 116,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks/brk riot 136",
+  "group": "breaks",
+  "name": "brk riot 136",
+  "cat": "break",
+  "len": 3.529,
+  "src": "played in PULSAR on the Gogodze kit (CC0)",
+  "lic": "CC0",
+  "bpm": 136,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks/brk crate 92",
+  "group": "breaks",
+  "name": "brk crate 92",
+  "cat": "break",
+  "len": 5.217,
+  "src": "played in PULSAR on the Gogodze kit (CC0)",
+  "lic": "CC0",
+  "bpm": 92,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks/brk rush 140",
+  "group": "breaks",
+  "name": "brk rush 140",
+  "cat": "break",
+  "len": 3.429,
+  "src": "played in PULSAR on the Gogodze kit (CC0)",
+  "lic": "CC0",
+  "bpm": 140,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks/brk stomp 104",
+  "group": "breaks",
+  "name": "brk stomp 104",
+  "cat": "break",
+  "len": 4.615,
+  "src": "played in PULSAR on the Gogodze kit (CC0)",
+  "lic": "CC0",
+  "bpm": 104,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks/brk ghost 88",
+  "group": "breaks",
+  "name": "brk ghost 88",
+  "cat": "break",
+  "len": 5.455,
+  "src": "played in PULSAR on the Gogodze kit (CC0)",
+  "lic": "CC0",
+  "bpm": 88,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "rhythm box/kick",
+  "group": "rhythm box",
+  "name": "kick",
+  "cat": "kick",
+  "len": 0.4,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/kick accent",
+  "group": "rhythm box",
+  "name": "kick accent",
+  "cat": "kick",
+  "len": 0.38,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/snare",
+  "group": "rhythm box",
+  "name": "snare",
+  "cat": "snare",
+  "len": 0.211,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/snare accent",
+  "group": "rhythm box",
+  "name": "snare accent",
+  "cat": "snare",
+  "len": 0.259,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/rim",
+  "group": "rhythm box",
+  "name": "rim",
+  "cat": "rim",
+  "len": 0.05,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/hat",
+  "group": "rhythm box",
+  "name": "hat",
+  "cat": "hat",
+  "len": 0.037,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/hat metal",
+  "group": "rhythm box",
+  "name": "hat metal",
+  "cat": "hat",
+  "len": 0.151,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/cymbal",
+  "group": "rhythm box",
+  "name": "cymbal",
+  "cat": "cym",
+  "len": 0.621,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/bongo high",
+  "group": "rhythm box",
+  "name": "bongo high",
+  "cat": "perc",
+  "len": 0.129,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/bongo low",
+  "group": "rhythm box",
+  "name": "bongo low",
+  "cat": "perc",
+  "len": 0.135,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/conga",
+  "group": "rhythm box",
+  "name": "conga",
+  "cat": "perc",
+  "len": 0.409,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/cowbell",
+  "group": "rhythm box",
+  "name": "cowbell",
+  "cat": "perc",
+  "len": 0.16,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/guiro",
+  "group": "rhythm box",
+  "name": "guiro",
+  "cat": "perc",
+  "len": 0.365,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "rhythm box/tambourine",
+  "group": "rhythm box",
+  "name": "tambourine",
+  "cat": "perc",
+  "len": 0.291,
+  "src": "oramics/sampled CR-78 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/kick",
+  "group": "80s studio",
+  "name": "kick",
+  "cat": "kick",
+  "len": 0.203,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/kick alt",
+  "group": "80s studio",
+  "name": "kick alt",
+  "cat": "kick",
+  "len": 0.117,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/snare",
+  "group": "80s studio",
+  "name": "snare",
+  "cat": "snare",
+  "len": 0.14,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/snare high",
+  "group": "80s studio",
+  "name": "snare high",
+  "cat": "snare",
+  "len": 0.086,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/clap",
+  "group": "80s studio",
+  "name": "clap",
+  "cat": "clap",
+  "len": 0.191,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/stick",
+  "group": "80s studio",
+  "name": "stick",
+  "cat": "rim",
+  "len": 0.108,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/hat closed",
+  "group": "80s studio",
+  "name": "hat closed",
+  "cat": "hat",
+  "len": 0.115,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/hat open",
+  "group": "80s studio",
+  "name": "hat open",
+  "cat": "open",
+  "len": 0.613,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/ride",
+  "group": "80s studio",
+  "name": "ride",
+  "cat": "cym",
+  "len": 1.266,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/crash",
+  "group": "80s studio",
+  "name": "crash",
+  "cat": "cym",
+  "len": 1.234,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/tom high",
+  "group": "80s studio",
+  "name": "tom high",
+  "cat": "tom",
+  "len": 0.294,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/tom low",
+  "group": "80s studio",
+  "name": "tom low",
+  "cat": "tom",
+  "len": 0.62,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/conga",
+  "group": "80s studio",
+  "name": "conga",
+  "cat": "perc",
+  "len": 0.275,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/cowbell",
+  "group": "80s studio",
+  "name": "cowbell",
+  "cat": "perc",
+  "len": 0.175,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/cabasa",
+  "group": "80s studio",
+  "name": "cabasa",
+  "cat": "perc",
+  "len": 0.079,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "80s studio/tambourine",
+  "group": "80s studio",
+  "name": "tambourine",
+  "cat": "perc",
+  "len": 0.158,
+  "src": "oramics/sampled LM-2 (marked Public Domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/kick",
+  "group": "studio kit",
+  "name": "kick",
+  "cat": "kick",
+  "len": 0.697,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/kick soft",
+  "group": "studio kit",
+  "name": "kick soft",
+  "cat": "kick",
+  "len": 0.929,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/snare",
+  "group": "studio kit",
+  "name": "snare",
+  "cat": "snare",
+  "len": 0.334,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/snare soft",
+  "group": "studio kit",
+  "name": "snare soft",
+  "cat": "snare",
+  "len": 0.317,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/rimshot",
+  "group": "studio kit",
+  "name": "rimshot",
+  "cat": "snare",
+  "len": 0.415,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/sidestick",
+  "group": "studio kit",
+  "name": "sidestick",
+  "cat": "rim",
+  "len": 0.441,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/tom high",
+  "group": "studio kit",
+  "name": "tom high",
+  "cat": "tom",
+  "len": 2.0,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/tom mid",
+  "group": "studio kit",
+  "name": "tom mid",
+  "cat": "tom",
+  "len": 1.723,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/tom low",
+  "group": "studio kit",
+  "name": "tom low",
+  "cat": "tom",
+  "len": 2.0,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/hat tight",
+  "group": "studio kit",
+  "name": "hat tight",
+  "cat": "hat",
+  "len": 0.344,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/hat loose",
+  "group": "studio kit",
+  "name": "hat loose",
+  "cat": "hat",
+  "len": 0.422,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/hat open",
+  "group": "studio kit",
+  "name": "hat open",
+  "cat": "open",
+  "len": 2.0,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/hat foot",
+  "group": "studio kit",
+  "name": "hat foot",
+  "cat": "hat",
+  "len": 0.698,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/ride",
+  "group": "studio kit",
+  "name": "ride",
+  "cat": "cym",
+  "len": 3.0,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/ride bell",
+  "group": "studio kit",
+  "name": "ride bell",
+  "cat": "cym",
+  "len": 3.0,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/crash",
+  "group": "studio kit",
+  "name": "crash",
+  "cat": "cym",
+  "len": 3.0,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "studio kit/china",
+  "group": "studio kit",
+  "name": "china",
+  "cat": "cym",
+  "len": 3.0,
+  "src": "SM Drums (public domain)",
+  "lic": "Public Domain"
+ },
+ {
+  "id": "big kit/kick",
+  "group": "big kit",
+  "name": "kick",
+  "cat": "kick",
+  "len": 0.822,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/snare",
+  "group": "big kit",
+  "name": "snare",
+  "cat": "snare",
+  "len": 0.604,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/rimshot",
+  "group": "big kit",
+  "name": "rimshot",
+  "cat": "snare",
+  "len": 0.511,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/sidestick",
+  "group": "big kit",
+  "name": "sidestick",
+  "cat": "rim",
+  "len": 0.953,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/hat closed",
+  "group": "big kit",
+  "name": "hat closed",
+  "cat": "hat",
+  "len": 0.628,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/hat tight",
+  "group": "big kit",
+  "name": "hat tight",
+  "cat": "hat",
+  "len": 0.486,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/hat open",
+  "group": "big kit",
+  "name": "hat open",
+  "cat": "open",
+  "len": 2.4,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/ride",
+  "group": "big kit",
+  "name": "ride",
+  "cat": "cym",
+  "len": 3.0,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/crash",
+  "group": "big kit",
+  "name": "crash",
+  "cat": "cym",
+  "len": 3.0,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/tom high",
+  "group": "big kit",
+  "name": "tom high",
+  "cat": "tom",
+  "len": 1.396,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/tom mid",
+  "group": "big kit",
+  "name": "tom mid",
+  "cat": "tom",
+  "len": 1.249,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "big kit/tom floor",
+  "group": "big kit",
+  "name": "tom floor",
+  "cat": "tom",
+  "len": 2.302,
+  "src": "Big Rusty Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/snare 10 piccolo",
+  "group": "snares",
+  "name": "snare 10 piccolo",
+  "cat": "snare",
+  "len": 0.526,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/snare 12 tight",
+  "group": "snares",
+  "name": "snare 12 tight",
+  "cat": "snare",
+  "len": 0.573,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/snare 14 brass",
+  "group": "snares",
+  "name": "snare 14 brass",
+  "cat": "snare",
+  "len": 0.894,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/snare 14 steel",
+  "group": "snares",
+  "name": "snare 14 steel",
+  "cat": "snare",
+  "len": 0.671,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/snare 14 maple",
+  "group": "snares",
+  "name": "snare 14 maple",
+  "cat": "snare",
+  "len": 0.546,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/snare 16 fat",
+  "group": "snares",
+  "name": "snare 16 fat",
+  "cat": "snare",
+  "len": 0.535,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/snare 20 tight",
+  "group": "snares",
+  "name": "snare 20 tight",
+  "cat": "snare",
+  "len": 0.59,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/rimshot 13",
+  "group": "snares",
+  "name": "rimshot 13",
+  "cat": "snare",
+  "len": 0.575,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/snare 12 ghost",
+  "group": "snares",
+  "name": "snare 12 ghost",
+  "cat": "snare",
+  "len": 0.543,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/hand clap",
+  "group": "snares",
+  "name": "hand clap",
+  "cat": "clap",
+  "len": 0.632,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "snares/tambourine",
+  "group": "snares",
+  "name": "tambourine",
+  "cat": "perc",
+  "len": 0.611,
+  "src": "Frankensnare, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "odd kit/kick",
+  "group": "odd kit",
+  "name": "kick",
+  "cat": "kick",
+  "len": 0.828,
+  "src": "Unruly Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "odd kit/snare 13",
+  "group": "odd kit",
+  "name": "snare 13",
+  "cat": "snare",
+  "len": 0.593,
+  "src": "Unruly Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "odd kit/snare 22",
+  "group": "odd kit",
+  "name": "snare 22",
+  "cat": "snare",
+  "len": 0.739,
+  "src": "Unruly Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "odd kit/hat",
+  "group": "odd kit",
+  "name": "hat",
+  "cat": "hat",
+  "len": 0.815,
+  "src": "Unruly Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "odd kit/cymbal",
+  "group": "odd kit",
+  "name": "cymbal",
+  "cat": "cym",
+  "len": 3.0,
+  "src": "Unruly Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "odd kit/block",
+  "group": "odd kit",
+  "name": "block",
+  "cat": "perc",
+  "len": 0.617,
+  "src": "Unruly Drums, Karoryfer (CC0)",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/kick punch",
+  "group": "designed",
+  "name": "kick punch",
+  "cat": "kick",
+  "len": 0.485,
+  "src": "PULSAR (synthesis + SM Drums transient)",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/kick rave",
+  "group": "designed",
+  "name": "kick rave",
+  "cat": "kick",
+  "len": 0.572,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/kick boom",
+  "group": "designed",
+  "name": "kick boom",
+  "cat": "kick",
+  "len": 1.652,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/kick gabber",
+  "group": "designed",
+  "name": "kick gabber",
+  "cat": "kick",
+  "len": 0.798,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/kick big beat",
+  "group": "designed",
+  "name": "kick big beat",
+  "cat": "kick",
+  "len": 1.236,
+  "src": "PULSAR (Big Rusty Drums + synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/kick electro",
+  "group": "designed",
+  "name": "kick electro",
+  "cat": "kick",
+  "len": 0.928,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/snare big beat",
+  "group": "designed",
+  "name": "snare big beat",
+  "cat": "snare",
+  "len": 0.844,
+  "src": "PULSAR (Big Rusty + Frankensnare)",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/snare jungle",
+  "group": "designed",
+  "name": "snare jungle",
+  "cat": "snare",
+  "len": 0.483,
+  "src": "PULSAR (Frankensnare, tuned up)",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/snare electro",
+  "group": "designed",
+  "name": "snare electro",
+  "cat": "snare",
+  "len": 0.266,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/clap stack",
+  "group": "designed",
+  "name": "clap stack",
+  "cat": "clap",
+  "len": 0.709,
+  "src": "PULSAR (Frankensnare claps, layered)",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/hat metal closed",
+  "group": "designed",
+  "name": "hat metal closed",
+  "cat": "hat",
+  "len": 0.08,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/hat metal open",
+  "group": "designed",
+  "name": "hat metal open",
+  "cat": "open",
+  "len": 0.553,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/fm blip",
+  "group": "designed",
+  "name": "fm blip",
+  "cat": "perc",
+  "len": 0.258,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/fm wood",
+  "group": "designed",
+  "name": "fm wood",
+  "cat": "perc",
+  "len": 0.128,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/zap",
+  "group": "designed",
+  "name": "zap",
+  "cat": "perc",
+  "len": 0.305,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "designed/noise riser",
+  "group": "designed",
+  "name": "noise riser",
+  "cat": "perc",
+  "len": 1.933,
+  "src": "PULSAR synthesis",
+  "lic": "CC0"
+ },
+ {
+  "id": "breaks hifi/brk big 120",
+  "group": "breaks hifi",
+  "name": "brk big 120",
+  "cat": "break",
+  "len": 4.0,
+  "src": "played in PULSAR on SM Drums + Big Rusty Drums",
+  "lic": "CC0",
+  "bpm": 120,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks hifi/brk heavy 108",
+  "group": "breaks hifi",
+  "name": "brk heavy 108",
+  "cat": "break",
+  "len": 4.444,
+  "src": "played in PULSAR on SM Drums + Big Rusty Drums",
+  "lic": "CC0",
+  "bpm": 108,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks hifi/brk tight 132",
+  "group": "breaks hifi",
+  "name": "brk tight 132",
+  "cat": "break",
+  "len": 3.636,
+  "src": "played in PULSAR on SM Drums + Big Rusty Drums",
+  "lic": "CC0",
+  "bpm": 132,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks hifi/brk ride 126",
+  "group": "breaks hifi",
+  "name": "brk ride 126",
+  "cat": "break",
+  "len": 3.81,
+  "src": "played in PULSAR on SM Drums + Big Rusty Drums",
+  "lic": "CC0",
+  "bpm": 126,
+  "bars": 2,
+  "slices": 32
+ },
+ {
+  "id": "breaks hifi/brk shuffle 96",
+  "group": "breaks hifi",
+  "name": "brk shuffle 96",
+  "cat": "break",
+  "len": 5.0,
+  "src": "played in PULSAR on SM Drums + Big Rusty Drums",
+  "lic": "CC0",
+  "bpm": 96,
+  "bars": 2,
+  "slices": 32
+ }
+]
