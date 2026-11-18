@@ -1,0 +1,61 @@
+name: Build PULSAR plug-in (macOS)
+on:
+  push:
+    branches: [main]
+    paths: ['engine/**', 'plugin/**', 'ui/**', 'installer/**', '.github/workflows/build.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure (universal arm64 + x86_64)
+        run: cmake -S plugin -B build -G Xcode -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+      - name: Build VST3 + AU + Standalone
+        run: cmake --build build --config Release -j 4 -- -quiet
+      - name: Sign (ad-hoc) and package
+        run: |
+          set -e
+          A=build/Pulsar_artefacts/Release
+          mkdir -p pkg/PULSAR
+          cp -R "$A/VST3/PULSAR.vst3" "$A/AU/PULSAR.component" "$A/Standalone/PULSAR.app" pkg/PULSAR/
+          for b in pkg/PULSAR/*.vst3 pkg/PULSAR/*.component pkg/PULSAR/*.app; do codesign --force --deep -s - "$b"; done
+          cp "installer/Install PULSAR.command" installer/README.txt pkg/PULSAR/
+          chmod +x "pkg/PULSAR/Install PULSAR.command"
+          cd pkg && ditto -c -k --keepParent PULSAR ../PULSAR-mac.zip
+      - name: Validate with pluginval
+        run: |
+          curl -sSL -o pv.zip https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip
+          unzip -q pv.zip
+          ./pluginval.app/Contents/MacOS/pluginval --strictness-level 8 --validate-in-process --skip-gui-tests --timeout-ms 300000 --validate build/Pulsar_artefacts/Release/VST3/PULSAR.vst3
+      - name: Validate AU (auval)
+        run: |
+          mkdir -p ~/Library/Audio/Plug-Ins/Components
+          cp -R build/Pulsar_artefacts/Release/AU/PULSAR.component ~/Library/Audio/Plug-Ins/Components/
+          killall -9 AudioComponentRegistrar || true
+          auval -v aumu Puls Plsl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PULSAR-mac
+          path: PULSAR-mac.zip
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: PULSAR 1.0.${{ github.run_number }} for Mac (VST3 · AU · App)
+          prerelease: false
+          make_latest: true
+          files: |
+            PULSAR-mac.zip
+            manual/PULSAR-Manual-EN.pdf
+            manual/PULSAR-Manual-ES.pdf
+            manual/PULSAR-Manual-EN-ES.pdf
+          body: |
+            PULSAR — a drum machine for broken beats · Dark Funk Durcal design · built at Polaris Sound Lab
+            Install: paste in Terminal → curl -fsSL https://drophlex.github.io/PULSAR/install.sh | bash
+            (or download PULSAR-mac.zip, unzip it and open "Install PULSAR.command").
+            Then Ableton → Settings → Plug-ins → Rescan. Plays with Live's transport; MIDI C1–D#2 play the 16 pads; 174 automatable parameters.
+            Manuals / Manuales: PULSAR-Manual-EN.pdf · PULSAR-Manual-ES.pdf · PULSAR-Manual-EN-ES.pdf
+            Web version / versión web: https://drophlex.github.io/PULSAR/

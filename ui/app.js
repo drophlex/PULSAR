@@ -40,6 +40,7 @@ function toast(m) { const t = $('#toast'); t.textContent = m; t.style.opacity = 
 
 // ------------------------------------------------------------------ sounds: decode the library once, give each its engine slot
 async function loadSounds() {
+  if (Bridge.kind === 'plugin') { SOUNDS.forEach((s, i) => { UI.soundIdx[s.id] = i; UI.sounds.push({ id: s.id, group: s.group, name: s.name, cat: s.cat, idx: i, bpm: s.bpm || 0 }); }); return; }
   const ctx = Bridge.ctx;
   for (const s of SOUNDS) {
     const bytes = Uint8Array.from(atob(s.b64), c => c.charCodeAt(0));
@@ -200,7 +201,7 @@ function renderPanel() {
       const step = d => { const i = UI.sounds.findIndex(x => x.idx === (tp(t, T.SMP) | 0)); const n = UI.sounds[(i + d + UI.sounds.length) % UI.sounds.length]; sel.value = n.idx; sel.onchange(); };
       prev.onclick = () => step(-1); next.onclick = () => step(1);
       P.append(h('div', { style: 'display:flex;gap:4px' }, prev, sel, next));
-      const up = h('button', { class: 'full', style: 'margin-top:6px' }, '⤒ ' + tr('LOAD YOUR SAMPLE')); up.onclick = () => $('#smpIn').click(); P.append(up);
+      const up = h('button', { class: 'full', style: 'margin-top:6px' }, '⤒ ' + tr('LOAD YOUR SAMPLE')); up.onclick = () => Bridge.kind === 'plugin' ? Bridge._call('openSample', []).then(r => r ? userSampleIn(r.name, r.idx, r.bpm, r.bars) : toast('✕')) : $('#smpIn').click(); P.append(up);
       P.append(h('div', { class: 'knobs' }, tk(t, T.TUNE, 'TUNE', -24, 24, v => (v > 0 ? '+' : '') + v.toFixed(1), 0), tk(t, T.DECAY, 'DECAY', 0, 1, pct, 1), tk(t, T.START, 'START POINT', 0, 1, pct, 0), tk(t, T.ATK, 'ATTACK', 0, 1, pct, 0), tk(t, T.DRIVE, 'DRIVE', 0, 1, pct, 0)));
       if ((tp(t, T.MODE) | 0) === 2) P.append(chips(['REPITCH', 'STRETCH TO TEMPO'], tp(t, T.STRETCH) | 0, i => { setTP(t, T.STRETCH, i); renderPanel(); }));
       P.append(chips(['REVERSE'], tp(t, T.REV) > .5 ? 0 : -1, () => { setTP(t, T.REV, tp(t, T.REV) > .5 ? 0 : 1); renderPanel(); }));
@@ -310,7 +311,8 @@ function doBuild() {
 // ------------------------------------------------------------------ transport and files
 function togglePlay() { UI.playing = !UI.playing; Bridge.post({ t: UI.playing ? 'play' : 'stop' }); $('#play').classList.toggle('on', UI.playing); $('#play').textContent = UI.playing ? '■ STOP' : '▶ PLAY'; }
 function toggleRec() { UI.rec = !UI.rec; Bridge.post({ t: 'rec', on: UI.rec }); $('#rec').classList.toggle('on', UI.rec); if (UI.rec) toast(tr('Recording motion: knobs, pads and FX go into the pattern')); }
-function download(name, data, type) { const a = h('a', { href: URL.createObjectURL(new Blob([data], { type })), download: name }); document.body.append(a); a.click(); a.remove(); }
+function download(name, data, type) {
+  if (Bridge.kind === 'plugin') { const u8 = typeof data === 'string' ? new TextEncoder().encode(data) : data instanceof Uint8Array ? data : new Uint8Array(data); Bridge._call('saveFile', [name, b64(u8)]); return; } const a = h('a', { href: URL.createObjectURL(new Blob([data], { type })), download: name }); document.body.append(a); a.click(); a.remove(); }
 function exportMidi() {
   const list = UI.songOn ? UI.song.map(([p, r]) => ({ bytes: UI.pats[p], rep: r })) : [{ bytes: UI.pats[UI.cur], rep: 4 }];
   download(`PULSAR-${UI.style.replace(/ /g, '-')}-${Math.round(PARAMS[G.BPM])}bpm.mid`, midiFile(list, PARAMS[G.BPM], UI.kit.map(k => k.n)), 'audio/midi'); toast(tr('MIDI saved'));
@@ -329,20 +331,25 @@ const b64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 32768) s += 
 const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 function projectJSON() { return JSON.stringify({ app: 'PULSAR', v: 1, params: [...PARAMS], pats: UI.pats.map(b64), song: UI.song, songOn: UI.songOn, kit: UI.kit, style: UI.style, cplx: UI.cplx,
   sampleIds: Array.from({ length: NT }, (_, t) => { const s = UI.sounds.find(x => x.idx === (tp(t, T.SMP) | 0)); return s ? s.id : null; }) }); }
+const uiJSON = () => JSON.stringify({ kit: UI.kit, style: UI.style, cplx: UI.cplx });
 function loadProject(txt) {
   const j = JSON.parse(txt); if (j.app !== 'PULSAR') throw new Error('not a PULSAR file');
   j.params.forEach((v, i) => (PARAMS[i] = v)); UI.pats = j.pats.map(unb64); UI.song = j.song; UI.songOn = j.songOn; UI.kit = j.kit; UI.style = j.style || UI.style; UI.cplx = j.cplx ?? .5;
   (j.sampleIds || []).forEach((id, t) => { if (id && UI.soundIdx[id] !== undefined) PARAMS[TPID(t, T.SMP)] = UI.soundIdx[id]; });
   pushAll(); renderAll();
 }
-function save() { download(`PULSAR-${UI.style.replace(/ /g, '-')}.pulsar`, projectJSON(), 'application/json'); LS.set('pulsar.project', projectJSON()); toast(tr('saved')); }
+function save() { download(`PULSAR-${UI.style.replace(/ /g, '-')}.pulsar`, projectJSON(), 'application/json'); if (Bridge.kind === 'web') LS.set('pulsar.project', projectJSON()); toast(tr('saved')); }
 async function addUserSample(file) {
   const ab = await file.arrayBuffer(); const buf = await (Bridge.kind === 'plugin' ? decodeOffline(new Uint8Array(ab)) : Bridge.ctx.decodeAudioData(ab));
   const d = buf.getChannelData(0), sr = buf.sampleRate, secs = d.length / sr;
   let bpm = 0, bars = 0; if (secs > 1.2) { for (const b of [1, 2, 4, 8]) { const x = b * 240 / secs; if (x >= 80 && x <= 180) { bpm = Math.round(x * 10) / 10; bars = b; break; } } }
-  const idx = await Bridge.addSample(Float32Array.from(d), sr, bpm, bars ? bars * 16 : 16);
+  const name = file.name.replace(/\.[^.]+$/, '');
+  const idx = await Bridge.addSample(Float32Array.from(d), sr, bpm, bars ? bars * 16 : 16, name);
+  userSampleIn(name, idx, bpm, bars);
+}
+function userSampleIn(name, idx, bpm, bars) {
   if (idx < 0) { toast('memory full'); return; }
-  const name = file.name.replace(/\.[^.]+$/, ''); UI.sounds.push({ id: 'user/' + name, group: 'user', name, idx, bpm }); UI.soundIdx['user/' + name] = idx;
+  UI.sounds.push({ id: 'user/' + name, group: 'user', name, idx, bpm }); UI.soundIdx['user/' + name] = idx;
   const t = UI.sel; setTP(t, T.MODE, bpm ? 2 : 1); setTP(t, T.SMP, idx); setTP(t, T.DECAY, bpm ? .35 : 1); UI.kit[t].n = name.toUpperCase().slice(0, 12); refreshTrack(t); toast(tr('Sample loaded') + (bpm ? ` · ${bpm} BPM, ${bars} bar(s)` : ''));
 }
 
@@ -350,6 +357,7 @@ async function addUserSample(file) {
 let lastTele = 0;
 function onTele(tele, scope) {
   UI.tele = tele; lastTele = performance.now();
+  if (!!tele[0] !== UI.playing) { UI.playing = !!tele[0]; $('#play').classList.toggle('on', UI.playing); $('#play').textContent = UI.playing ? '■ STOP' : '▶ PLAY'; }
   if (tele[2] !== UI.cur && UI.playing) { UI.cur = tele[2] | 0; renderGrid(); renderFX(); }
   const bt = String(Math.round(tele[1])); if ($('#bpm').textContent !== bt) $('#bpm').textContent = bt;
   if (UI.rec && tele[6] !== UI.dirty) { UI.dirty = tele[6]; Bridge.getPat(UI.cur).then(r => { UI.pats[UI.cur] = new Uint8Array(r.bytes); renderGrid(); renderFX(); }); }
@@ -410,7 +418,7 @@ function wire() {
   dragNum($('#bpm'), () => Math.round(PARAMS[G.BPM]), v => { setP(G.BPM, v); $('#bpm').textContent = v; }, 40, 300);
   let taps = []; $('#tap').onclick = () => { const n = performance.now(); taps = taps.filter(x => n - x < 2000); taps.push(n); if (taps.length > 2) { const d = (taps[taps.length - 1] - taps[0]) / (taps.length - 1); const b = Math.round(60000 / d); setP(G.BPM, b); $('#bpm').textContent = b; } };
   $('#songBtn').onclick = () => { UI.songOn = !UI.songOn; pushSong(); renderPats(); if (UI.tab === 'SONG') renderPanel(); };
-  $('#midiBtn').onclick = exportMidi; $('#wavBtn').onclick = toggleWav; $('#saveBtn').onclick = save; $('#loadBtn').onclick = () => $('#fileIn').click();
+  $('#midiBtn').onclick = exportMidi; $('#wavBtn').onclick = toggleWav; $('#saveBtn').onclick = save; $('#loadBtn').onclick = () => Bridge.kind === 'plugin' ? Bridge._call('openFile', ['*.pulsar;*.json']).then(r => { if (r) try { loadProject(r.text); toast(r.name); } catch (er) { toast('✕ ' + er.message); } }) : $('#fileIn').click();
   $('#fileIn').onchange = async e => { const f = e.target.files[0]; if (f) try { loadProject(await f.text()); toast(f.name); } catch (er) { toast('✕ ' + er.message); } e.target.value = ''; };
   $('#smpIn').onchange = async e => { const f = e.target.files[0]; if (f) try { await addUserSample(f); } catch (er) { toast('✕ ' + er.message); } e.target.value = ''; };
   $('#helpBtn').onclick = () => { renderHelp(); $('#help').style.display = 'grid'; }; $('#help').onclick = () => ($('#help').style.display = 'none');
@@ -427,7 +435,8 @@ function wire() {
   });
   document.addEventListener('keyup', e => { const fi = FXKEYS.indexOf(e.key.toLowerCase()); if (fi >= 0) fxUp(fi); });
   if (navigator.requestMIDIAccess) navigator.requestMIDIAccess().then(m => { const bind = () => m.inputs.forEach(i => (i.onmidimessage = ev => { const [s, n, v] = ev.data; if ((s & 0xf0) === 0x90 && v > 0 && n >= 36 && n < 52) Bridge.post({ t: 'pad', t2: n - 36, vel: v }); })); bind(); m.onstatechange = bind; }).catch(() => {});
-  setInterval(() => LS.set('pulsar.project', projectJSON()), 15000);
+  if (Bridge.kind === 'web') setInterval(() => LS.set('pulsar.project', projectJSON()), 15000);
+  else { let last = ''; setInterval(() => { const u = uiJSON(); if (u !== last) { last = u; Bridge._call('setUi', [u]); } }, 1500); $('#wavBtn').style.display = 'none'; }
   // the plug-in: follow the DAW's transport
   if (Bridge.kind === 'web') setInterval(() => { if (UI.playing && performance.now() - lastTele > 1500 && Bridge.ctx && Bridge.ctx.state !== 'running') Bridge.ctx.resume(); }, 1000);
 }
@@ -438,7 +447,13 @@ async function boot() {
     $('#splash .go').textContent = '…';
     await Bridge.start(); Bridge.onTele = onTele;
     await loadSounds();
-    const saved = LS.get('pulsar.project');
+    let saved = Bridge.kind === 'web' ? LS.get('pulsar.project') : null;
+    if (Bridge.kind === 'plugin') {
+      const pr = await Bridge._call('getProject', []);
+      (pr.user || []).forEach(u => { UI.sounds.push({ id: 'user/' + u.name, group: 'user', name: u.name, idx: u.idx, bpm: u.bpm }); UI.soundIdx['user/' + u.name] = u.idx; });
+      if (pr.ui) saved = JSON.stringify(Object.assign({ app: 'PULSAR', v: 1, params: pr.params, pats: pr.pats, song: pr.song.length ? pr.song : [[0, 1]], songOn: pr.songOn }, JSON.parse(pr.ui)));
+      UI.fx = pr.fx | 0; UI.playing = !!pr.playing;
+    }
     wire();
     if (saved) { try { loadProject(saved); } catch (e) { applyKit('BIG BEAT'); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); } }
     else { applyKit('BIG BEAT'); setP(G.BPM, 132); setP(G.DRIVE, .3); setP(G.COMP, .5); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); }
@@ -446,3 +461,4 @@ async function boot() {
   };
 }
 boot();
+if (window.__JUCE__ && window.__JUCE__.backend) setTimeout(() => $('#splash') && $('#splash').onclick(), 400);

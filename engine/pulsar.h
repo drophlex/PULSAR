@@ -53,7 +53,7 @@ struct Engine {
   float sr = 48000; Rng rng;
   float params[P_COUNT];
   Pattern pat[NPAT]; SongEntry song[SONGMAX]; int songLen = 0; bool songOn = false;
-  Sample smp[MAXSMP]; int nSmp = 0; int poolUsed = 0; float* pool = nullptr;
+  Sample smp[MAXSMP]; int nSmp = 0; int poolUsed = 0; float* pool = nullptr; int poolCap = POOL; bool silent = false;
   Voice vo[NT][2]; int vcur[NT];
   // transport
   bool playing = false, rec = false, fillHeld = false; int cur = 0, queued = -1, songPos = 0, songRep = 0;
@@ -102,12 +102,28 @@ struct Engine {
 
   // ---------------------------------------------------------------- samples
   int addSample(int len, float rate, float bpm, int slices) {          // the caller has written len floats at pool + poolUsed
-    if (nSmp >= MAXSMP || poolUsed + len > POOL) return -1;
+    if (nSmp >= MAXSMP || poolUsed + len > poolCap) return -1;
     Sample& S = smp[nSmp]; S.off = poolUsed; S.len = len; S.sr = rate; S.bpm = bpm; S.slices = slices < 1 ? 16 : slices;
     poolUsed += len; return nSmp++;
   }
   float* poolWrite() { return pool + poolUsed; }
-  int poolFree() const { return POOL - poolUsed; }
+  int poolFree() const { return poolCap - poolUsed; }
+  // jump the transport forward n samples without sounding (the plug-in uses it to land on the DAW's bar position)
+  void skip(double n) {
+    if (!playing) return; silent = true; const bool r = rec; rec = false;
+    while (n >= 1) {
+      double d = mClock; for (int t = 0; t < NT; t++) if (tClock[t] < d) d = tClock[t];
+      if (d <= 1) { advance(1); n -= 1; for (int t = 0; t < NT; t++) npend[t] = 0; continue; }
+      d = (double)(long long)(d - 1); if (d > n) d = (double)(long long)n; if (d < 1) d = 1;
+      mClock -= d; for (int t = 0; t < NT; t++) tClock[t] -= d; n -= d;
+    }
+    for (int t = 0; t < NT; t++) npend[t] = 0; silent = false; rec = r;
+  }
+  // how many 1/16 steps one pass of the song (or a long stretch of the pattern) lasts
+  int cycleSteps() const {
+    if (songOn && songLen > 0) { int n = 0; for (int i = 0; i < songLen; i++) n += (pat[song[i].pat].len < 1 ? 16 : pat[song[i].pat].len) * (song[i].rep < 1 ? 1 : song[i].rep); return n; }
+    return 64 * 16;
+  }
 
   // ---------------------------------------------------------------- helpers
   inline float P(int t, int k) const { return params[TPID(t, k)]; }

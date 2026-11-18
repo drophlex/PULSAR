@@ -76,8 +76,8 @@ const Bridge = {
   async getPats() { if (this.kind === 'plugin') { const r = await this._call('getPats', []); return { bytes: Uint8Array.from(atob(r.bytes), c => c.charCodeAt(0)), size: r.size }; } return this._ask({ t: 'getPats' }); },
   async getPat(p) { if (this.kind === 'plugin') { const r = await this._call('getPat', [p]); return { bytes: Uint8Array.from(atob(r), c => c.charCodeAt(0)) }; } return this._ask({ t: 'getPat', p }); },
   setPat(p, bytes) { if (this.kind === 'plugin') return this._call('setPat', [p, btoa(String.fromCharCode(...bytes))]); this.node.port.postMessage({ t: 'setPat', p, bytes: bytes.slice() }); },
-  async addSample(data, sr, bpm, slices) {
-    if (this.kind === 'plugin') { const b = new Uint8Array(data.buffer.slice(0)); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return this._call('addSample', [btoa(s), sr, bpm || 0, slices || 16]); }
+  async addSample(data, sr, bpm, slices, name) {
+    if (this.kind === 'plugin') { const b = new Uint8Array(data.buffer.slice(0)); let s = ''; for (let i = 0; i < b.length; i += 32768) s += String.fromCharCode.apply(null, b.subarray(i, i + 32768)); return this._call('addSample', [btoa(s), sr, bpm || 0, slices || 16, name || 'sample']); }
     const r = await this._ask({ t: 'sample', data, sr, bpm, slices }, [data.buffer]); return r.idx; },
   record(on, cb) { this.recCb = cb; this.post({ t: 'recAudio', on }); },
   // ---- plug-in side (JUCE 8 WebBrowserComponent native functions + events)
