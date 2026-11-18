@@ -5,6 +5,7 @@ Dark Funk Durcal design · built at <b>Polaris Sound Lab</b>, Mérida, Yucatán,
 
 <p align="center">
 <a href="https://drophlex.github.io/PULSAR/"><b>▶ Play it in your browser</b></a> &nbsp;·&nbsp;
+<a href="#-ableton-live--mac-vst3--au"><b>🎛 Ableton / Mac plug-in</b></a> &nbsp;·&nbsp;
 <a href="manual/PULSAR-Manual-EN.pdf"><b>📘 Manual (English)</b></a> &nbsp;·&nbsp;
 <a href="manual/PULSAR-Manual-ES.pdf"><b>Manual (Español)</b></a> &nbsp;·&nbsp;
 <a href="https://www.paypal.com/donate/?business=drophlex%40gmail.com&no_recurring=0&item_name=PULSAR&currency_code=USD"><b>♥ Donate</b></a>
@@ -24,6 +25,21 @@ PULSAR is a drum machine for big beat, braindance, drill'n'bass, jungle and ever
 4. **● REC** writes your tricks, knob moves and pad hits into the pattern.
 5. **BUILD TRACK** makes a whole song; **⤓ MIDI** or **● WAV** takes it to your DAW.
 
+## 🎛 Ableton Live · Mac (VST3 · AU)
+
+Open **Terminal** and paste:
+
+```
+curl -fsSL https://drophlex.github.io/PULSAR/install.sh | bash
+```
+
+Then go to Ableton → *Settings → Plug-ins → Use VST3 Plug-in System Folders → Rescan*, and find it under *Plug-ins → Polaris Sound Lab → PULSAR*. If you'd rather not use Terminal, download [PULSAR-mac.zip](https://github.com/drophlex/PULSAR/releases/latest/download/PULSAR-mac.zip) (Apple Silicon and Intel, macOS 11+) and open *Install PULSAR.command*.
+
+- It plays with Live's transport, tempo and bar, including loops and jumps.
+- MIDI notes C1–D#2 play the 16 pads.
+- It has **174 automatable parameters**, including the 16 tricks as on/off switches you can record in the arrangement.
+- Everything is saved inside the Live set.
+
 ## What's inside
 
 - **16 tracks**, each a synth (14 drum models), a sample or a **break** sliced into 32 steps.
@@ -42,8 +58,7 @@ PULSAR is a drum machine for big beat, braindance, drill'n'bass, jungle and ever
 
 ## Coming next
 
-- **VST3 / AU plug-in** for Ableton Live and any DAW (the engine is ready: `engine/`).
-- **M-VAVE FM-1 firmware**.
+- **M-VAVE FM-1 firmware**, in development.
 
 ## Build
 
@@ -62,6 +77,8 @@ If PULSAR makes your music better: **[♥ donate with PayPal](https://www.paypal
 PULSAR es una caja de ritmos para big beat, braindance, drill'n'bass, jungle y todo ritmo roto que haya entre ellos — tan fácil de tocar en vivo como una caja de hardware, con mucho más sonido y profundidad. Gratis y de código abierto. El programa está en inglés; el botón **EN · ES** lo cambia a español.
 
 **Inicio rápido:** abre **[drophlex.github.io/PULSAR](https://drophlex.github.io/PULSAR/)** en Chrome → **EMPEZAR** → elige un **estilo** → **⚡ GENERAR** → tócalo con los faders, los pads y los 16 trucos (toque = fijo, mantener = momentáneo) → **● REC** graba tus movimientos → **ARMAR TEMA** hace una canción → **⤓ MIDI** o **● WAV** a tu DAW.
+
+**Ableton Live en Mac (VST3 · AU):** en Terminal pega `curl -fsSL https://drophlex.github.io/PULSAR/install.sh | bash`. Luego en Ableton ve a *Ajustes → Plug-ins → Usar carpetas de sistema VST3 → Volver a escanear*. PULSAR sigue el play, el tempo y el compás de Live. Las notas C1–D#2 tocan los pads. Tiene 174 parámetros automatizables, entre ellos los 16 trucos, y todo se guarda en el set. **FM-1:** en desarrollo.
 
 📘 **[Manual en español (PDF)](manual/PULSAR-Manual-ES.pdf)** · [English + Español](manual/PULSAR-Manual-EN-ES.pdf)
 

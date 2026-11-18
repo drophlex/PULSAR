@@ -75,3 +75,4 @@ footer .pn{color:var(--beam)}
 .small{font-size:8pt;color:var(--dim)}
 .two .fig img{max-height:4.3in;object-fit:cover;object-position:top}
 .fig{margin-left:auto;margin-right:auto}
+.codebox{background:#0d1117;color:#46e0ff;border-radius:6px;padding:8px 10px;font:11px ui-monospace,monospace;margin:6px 0;word-break:break-all}
