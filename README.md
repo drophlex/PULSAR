@@ -37,7 +37,7 @@ Then go to Ableton → *Settings → Plug-ins → Use VST3 Plug-in System Folder
 
 - It plays with Live's transport, tempo and bar, including loops and jumps.
 - MIDI notes C1–D#2 play the 16 pads.
-- It has **174 automatable parameters**, including the 16 tricks as on/off switches you can record in the arrangement.
+- It has **238 automatable parameters**, including the 16 tricks as on/off switches you can record in the arrangement.
 - Everything is saved inside the Live set.
 
 ## What's inside
@@ -51,6 +51,18 @@ Then go to Ableton → *Settings → Plug-ins → Use VST3 Plug-in System Folder
 - **13 style generators**, VARY, and BUILD TRACK (8 patterns + a 13-part song).
 - **MIDI export** (pattern or song), **WAV recording**, project files, MIDI input (notes 36–51).
 - **LIVE view** (a strip per instrument and a step row, like hardware) and **GRID view** (all 16 tracks).
+
+### New in PULSAR 2
+
+- **Multi-out** in the plug-in: 8 extra stereo outputs. MIX › OUTPUT sends any track to its own channel in Ableton (*Audio From → PULSAR → Bus 1…8*).
+- **Drag MIDI out**: drag **⇱ MIDI** onto a MIDI track, and the pattern or the song becomes a clip that plays PULSAR. TRACK › DRAG MIDI drags one track.
+- **Note repeat** (1/8 · 1/16 · 1/32 · 1/16T): hold a pad and it repeats in time, like an MPC. Pad velocity can be turned on or off.
+- **XY performance pad**: left sweeps a low-pass, right a high-pass, and up throws everything into reverb and delay. It springs back when you let go, or HOLD keeps it.
+- **PUNCH · GLUE · LOW · HIGH** on every track: a transient shaper, a compressor and two ±12 dB shelves.
+- **Lock · Dice · Mutate** per track: keep a part through GENERATE, VARY, BUILD and kits, write a new part for one track, or nudge it.
+- **Resample** one loop into a track. **Drop your own samples** on any row or strip.
+- **MIDI learn**: right-click a knob, a trick or the XY pad, then move a control on your keyboard. It is saved with the set, and the web version has it too.
+- **Undo / redo** (⌘Z / ⇧⌘Z), **MIDI out** of the sequence (notes 36–51, channel 10), and 238 automatable parameters.
 
 ## Sounds
 
@@ -78,7 +90,17 @@ PULSAR es una caja de ritmos para big beat, braindance, drill'n'bass, jungle y t
 
 **Inicio rápido:** abre **[drophlex.github.io/PULSAR](https://drophlex.github.io/PULSAR/)** en Chrome → **EMPEZAR** → elige un **estilo** → **⚡ GENERAR** → tócalo con los faders, los pads y los 16 trucos (toque = fijo, mantener = momentáneo) → **● REC** graba tus movimientos → **ARMAR TEMA** hace una canción → **⤓ MIDI** o **● WAV** a tu DAW.
 
-**Ableton Live en Mac (VST3 · AU):** en Terminal pega `curl -fsSL https://drophlex.github.io/PULSAR/install.sh | bash`. Luego en Ableton ve a *Ajustes → Plug-ins → Usar carpetas de sistema VST3 → Volver a escanear*. PULSAR sigue el play, el tempo y el compás de Live. Las notas C1–D#2 tocan los pads. Tiene 174 parámetros automatizables, entre ellos los 16 trucos, y todo se guarda en el set. **FM-1:** en desarrollo.
+**Ableton Live en Mac (VST3 · AU):** en Terminal pega `curl -fsSL https://drophlex.github.io/PULSAR/install.sh | bash`. Luego en Ableton ve a *Ajustes → Plug-ins → Usar carpetas de sistema VST3 → Volver a escanear*. PULSAR sigue el play, el tempo y el compás de Live. Las notas C1–D#2 tocan los pads. Tiene 238 parámetros automatizables, entre ellos los 16 trucos, y todo se guarda en el set. **Nuevo en PULSAR 2:**
+
+- **Multi-salida**: 8 salidas estéreo extra, y cada pista puede ir a su propio canal de Ableton.
+- **Arrastrar el patrón como MIDI** a una pista de Ableton.
+- **Repetir nota** (1/8, 1/16, 1/32, 1/16T), al estilo MPC.
+- **Pad XY**: filtro hacia los lados y espacio hacia arriba.
+- **GOLPE+, COMPRESIÓN, GRAVES y AGUDOS** en cada pista.
+- **Candado, dado y mutar** por pista.
+- **Resamplear** y **soltar tus samples** en cualquier pista.
+- **Aprender MIDI** con clic derecho.
+- **Deshacer y rehacer**, y **salida MIDI** del secuenciador. **FM-1:** en desarrollo.
 
 📘 **[Manual en español (PDF)](manual/PULSAR-Manual-ES.pdf)** · [English + Español](manual/PULSAR-Manual-EN-ES.pdf)
 
