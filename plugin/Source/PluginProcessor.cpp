@@ -154,9 +154,10 @@ void PulsarProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiB
   // like XO: PULSAR's own PLAY and STOP are independent of the DAW, and it always runs at the DAW's tempo. The DAW's play
   // starts it on the bar; the DAW's stop stops it only if the DAW started it (not if you pressed PLAY yourself).
   E.hostSync = true; E.hostPlaying = hpl; E.hostBpm = (float)bpm;
-  if (hpl && !hostWasPlaying) { startAt(hasPpq ? ppq : 0, bpm); hostStarted = !ownPlay; }
-  else if (hpl && hasPpq && std::abs(ppq - (lastPpq + lastBlockBeats)) > 0.2) startAt(ppq, bpm);     // a loop or a jump in the arrangement
-  else if (!hpl && hostWasPlaying && hostStarted) { E.stop(); hostStarted = false; }
+  // PULSAR 3.4: the DAW's PLAY and STOP never start or stop PULSAR (its own PLAY / STOP do, like XO). If PULSAR is
+  // playing when the DAW starts, or the DAW jumps or loops, PULSAR lines up on the DAW's bar so both stay together.
+  if (E.playing && hpl && hasPpq && (!hostWasPlaying || std::abs(ppq - (lastPpq + lastBlockBeats)) > 0.2)) startAt(ppq, bpm);
+  hostStarted = false;
   hostWasPlaying = hpl; lastPpq = ppq; lastBlockBeats = n / sr * bpm / 60.0;
 
   // the main output and the buses the DAW has turned on

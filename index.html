@@ -16,6 +16,8 @@ button.on{background:var(--beam2);border-color:var(--beam);color:#fff}
 button.hot.on{background:var(--hot2);border-color:var(--hot)}
 select,input{font:inherit;color:var(--text);background:var(--panel2);border:1px solid var(--line2);border-radius:7px;padding:4px 6px}
 #app{display:grid;grid-template-rows:auto 1fr auto;height:100vh;height:100dvh}
+/* the plug-in: the page is laid out at 1440 x 900 and scaled to the window, so nothing is ever cut off */
+html.plug,html.plug body{width:100%;height:100%;overflow:hidden}html.plug #app{width:1440px;height:900px;transform-origin:0 0;position:absolute;left:0;top:0}
 /* top bar */
 #top{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);background:linear-gradient(#0d0f14,#090a0d);flex-wrap:wrap}
 #logo{display:flex;align-items:center;gap:8px;margin-right:6px}
@@ -40,7 +42,7 @@ select,input{font:inherit;color:var(--text);background:var(--panel2);border:1px 
 .soc{display:inline-flex;width:20px;height:20px;padding:3px;border-radius:6px;color:var(--dim);border:1px solid transparent}
 .soc:hover{color:var(--beam);border-color:var(--line2)}
 .soc svg{width:100%;height:100%}
-@media (max-width:1300px){#credit>span{display:none}}
+@media (max-width:1300px){html:not(.plug) #credit>span{display:none}}
 .don{color:var(--gold);border-color:rgba(255,197,77,.35);background:none;font-size:10px;padding:4px 9px;border-radius:99px;text-decoration:none;white-space:nowrap}
 #gen{background:linear-gradient(#3a1b0f,#2a1209);border-color:var(--hot);color:#ffd8cc;font-weight:700}
 /* main */
@@ -92,7 +94,7 @@ select,input{font:inherit;color:var(--text);background:var(--panel2);border:1px 
 .tr8 .sb8.on{background:var(--c);border-color:transparent;box-shadow:0 0 10px color-mix(in srgb,var(--c) 50%,transparent)}
 .tr8 .sb8.ph{outline:2px solid #fff;outline-offset:-2px}
 .tr8 .sb8 small{position:absolute;bottom:2px;left:0;right:0;text-align:center;font:600 8px var(--mono);color:var(--dim2)}
-@media (max-width:1100px){.strips{grid-template-columns:repeat(8,minmax(0,1fr))}}
+@media (max-width:1100px){html:not(.plug) .strips{grid-template-columns:repeat(8,minmax(0,1fr))}}
 /* side panel */
 #side{border-left:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
 .tabs{display:flex;border-bottom:1px solid var(--line)}
@@ -153,9 +155,9 @@ body.filedrop{outline:3px dashed var(--beam);outline-offset:-6px}
 #help h2{margin:0 0 6px;letter-spacing:.2em}
 #help h3{color:var(--beam);margin:14px 0 4px;font-size:12px;letter-spacing:.15em}
 #help kbd{font:600 10px var(--mono);background:#1d2230;border:1px solid var(--line2);border-radius:4px;padding:1px 5px}
-@media (max-width:1100px){#main{grid-template-columns:1fr}#side{position:fixed;right:0;top:0;bottom:0;width:340px;z-index:30;transform:translateX(100%);transition:transform .2s}#side.open{transform:none}#sideBtn{display:inline-block!important}}
-@media (max-width:1250px){#scope,#macros{display:none}#perf{grid-template-columns:1fr auto}}
-@media (max-width:760px){.row{grid-template-columns:20px 20px 74px 1fr 0}.ln{display:none}#fxGrid{grid-template-columns:repeat(8,1fr)}.fx{height:38px}#macros,#scope{display:none}#perf{grid-template-columns:1fr}#perf2{justify-content:center}}
+@media (max-width:1100px){html:not(.plug) #main{grid-template-columns:1fr}html:not(.plug) #side{position:fixed;right:0;top:0;bottom:0;width:340px;z-index:30;transform:translateX(100%);transition:transform .2s}html:not(.plug) #side.open{transform:none}html:not(.plug) #sideBtn{display:inline-block!important}}
+@media (max-width:1250px){html:not(.plug) #scope,html:not(.plug) #macros{display:none}html:not(.plug) #perf{grid-template-columns:1fr auto}}
+@media (max-width:760px){html:not(.plug) .row{grid-template-columns:20px 20px 74px 1fr 0}html:not(.plug) .ln{display:none}html:not(.plug) #fxGrid{grid-template-columns:repeat(8,1fr)}html:not(.plug) .fx{height:38px}html:not(.plug) #macros,html:not(.plug) #scope{display:none}html:not(.plug) #perf{grid-template-columns:1fr}html:not(.plug) #perf2{justify-content:center}}
 
 /* ---- PULSAR 3 &#xb7; DFD LIVE LAB ---- */
 #labV{padding:4px 2px 18px;display:flex;flex-direction:column;gap:10px;min-width:0;max-width:100%;overflow-x:hidden}
@@ -202,10 +204,10 @@ body.filedrop{outline:3px dashed var(--beam);outline-offset:-6px}
 .hlrow .chips button{padding:4px 6px;font-size:10px}.hlrow .chips button.on.r1{background:#3a2c0f;border-color:var(--gold);color:var(--gold)}.hlrow .chips button.on.r2{border-color:var(--acid);color:var(--acid)}.hlrow .chips button.on.r4{border-color:var(--hot);color:var(--hot)}
 .hlrow select{padding:4px;font-size:11px}
 .hlmon{background:#05060a;border:1px solid var(--line);border-radius:6px;padding:8px;font:500 11px var(--mono);color:var(--beam);height:120px;overflow:auto;margin:0}
-@media (max-width:900px){.hlmx{grid-template-columns:1fr}}
-@media (max-width:900px){.lfams{grid-template-columns:repeat(3,minmax(0,1fr))}.lmeter{min-width:0;flex-basis:100%}.lbank{grid-template-columns:repeat(2,minmax(0,1fr))}.lscenes{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media (max-width:640px){#app{max-width:100vw;overflow-x:hidden}#top .grp{flex-wrap:wrap;max-width:100%;min-width:0}#top #style{max-width:52vw}#top{overflow-x:hidden}}
-@media (max-width:520px){.lbank{grid-template-columns:1fr}.lscenes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){html:not(.plug) .hlmx{grid-template-columns:1fr}}
+@media (max-width:900px){html:not(.plug) .lfams{grid-template-columns:repeat(3,minmax(0,1fr))}html:not(.plug) .lmeter{min-width:0;flex-basis:100%}html:not(.plug) .lbank{grid-template-columns:repeat(2,minmax(0,1fr))}html:not(.plug) .lscenes{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:640px){html:not(.plug) #app{max-width:100vw;overflow-x:hidden}html:not(.plug) #top .grp{flex-wrap:wrap;max-width:100%;min-width:0}html:not(.plug) #top #style{max-width:52vw}html:not(.plug) #top{overflow-x:hidden}}
+@media (max-width:520px){html:not(.plug) .lbank{grid-template-columns:1fr}html:not(.plug) .lscenes{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -1030,14 +1032,14 @@ function renderHelp() {
 <h3>BREAKS</h3><p>BREAK tracks play one slice of a breakbeat per step (32 slices = 2 bars). STRETCH TO TEMPO keeps their pitch at any tempo; REPITCH speeds them up like a sampler did (jungle!). LOAD YOUR SAMPLE: any loop is measured and sliced automatically.</p>
 <h3>PERFORM</h3><p>Sixteen tricks under the grid. <b>Tap</b> = on until you tap again; <b>hold</b> = only while held. Keys <kbd>1</kbd>\u2026<kbd>0</kbd> <kbd>Z</kbd>\u2026<kbd>N</kbd>. With <b>\u25cf REC</b> on, the FX you play, the knobs you turn and the pads you hit are written into the pattern (a red line marks recorded FX). MASTER \u203a CLEAR MOTION erases the moves.</p>
 <h3>KEYS</h3><p><kbd>Space</kbd> play/stop \u00b7 <kbd>R</kbd> record \u00b7 <kbd>G</kbd> generate \u00b7 <kbd>V</kbd> vary \u00b7 <kbd>\u2191</kbd><kbd>\u2193</kbd> track \u00b7 tracks play on a click on their name and on MIDI notes 36\u201351.</p>
-<h3>EXPORT</h3><p><b>\u2913 MIDI</b> saves the pattern (or the whole song when SONG is on) as a MIDI file for any DAW, on one channel (1). In the plug-in, <b>\u21f1 MIDI</b> and <b>\u21f1 WAV</b> are dragged straight onto a track; drop a .mid on PULSAR and it becomes the pattern. PLAY and STOP are PULSAR's own (like XO): it plays with the DAW stopped, always at the DAW's tempo. <b>\u25cf WAV</b> records the audio. SAVE / OPEN keep your project.</p>`;
+<h3>EXPORT</h3><p><b>\u2913 MIDI</b> saves the pattern (or the whole song when SONG is on) as a MIDI file for any DAW, on one channel (1). In the plug-in, <b>\u21f1 MIDI</b> and <b>\u21f1 WAV</b> are dragged straight onto a track; drop a .mid on PULSAR and it becomes the pattern. PLAY and STOP are PULSAR's own (like XO): the DAW's play does not start it; it runs at the DAW's tempo, and when both play it lines up on the DAW's bar. <b>\u25cf WAV</b> records the audio. SAVE / OPEN keep your project.</p>`;
   const es = `<h2>PULSAR</h2><p>Una caja de ritmos para beats rotos: breakbeats que puedes picar y estirar, diecis\u00e9is pistas, y los trucos del big beat, el braindance y el drill'n'bass a un bot\u00f3n cada uno.</p>
 <h3>EMPIEZA EN 10 SEGUNDOS</h3><p>Elige un estilo (arriba) y presiona <b>\u26a1 GENERAR</b>. Otra vez para otra idea, <b>VARIAR</b> para tocarlo distinto, <b>ARMAR TEMA</b> para una canci\u00f3n completa (intro, groove, break, remates, drop).</p>
 <h3>LA CUADR\u00cdCULA</h3><p>Clic en un paso lo enciende o apaga. Arrastra arriba o abajo sobre un paso para su velocidad. <b>Clic derecho o mantener</b> un paso para editarlo: probabilidad, micro tiempo, tono, corte, redoble (\u00d72\u2026\u00d78) y condiciones (1:2, 1:4, FILL\u2026). El n\u00famero a la derecha de cada fila es su largo: arr\u00e1stralo. M = silencio, S = solo. Clic en el nombre de una pista para o\u00edrla y editar su sonido.</p>
 <h3>BREAKS</h3><p>Las pistas BREAK tocan un corte de un breakbeat por paso (32 cortes = 2 compases). AJUSTAR AL TEMPO mantiene su tono a cualquier tempo; RE-AFINAR los acelera como lo hac\u00eda un sampler (\u00a1jungle!). CARGA TU SAMPLE: cualquier loop se mide y se corta solo.</p>
 <h3>TOCAR EN VIVO</h3><p>Diecis\u00e9is trucos bajo la cuadr\u00edcula. <b>Toque</b> = encendido hasta que lo vuelvas a tocar; <b>mantener</b> = solo mientras lo sostienes. Teclas <kbd>1</kbd>\u2026<kbd>0</kbd> <kbd>Z</kbd>\u2026<kbd>N</kbd>. Con <b>\u25cf REC</b> encendido, los efectos, las perillas y los pads que tocas se escriben en el patr\u00f3n (una l\u00ednea roja marca los efectos grabados). MASTER \u203a BORRAR MOVIMIENTOS los quita.</p>
 <h3>TECLAS</h3><p><kbd>Espacio</kbd> tocar/parar \u00b7 <kbd>R</kbd> grabar \u00b7 <kbd>G</kbd> generar \u00b7 <kbd>V</kbd> variar \u00b7 las pistas suenan con clic en su nombre y con notas MIDI 36\u201351.</p>
-<h3>EXPORTAR</h3><p><b>\u2913 MIDI</b> guarda el patr\u00f3n (o la canci\u00f3n si SONG est\u00e1 encendido) como archivo MIDI para cualquier DAW, en un solo canal (1). En el plug-in, <b>\u21f1 MIDI</b> y <b>\u21f1 WAV</b> se arrastran directo a una pista; suelta un .mid sobre PULSAR y se vuelve el patr\u00f3n. TOCAR y DETENER son de PULSAR (como XO): suena con el DAW detenido, siempre al tempo del DAW. <b>\u25cf WAV</b> graba el audio. GUARDAR / ABRIR conservan tu proyecto.</p>`;
+<h3>EXPORTAR</h3><p><b>\u2913 MIDI</b> guarda el patr\u00f3n (o la canci\u00f3n si SONG est\u00e1 encendido) como archivo MIDI para cualquier DAW, en un solo canal (1). En el plug-in, <b>\u21f1 MIDI</b> y <b>\u21f1 WAV</b> se arrastran directo a una pista; suelta un .mid sobre PULSAR y se vuelve el patr\u00f3n. TOCAR y DETENER son de PULSAR (como XO): el play del DAW no lo arranca; va al tempo del DAW, y cuando ambos tocan se alinea al comp\u00e1s del DAW. <b>\u25cf WAV</b> graba el audio. GUARDAR / ABRIR conservan tu proyecto.</p>`;
   const man = `<p style="margin-top:14px">\ud83d\udcd8 <a style="color:var(--beam)" target="_blank" rel="noopener" href="https://github.com/drophlex/PULSAR/raw/main/manual/PULSAR-Manual-${LANG === 'es' ? 'ES' : 'EN'}.pdf">${LANG === 'es' ? 'Manual completo (PDF)' : 'Full manual (PDF)'}</a> \u00b7 <a style="color:var(--dim)" target="_blank" rel="noopener" href="https://github.com/drophlex/PULSAR">github.com/drophlex/PULSAR</a></p>`;
   $('#helpBox').innerHTML = (LANG === 'es' ? es : en) + man;
 }
@@ -1099,6 +1101,13 @@ async function boot() {
 }
 boot();
 if (window.__JUCE__ && window.__JUCE__.backend) setTimeout(() => $('#splash') && $('#splash').onclick(), 400);
+// the plug-in's window: the page keeps its 1440 x 900 layout and is scaled (and centred) to whatever size the window is
+if (window.__JUCE__ && window.__JUCE__.backend) {
+  document.documentElement.classList.add('plug');
+  const fit = () => { const a = $('#app'); if (!a) return; const k = Math.min(innerWidth / 1440, innerHeight / 900);
+    a.style.transform = `translate(${Math.max(0, (innerWidth - 1440 * k) / 2)}px, ${Math.max(0, (innerHeight - 900 * k) / 2)}px) scale(${k})`; };
+  addEventListener('resize', fit); fit(); setTimeout(fit, 300);
+}
 
 /* ---- families.js ---- */
 /* families.js \u2014 PULSAR 3 \u00b7 DFD LIVE LAB: six creative families, each with its own kit, generator, tempo, feel and six named

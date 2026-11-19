@@ -6,8 +6,8 @@ PulsarEditor::PulsarEditor(PulsarProcessor& p) : AudioProcessorEditor(p), proc(p
   web = std::make_unique<juce::WebBrowserComponent>(makeOptions());
   addAndMakeVisible(*web);
   setResizable(true, true);
-  setResizeLimits(960, 600, 2600, 1700);
-  setSize(1360, 820);
+  setResizeLimits(800, 500, 2880, 1800);
+  setSize(1440, 900);   // the page is laid out at 1440 x 900 and scaled to fit the window (any size)
   web->goToURL(juce::WebBrowserComponent::getResourceProviderRoot());
   startTimerHz(30);
 }
