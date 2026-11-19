@@ -302,14 +302,14 @@ function genSeed() { return (Date.now() ^ (Math.random() * 1e9)) >>> 0; }
 function doGenerate() {
   const st = STYLES[UI.style], seed = genSeed(), r = RNG(seed);
   applyKit(STYLE_KIT[UI.style] || UI.style);
-  setP(G.BPM, Math.round(st.bpm[0] + r() * (st.bpm[1] - st.bpm[0]))); setP(G.SWING, st.swing); setP(G.DRIVE, st.drive); setP(G.COMP, st.comp); setP(G.HUMAN, st.human);
+  setP(G.BPM, Math.round(st.bpm[0] + r() * (st.bpm[1] - st.bpm[0]))); setP(G.SWING, st.swing); setP(G.DRIVE, st.drive * DRIVE_SCALE); setP(G.COMP, st.comp); setP(G.HUMAN, st.human);
   UI.pats[UI.cur] = generate(UI.style, seed, UI.cplx); pushPat(UI.cur); renderRows(); renderPanel(); renderMacros(); toast(tr('Generated') + ': ' + UI.style + ' · ' + Math.round(PARAMS[G.BPM]) + ' BPM');
   if (!UI.playing) togglePlay();
 }
 function doVary() { UI.pats[UI.cur] = vary(UI.pats[UI.cur], genSeed(), 0.3 + UI.cplx * 0.5); pushPat(UI.cur); renderGrid(); toast(tr('Variation')); }
 function doBuild() {
   const st = STYLES[UI.style], seed = genSeed(), r = RNG(seed); applyKit(STYLE_KIT[UI.style] || UI.style);
-  setP(G.BPM, Math.round(st.bpm[0] + r() * (st.bpm[1] - st.bpm[0]))); setP(G.SWING, st.swing); setP(G.DRIVE, st.drive); setP(G.COMP, st.comp); setP(G.HUMAN, st.human);
+  setP(G.BPM, Math.round(st.bpm[0] + r() * (st.bpm[1] - st.bpm[0]))); setP(G.SWING, st.swing); setP(G.DRIVE, st.drive * DRIVE_SCALE); setP(G.COMP, st.comp); setP(G.HUMAN, st.human);
   const { pats, song } = buildSong(UI.style, seed, UI.cplx); UI.pats = pats; UI.song = song; UI.songOn = true; UI.cur = 0;
   for (let p = 0; p < NPAT; p++) pushPat(p); pushSong(); Bridge.post({ t: 'select', p: 0, now: true }); renderRows(); renderPanel(); renderMacros(); toast(tr('A whole track in the song') + ' · ' + UI.style);
   if (!UI.playing) togglePlay();
@@ -464,7 +464,7 @@ async function boot() {
     }
     wire();
     if (saved) { try { loadProject(saved); } catch (e) { applyKit('BIG BEAT'); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); } }
-    else { applyKit('BIG BEAT'); setP(G.BPM, 132); setP(G.DRIVE, .3); setP(G.COMP, .5); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); }
+    else { applyKit('BIG BEAT'); setP(G.BPM, 132); setP(G.DRIVE, 0); setP(G.COMP, .35); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); }
     renderAll(); $('#splash').remove(); if (window.Pro) Pro.boot(); if (window.Lab) Lab.boot(); if (window.Hyper) Hyper.boot(); if (typeof Coach !== 'undefined') Coach.show();
   };
 }

@@ -104,7 +104,7 @@ struct Engine {
   void init(float rate, float* mem) {
     sr = rate; pool = mem; for (int i = 0; i < P_COUNT; i++) params[i] = 0;
     params[G_BPM] = 120; params[G_SWING] = 0; params[G_MASTER] = 0.8f; params[G_REVSIZE] = 0.5f; params[G_REVTONE] = 0.6f;
-    params[G_DLYTIME] = 3; params[G_DLYFB] = 0.4f; params[G_DLYTONE] = 0.6f; params[G_COMP] = 0.3f; params[G_DRIVE] = 0.1f;
+    params[G_DLYTIME] = 3; params[G_DLYFB] = 0.4f; params[G_DLYTONE] = 0.6f; params[G_COMP] = 0.3f; params[G_DRIVE] = 0.f;
     params[G_DUCKSRC] = 0; params[G_DUCKTIME] = 0.35f; params[G_STUTLEN] = 1; params[G_HUMAN] = 0; params[G_WIDTH] = 1;
     params[XG_ID(XG_XYON)] = 0; params[XG_ID(XG_XYX)] = 0; params[XG_ID(XG_XYY)] = 0; params[XG_ID(XG_REPEAT)] = 0; params[XG_ID(XG_VELSENS)] = 1; params[XG_ID(XG_DV)] = 0; params[XG_ID(XG_DVTONE)] = 0.6f; params[XG_ID(XG_LIMIT)] = 1;
     held = 0; nev = 0;
@@ -468,7 +468,8 @@ struct Engine {
         }
         const float* p = params + TPID(t, 0);
         // per-channel: drive, filter, extra crush (ERA on synths), duck
-        if (p[T_DRIVE] > 0.001f) { float g = 1.f + p[T_DRIVE] * 12.f; s = tanhf_(s * g) / tanhf_(g) * (1.f + p[T_DRIVE] * 0.3f); }
+        // DRIVE (PULSAR 3.1): blended in, so a little is colour and not a wall of distortion (it was tanh x4 at 25 %)
+        if (p[T_DRIVE] > 0.001f) { const float d = p[T_DRIVE], g = 1.f + d * 6.f, w = minf(1.f, d * 1.6f); s = s + (tanhf_(s * g) / tanhf_(g) * 0.95f - s) * w; }
         float cut = p[T_CUT]; int ft = (int)p[T_FTYPE];
         if (cut < 0.995f || ft != 0 || p[T_RES] > 0.12f) { float fc = 30.f * powf_(600.f, ft == 1 ? 1.f - cut : cut); tf[t][0].set(fc, 0.6f + clampf(p[T_RES], 0.f, 1.f) * 12.f, sr);
           s = ft == 0 ? tf[t][0].lp(s) : ft == 1 ? tf[t][0].hp(s) : tf[t][0].bp(s) * 1.6f; }
@@ -517,15 +518,16 @@ struct Engine {
       // brings the level back; the safety limiter (-1 dBFS) catches only what is left of the peaks.
       mixL *= 0.5f; mixR *= 0.5f;
       // glue: compressor + drive + soft limit
-      float lvl = maxf(absf(mixL), absf(mixR)); if (lvl > mixPk) mixPk = lvl;     // (the mix's peak into the glue: the headroom meter) compEnv += (lvl - compEnv) * (lvl > compEnv ? 0.01f : 0.0002f);
+      float lvl = maxf(absf(mixL), absf(mixR)); if (lvl > mixPk) mixPk = lvl;     // the mix's peak into the glue: the headroom meter
+      compEnv += (lvl - compEnv) * (lvl > compEnv ? 0.004f : 0.00012f);                // (PULSAR 3.1: this line had been swallowed by the comment above, so COMP did nothing)
       float thr = 0.5f - params[G_COMP] * 0.35f; float g = compEnv > thr ? powf_(thr / compEnv, params[G_COMP] * 0.75f) : 1.f;
       mixL *= g; mixR *= g;
-      const float drv = clampf(params[G_DRIVE], 0.f, 1.f), dr = 1.f + drv * 2.5f, mv = params[G_MASTER] * 1.6f;
+      const float drv = clampf(params[G_DRIVE], 0.f, 1.f), dr = 1.f + drv * 1.6f, mv = params[G_MASTER] * 1.6f;
       // the drive blends in: at 0 the glue is clean (only a soft knee near full scale), turned up it saturates
       auto glue = [&](float x) {
         const float ax = absf(x), soft = ax < 0.6f ? x : (x > 0 ? 1.f : -1.f) * (0.6f + 0.4f * tanhf_((ax - 0.6f) / 0.4f));   // clean, a soft knee near full scale
         const float hot = tanhf_(x * dr) / tanhf_(dr) * 0.9f;                                                               // the drive's colour
-        return soft + (hot - soft) * minf(1.f, drv * 2.f); };
+        return soft + (hot - soft) * minf(0.6f, drv * 1.2f); };                             // at most 60 % of the drive's colour
       float oL = glue(mixL) * mv, oR = glue(mixR) * mv;
       limiter(oL, oR); outL[i] = oL; outR[i] = oR;
       if ((i & 3) == 0) { scope[scopeW] = (outL[i] + outR[i]) * 0.5f; scopeW = (scopeW + 1) & 511; }

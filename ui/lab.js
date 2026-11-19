@@ -38,7 +38,7 @@ function saveScenes() { LS.set('pulsar.scenes', JSON.stringify(Lab.scenes)); }
 function applyFamily(fam, kit, bpm) {
   const st = STYLES[fam];
   applyKit(kit || fam);
-  setP(G.BPM, bpm); setP(G.SWING, st.swing); setP(G.DRIVE, st.drive); setP(G.COMP, st.comp); setP(G.HUMAN, st.human);
+  setP(G.BPM, bpm); setP(G.SWING, st.swing); setP(G.DRIVE, st.drive * DRIVE_SCALE); setP(G.COMP, st.comp); setP(G.HUMAN, st.human);
   setP(XGID(XGL.DV), st.dv || 0); setP(XGID(XGL.LIMIT), 1);
   if (st.duck) for (const t of [3, 4, 5, 6, 10, 13, 15]) setTP(t, T.DUCK, st.duck);
   UI.style = fam; if ($('#style')) $('#style').value = fam;
@@ -145,7 +145,7 @@ function doFusion() { const f = Lab.fusion; startPreview(tr('FUSION MORPH') + ' 
   kit.forEach((s, t) => applySound(t, s));
   const sa = STYLES[f.a], sb = STYLES[f.b], mixv = (x, y) => x + (y - x) * f.rhythm;
   setP(G.BPM, Math.round(mixv((sa.bpm[0] + sa.bpm[1]) / 2, (sb.bpm[0] + sb.bpm[1]) / 2))); setP(G.SWING, mixv(sa.swing, sb.swing));
-  setP(G.DRIVE, mixv(sa.drive, sb.drive) * (.6 + .6 * f.energy)); setP(XGID(XGL.DV), mixv(sa.dv, sb.dv) * (.5 + f.energy)); setP(XGID(XGL.LIMIT), 1);
+  setP(G.DRIVE, mixv(sa.drive, sb.drive) * DRIVE_SCALE * (.6 + .6 * f.energy)); setP(XGID(XGL.DV), mixv(sa.dv, sb.dv) * (.5 + f.energy)); setP(XGID(XGL.LIMIT), 1);
   UI.pats[UI.cur] = out; pushAndPlay([UI.cur]); }
 
 // ------------------------------------------------------------------ scenes: the pattern goes to a free slot, the switch happens on the bar, the kit with it

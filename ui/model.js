@@ -99,6 +99,9 @@ KITS['VINTAGE BOX'] = [SND('KICK', 'smp', 'rhythm box/kick', 'KICK'), SND('SNARE
   SND('BREAK B', 'brk', 'breaks/brk crate 92', 'BREAK'), SND('RIM', 'smp', 'rhythm box/rim', 'PERC'), SND('BONGO', 'smp', 'rhythm box/bongo high', 'PERC'),
   SND('CYMBAL', 'smp', 'rhythm box/cymbal', 'CYMBAL'), SND('CONGA', 'smp', 'rhythm box/conga', 'PERC'), SND('GUIRO', 'smp', 'rhythm box/guiro', 'PERC'),
   SND('COWBELL', 'smp', 'rhythm box/cowbell', 'PERC'), SND('TAMB', 'smp', 'rhythm box/tambourine', 'HAT'), SND('LM KICK', 'smp', '80s studio/kick', 'KICK'), SND('LM CLAP', 'smp', '80s studio/clap', 'SNARE')];
+// PULSAR 3.1: the styles' master drive is scaled down: the sounds already carry their own character, and the drive on the
+// whole mix stacked distortion on top of it (2.5-6 % THD on the kick at the old 30 %)
+const DRIVE_SCALE = 0.3;
 const STYLES = {    // bpm range, swing, the master feel, and which generator writes each role
   'BIG BEAT':     { bpm: [126, 138], swing: .06, drive: .35, comp: .55, human: .15, desc: ['Breakbeats with a heavy kick, distorted and loud.', 'Breaks con bombo pesado, distorsionados y fuertes.'] },
   'BRAINDANCE':   { bpm: [118, 160], swing: .0, drive: .1, comp: .35, human: .05, desc: ['Twisted, playful, odd lengths, drills and glitches.', 'Retorcido, juguetón, largos impares, ráfagas y glitches.'] },
