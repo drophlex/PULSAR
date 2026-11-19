@@ -3,12 +3,12 @@ const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args
 for (const lang of ['en', 'es']) {
   const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
   const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
-  await p.addInitScript(l => { try { localStorage.clear(); localStorage.setItem('pulsar.lang', l); } catch (e) {} }, lang);
-  await p.goto('http://localhost:8790/index.html'); await p.waitForTimeout(1200);
+  await p.addInitScript(l => { try { localStorage.clear(); localStorage.setItem('pulsar.lang', l); localStorage.setItem('pulsar.coach', '1'); } catch (e) {} }, lang);
+  await p.goto('http://127.0.0.1:8811/index.html'); await p.waitForTimeout(1200);
   const D = `/home/claude/man/pulsar/shots/${lang}_`;
   await p.screenshot({ path: D + 'splash.png' });
   await p.click('#splash'); await p.waitForTimeout(9500);
-  await p.evaluate(() => { UI.style = 'BIG BEAT'; $('#style').value = 'BIG BEAT'; applyKit('BIG BEAT'); setP(G.BPM, 132); setP(G.DRIVE, .35); setP(G.COMP, .55); UI.pats[0] = generate('BIG BEAT', 11, .55); pushPat(0); UI.sel = 5; renderAll(); });
+  await p.evaluate(() => { UI.style = 'BIG BEAT'; $('#style').value = 'BIG BEAT'; applyKit('BIG BEAT'); setP(G.BPM, 132); setP(G.DRIVE, .1); setP(G.COMP, .45); UI.pats[0] = generate('BIG BEAT', 11, .55); pushPat(0); UI.sel = 5; renderAll(); });
   await p.click('#play'); await p.waitForTimeout(1700);
   await p.evaluate(() => setView('LIVE')); await p.waitForTimeout(300);
   await p.screenshot({ path: D + 'live.png' });
@@ -35,6 +35,15 @@ for (const lang of ['en', 'es']) {
   await p.screenshot({ path: D + 'dnb.png' });
   await p.evaluate(() => { UI.style = 'BRAINDANCE'; $('#style').value = 'BRAINDANCE'; doGenerate(); }); await p.waitForTimeout(1200);
   await p.screenshot({ path: D + 'braindance.png' });
+  // PULSAR 3: the LAB view and its sections (QUICK START, PATTERNS, MACROS, DIRTY VOLTAGE, ..., HYPERLINK)
+  await p.evaluate(() => setView('LAB')); await p.waitForTimeout(700);
+  await p.screenshot({ path: D + 'lab.png' });
+  const secs = await p.locator('#labV .lsec').count();
+  for (let i = 0; i < secs; i++) { const sec = p.locator('#labV .lsec').nth(i); const cls = (await sec.getAttribute('class')) || ''; const t = (await sec.locator('h3').first().textContent()) || 's' + i;
+    await sec.scrollIntoViewIfNeeded(); await p.waitForTimeout(150);
+    await sec.screenshot({ path: D + 'lab_' + i + '.png' }); console.log('lab section', i, t.trim(), cls); }
+  await p.evaluate(() => { localStorage.removeItem('pulsar.coach'); Coach.show(); }); await p.waitForTimeout(300);
+  await p.locator('#coach > div').screenshot({ path: D + 'coach.png' }); await p.evaluate(() => { const c = document.getElementById('coach'); if (c) c.remove(); });
   console.log(lang, JSON.stringify(errs));
   await ctx.close();
 }

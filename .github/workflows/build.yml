@@ -63,6 +63,12 @@ jobs:
             manual/PULSAR-Manual-EN.pdf
             manual/PULSAR-Manual-ES.pdf
             manual/PULSAR-Manual-EN-ES.pdf
+            manual/PULSAR-VST-Manual-EN.pdf
+            manual/PULSAR-VST-Manual-ES.pdf
+            manual/PULSAR-Web-Manual-EN.pdf
+            manual/PULSAR-Web-Manual-ES.pdf
+            manual/PULSAR-FM1-Manual-EN.pdf
+            manual/PULSAR-FM1-Manual-ES.pdf
           body: |
             PULSAR — a drum machine for broken beats · Dark Funk Durcal design · built at Polaris Sound Lab
             Install: paste in Terminal → curl -fsSL https://drophlex.github.io/PULSAR/install.sh | bash

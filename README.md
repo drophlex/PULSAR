@@ -17,6 +17,19 @@ Dark Funk Durcal design · built at <b>Polaris Sound Lab</b>, Mérida, Yucatán,
 
 PULSAR is a drum machine for big beat, braindance, drill'n'bass, jungle and every broken rhythm in between — as easy to play live as a hardware box, with far more sound and depth. Free and open source. The program is in English; the **EN · ES** button switches it to Spanish.
 
+
+## Manuals
+
+Illustrated, in English and Spanish, one for each edition:
+
+| Edition | English | Español | Both |
+|---|---|---|---|
+| 🎛 **Plug-in** (VST3 · AU · App, Ableton Live) | [EN](manual/PULSAR-VST-Manual-EN.pdf) | [ES](manual/PULSAR-VST-Manual-ES.pdf) | [EN + ES](manual/PULSAR-VST-Manual-EN-ES.pdf) |
+| 🌐 **Web** | [EN](manual/PULSAR-Web-Manual-EN.pdf) | [ES](manual/PULSAR-Web-Manual-ES.pdf) | [EN + ES](manual/PULSAR-Web-Manual-EN-ES.pdf) |
+| 🎹 **M-VAVE FM-1** (as a controller; the native firmware is in development) | [EN](manual/PULSAR-FM1-Manual-EN.pdf) | [ES](manual/PULSAR-FM1-Manual-ES.pdf) | [EN + ES](manual/PULSAR-FM1-Manual-EN-ES.pdf) |
+
+The complete manual (every edition together): [EN](manual/PULSAR-Manual-EN.pdf) · [ES](manual/PULSAR-Manual-ES.pdf) · [EN + ES](manual/PULSAR-Manual-EN-ES.pdf)
+
 ## ⚡ Quick start
 
 1. Open **[drophlex.github.io/PULSAR](https://drophlex.github.io/PULSAR/)** in Chrome and press **START**.
@@ -102,6 +115,6 @@ PULSAR es una caja de ritmos para big beat, braindance, drill'n'bass, jungle y t
 - **Aprender MIDI** con clic derecho.
 - **Deshacer y rehacer**, y **salida MIDI** del secuenciador. **FM-1:** en desarrollo.
 
-📘 **[Manual en español (PDF)](manual/PULSAR-Manual-ES.pdf)** · [English + Español](manual/PULSAR-Manual-EN-ES.pdf)
+📘 **Manuales en español:** [plug-in](manual/PULSAR-VST-Manual-ES.pdf) · [web](manual/PULSAR-Web-Manual-ES.pdf) · [FM-1](manual/PULSAR-FM1-Manual-ES.pdf) · [completo](manual/PULSAR-Manual-ES.pdf)
 
 Dark Funk Durcal design · construido en **Polaris Sound Lab**, Mérida, Yucatán, México. Si PULSAR mejora tu música: **[♥ dona con PayPal](https://www.paypal.com/donate/?business=drophlex%40gmail.com&no_recurring=0&item_name=PULSAR&currency_code=USD)**.

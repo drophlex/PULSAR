@@ -3,6 +3,8 @@
 import os, math, json
 HERE = os.path.dirname(os.path.abspath(__file__))
 L = 'en'
+ED = 'all'   # 'web', 'vst', 'fm1' or 'all'
+OUT = '/home/claude/man/pulsar'
 def T(en, es): return es if L == 'es' else en
 DON = 'https://www.paypal.com/donate/?business=drophlex%40gmail.com&amp;no_recurring=0&amp;item_name=PULSAR&amp;currency_code=USD'
 WEB = 'https://drophlex.github.io/PULSAR/'
@@ -36,17 +38,20 @@ def pulsar_svg(size=520, beams=True):
     return ''.join(out)
 
 PAGES = []
-def page(title, body, cls=''): PAGES.append((cls, body, title))
+ALL = ('web', 'vst', 'fm1', 'all')
+def page(title, body, cls='', ed=('web', 'vst', 'all')):
+    if ED in ed: PAGES.append((cls, body, title))
+def EDNAME(): return {'web': T('WEB EDITION', 'EDICIÓN WEB'), 'vst': T('PLUG-IN EDITION · VST3 · AU · APP', 'EDICIÓN PLUG-IN · VST3 · AU · APP'), 'fm1': T('M-VAVE FM-1 EDITION', 'EDICIÓN M-VAVE FM-1'), 'all': 'WEB · VST3 · AU · FM-1'}[ED]
 
 def build():
     global PAGES; PAGES = []
     # 1 cover
     page('', f'''<div class="cover"><div class="cart">{pulsar_svg()}</div>
 <div class="ctitle">PULSAR</div><div class="csub">{T('a drum machine for broken beats', 'una caja de ritmos para beats rotos')}</div>
-<div class="cmeta">{T('USER MANUAL', 'MANUAL DE USO')} · WEB · VST3 · AU · FM-1</div>
+<div class="cmeta">{T('USER MANUAL', 'MANUAL DE USO')} · {EDNAME()}</div>
 <div class="clang">{T('ENGLISH EDITION', 'EDICIÓN EN ESPAÑOL') if L != 'both' else 'ENGLISH · ESPAÑOL'}</div>
 <div class="cfoot">Dark Funk Durcal {T('design', 'diseño')} · {T('built at', 'construido en')} <b>POLARIS SOUND LAB</b> · Mérida, Yucatán, México<br>
-<a href="{IG}">Instagram @polaris.sound.lab</a> · <a href="{YT}">YouTube @PolarisSoundLab</a></div></div>''', 'coverp')
+<a href="{IG}">Instagram @polaris.sound.lab</a> · <a href="{YT}">YouTube @PolarisSoundLab</a></div></div>''', 'coverp', ALL)
     # 2 welcome
     toc = [T('Quick start', 'Inicio rápido'), T('The screen', 'La pantalla'), T('LIVE view', 'Vista LIVE'), T('The grid', 'La cuadrícula'), T('Editing a step', 'Editar un paso'),
            T('Sounds', 'Sonidos'), T('Breaks and sampler eras', 'Breaks y épocas de sampler'), T('Mixer', 'Mezcla'), T('Tracks and polymeter', 'Pistas y polirritmo'),
@@ -60,7 +65,7 @@ def build():
 <div class="card"><h3>FM-1</h3><p>{T('A firmware for the M-VAVE FM-1 (in development).', 'Un firmware para el M-VAVE FM-1 (en desarrollo).')}</p></div></div>
 {note(f"<b>English · Español.</b> {T('PULSAR opens in English. The', 'PULSAR abre en inglés. El botón')} <span class='k'>EN · ES</span> {T('button (top right) switches the whole program to Spanish and remembers it. This manual exists in both languages.', '(arriba a la derecha) cambia todo el programa a español y lo recuerda. Este manual existe en los dos idiomas.')}")}
 {note(f"<b>{T('Free and open source', 'Gratis y de código abierto')}</b> (AGPL-3.0). {T('If PULSAR makes your music better, you can support it:', 'Si PULSAR mejora tu música, puedes apoyarlo:')} <a class='paypal' href='{DON}'>♥ {T('Donate with PayPal', 'Donar con PayPal')}</a>")}
-<h3>{T('In this manual', 'En este manual')}</h3><div class="toc">{''.join(f'<div><span>{i + 3:02d}</span>{t}</div>' for i, t in enumerate(toc))}</div>''')
+<h3>{T('In this manual', 'En este manual')}</h3><div class="toc">{''.join(f'<div><span>{i + 3:02d}</span>{t}</div>' for i, t in enumerate(toc))}</div>''', '', ALL)
     # 3 quick start
     page(T('Quick start', 'Inicio rápido'), f'''{kick(T('Quick start', 'Inicio rápido'))}<h1>{T('Your first beat in <i>one minute</i>', 'Tu primer ritmo en <i>un minuto</i>')}</h1>
 <ol class="steps">
@@ -70,7 +75,7 @@ def build():
 <li><b>{T('Play it with your hands.', 'Tócalo con las manos.')}</b> {T('Move the faders, tap the pads, mute instruments, and press the tricks at the bottom (STUTTER, DRILL, FILTER…).', 'Mueve los faders, toca los pads, silencia instrumentos y presiona los trucos de abajo (STUTTER, DRILL, FILTER…).')}</li>
 <li><b>{T('Make it a song.', 'Hazlo canción.')}</b> {k('BUILD TRACK')} {T('writes intro, groove, variations, a break and fills; then', 'escribe intro, groove, variaciones, un break y remates; luego')} {k('⤓ MIDI')} {T('or', 'o')} {k('● WAV')} {T('takes it to your DAW.', 'lo lleva a tu DAW.')}</li></ol>
 {img('live', T('<b>fig. 1</b> — the LIVE view, ready to play.', '<b>fig. 1</b> — la vista LIVE, lista para tocar.'))}
-{tip(T('Everything has a reset: double-click a knob to send it back to its starting value.', 'Todo tiene regreso: doble clic en una perilla la devuelve a su valor inicial.'))}''')
+{tip(T('Everything has a reset: double-click a knob to send it back to its starting value.', 'Todo tiene regreso: doble clic en una perilla la devuelve a su valor inicial.'))}''', '', ALL)
     # 4 screen map
     pins = [('A', T('Logo, LIVE / GRID views, PLAY, REC (records movement)', 'Logo, vistas LIVE / GRID, PLAY, REC (graba movimientos)')),
             ('B', T('Tempo (drag up/down) and TAP', 'Tempo (arrastra arriba/abajo) y TAP')), ('C', T('16 patterns and SONG mode', '16 patrones y modo canción')),
@@ -182,7 +187,7 @@ def build():
     page(T('Perform', 'Tocar en vivo'), f'''{kick(T('Perform', 'Tocar en vivo'))}<h1>{T('Sixteen tricks, <i>one button each</i>', 'Dieciséis trucos, <i>un botón cada uno</i>')}</h1>
 {img('perf', '')}
 <p>{T('<b>Tap</b> a trick: it stays on until you tap it again. <b>Hold</b> it: it works only while you hold. Several can be on at once (DRILL + FILTER is a classic). They also live on the keyboard.', '<b>Toca</b> un truco: queda encendido hasta que lo vuelvas a tocar. <b>Mantenlo</b>: funciona solo mientras lo sostienes. Puedes encender varios a la vez (DRILL + FILTER es un clásico). También están en el teclado.')}</p>
-{table([T('Key', 'Tecla'), T('Trick', 'Truco'), T('What you hear', 'Qué escuchas')], [[f'<span class="k">{keys[i]}</span>', f'<b>{n}</b>', d] for i, (n, d) in enumerate(fx)], 'tight small')}''')
+{table([T('Key', 'Tecla'), T('Trick', 'Truco'), T('What you hear', 'Qué escuchas')], [[f'<span class="k">{keys[i]}</span>', f'<b>{n}</b>', d] for i, (n, d) in enumerate(fx)], 'tight small')}''', '', ALL)
     # 12b PULSAR 2: play it live
     page(T('Play it live', 'Tocar en vivo 2'), f'''{kick('PULSAR 2')}<h1>{T('Hands on, <i>no menus</i>', 'Las manos, <i>sin menús</i>')}</h1>
 {img('perf2', T('<b>fig.</b> — the XY pad and NOTE REPEAT, next to the tricks.', '<b>fig.</b> — el pad XY y REPETIR NOTA, junto a los trucos.'))}
@@ -232,6 +237,56 @@ def build():
 <p>{T('COMPLEX (next to the style) goes from a solid groove to a busy, glitchy one: more ghost notes, rolls, chances and micro timing.', 'COMPLEJO (junto al estilo) va de un groove sólido a uno lleno y glitchy: más notas fantasma, redobles, probabilidades y micro tiempo.')}</p>
 {table([T('Style', 'Estilo'), 'BPM', T('Character', 'Carácter')], [[f'<b>{a}</b>', b, c] for a, b, c in sty], 'tight small')}''')
     # 15 SONG
+    page(T('LAB: families and patterns', 'LAB: familias y patrones'), f'''{kick('PULSAR 3 · LAB')}<h1>{T('Six families, <i>36 starting points</i>', 'Seis familias, <i>36 puntos de partida</i>')}</h1>
+<p class="lead">{T('LAB is the third view (LIVE · GRID · LAB). It is the fastest way to a finished groove: pick a family, press ⚡ GENERATE, or audition one of the 36 patterns and keep it.', 'LAB es la tercera vista (LIVE · GRID · LAB). Es el camino más rápido a un groove terminado: elige una familia, pulsa ⚡ GENERAR, o escucha uno de los 36 patrones y quédate con él.')}</p>
+{img('lab', T('The LAB view: quick start, the 36 patterns and the macros.', 'La vista LAB: inicio rápido, los 36 patrones y las macros.'))}
+{table([T('Family', 'Familia'), T('The sound', 'El sonido')], [
+ ['FRACTAL RHYTHM', T('asymmetric grooves, odd lengths, micro offsets', 'grooves asimétricos, largos impares, micro desplazamientos')],
+ ['HYPERBREAK', T('breaks chopped at speed, pitched ratchets, a sub line', 'breaks picados a toda velocidad, ratchets afinados, una línea de sub')],
+ ['CHEMICAL PRESSURE', T('heavy layered breaks, big accents, sweeps', 'breaks pesados en capas, acentos grandes, barridos')],
+ ['RIOT MACHINE', T('aggressive breaks, industrial kicks, stabs', 'breaks agresivos, bombos industriales, stabs')],
+ ['ROBOT DISCO', T('four on the floor, elastic bass, swung hats, pump', 'cuatro por cuatro, bajo elástico, hats con swing, bombeo')],
+ ['DIRTY VOLTAGE', T('dark electro house: dense kicks, abrasive bass (dirty on purpose)', 'electro house oscuro: bombos densos, bajo abrasivo (sucio a propósito)')]], 'tight')}
+{tip(T('A pattern from the bank is a PREVIEW: it plays at once; COMMIT keeps it, CANCEL brings back exactly what you had. Each one loads A, a variation B and a FILL.', 'Un patrón del banco es una PRUEBA: suena al instante; CONFIRMAR lo deja, CANCELAR regresa exactamente lo que tenías. Cada uno carga A, una variación B y un FILL.'))}''', '', ALL)
+    page(T('Macros, DIRTY VOLTAGE, scenes', 'Macros, VOLTAJE SUCIO, escenas'), f'''{kick('PULSAR 3 · LAB')}<h1>{T('Big moves, <i>always in time</i>', 'Movimientos grandes, <i>siempre a tiempo</i>')}</h1>
+{img('lab_2', T('The macros: DRIVE, PUMP, GLITCH, FILTER, TENSION, DENSITY, HUMAN, DROP and ↺ RECOVER.', 'Las macros: SATURACIÓN, BOMBEO, GLITCH, FILTRO, TENSIÓN, DENSIDAD, HUMANO, DROP y ↺ RECUPERAR.'))}
+<p>{T('Each macro is a musical result built on a snapshot of your groove. Turn them freely: <b>↺ RECOVER</b> always returns to the snapshot. DROP mutes everything but the kick and bass until you let go.', 'Cada macro es un resultado musical hecho sobre una foto de tu groove. Gíralas libremente: <b>↺ RECUPERAR</b> siempre regresa a la foto. DROP silencia todo menos bombo y bajo hasta que sueltas.')}</p>
+{img('lab_3', T('DIRTY VOLTAGE: drive, tone and the safety limiter, with its meter.', 'VOLTAJE SUCIO: saturación, tono y el limitador de seguridad, con su medidor.'))}
+<p>{T('DIRTY VOLTAGE is a saturation stage for the whole mix, built to stay tight: the lows under 140 Hz stay mono and almost clean, the rest is saturated at twice the sample rate, and its level is matched so more drive is not simply louder. At 0 it is bypassed. Since 3.3 the limiter after it looks ahead and never clips the waveform.', 'VOLTAJE SUCIO es una etapa de saturación para toda la mezcla, hecha para sonar firme: los graves bajo 140 Hz quedan mono y casi limpios, el resto se satura al doble de la frecuencia de muestreo y su nivel se iguala para que más saturación no sea sólo más volumen. En 0 se desactiva. Desde 3.3 el limitador posterior se anticipa y nunca recorta la onda.')}</p>
+{img('lab_7', T('SCENES: 16 slots, launched on the next bar.', 'ESCENAS: 16 ranuras, lanzadas en el siguiente compás.'))}
+<p>{T('<b>RAVE BUILDER</b> writes a build-up into a free slot; <b>DNA MORPH</b> crosses two patterns; <b>FUSION MORPH</b> blends two families. Scenes change on the next bar, so a live set never goes off the grid.', '<b>RAVE BUILDER</b> escribe una subida en una ranura libre; <b>DNA MORPH</b> cruza dos patrones; <b>FUSION MORPH</b> mezcla dos familias. Las escenas cambian en el siguiente compás, así un set en vivo nunca se sale de tiempo.')}</p>''', '', ALL)
+    page(T('HYPERLINK: the TR-8', 'HYPERLINK: la TR-8'), f'''{kick('PULSAR 3 · HYPERLINK')}<h1>{T('Your TR-8 <i>and</i> PULSAR, as one', 'Tu TR-8 <i>y</i> PULSAR, como uno')}</h1>
+<p class="lead">{T('HYPERLINK plays an original Roland AIRA TR-8 from PULSAR\'s tracks, over MIDI, beside PULSAR\'s own sound: the TR-8 for the classic voices, PULSAR for the breaks and the glitches.', 'HYPERLINK toca una Roland AIRA TR-8 original desde las pistas de PULSAR, por MIDI, junto al sonido propio de PULSAR: la TR-8 para las voces clásicas, PULSAR para los breaks y los glitches.')}</p>
+{img('lab_9', T('HYPERLINK: connection, the KIT MATRIX (where each track plays), SCATTER DIRECTOR and GHOST GROOVE.', 'HYPERLINK: conexión, la KIT MATRIX (dónde suena cada pista), SCATTER DIRECTOR y GHOST GROOVE.'), '78%')}
+{table([T('Part', 'Parte'), T('What it does', 'Qué hace')], [
+ ['KIT MATRIX', T('per track: PULSAR, the TR-8, BOTH, ALTERNATING or MUTE, and which TR-8 voice', 'por pista: PULSAR, la TR-8, AMBAS, ALTERNANDO o MUDO, y qué voz de la TR-8')],
+ ['SCATTER DIRECTOR', T('sends the TR-8\'s scatter changes on the bar', 'manda los cambios de scatter de la TR-8 en el compás')],
+ ['GHOST GROOVE', T('listens to what you play on the TR-8 and keeps PULSAR in its feel', 'escucha lo que tocas en la TR-8 y mantiene a PULSAR en su sensación')]], 'tight')}
+{note(T('Plug-in: make a MIDI track with MIDI From: PULSAR and MIDI To: the TR-8 (channel 10). Web: pick the TR-8 as MIDI OUT in Chrome or Edge.', 'Plug-in: crea una pista MIDI con MIDI From: PULSAR y MIDI To: la TR-8 (canal 10). Web: elige la TR-8 como MIDI OUT en Chrome o Edge.'))}''', '', ('web', 'vst', 'all'))
+    page(T('Controllers: FM-1 and KeyLab', 'Controladores: FM-1 y KeyLab'), f'''{kick(T('Controllers', 'Controladores'))}<h1>{T('Play it with <i>your hands</i>', 'Tócala con <i>tus manos</i>')}</h1>
+{img('lab_8', T('LAB › MIDI: IMPORT MIDI and the controller profiles.', 'LAB › MIDI: IMPORTAR MIDI y los perfiles de controlador.'))}
+<h2>M-VAVE FM-1</h2>
+{table([T('On the FM-1', 'En el FM-1'), T('In PULSAR', 'En PULSAR')], [
+ [T('USB, channel 16', 'USB, canal 16'), T('choose CONTROLLER › FM-1 in LAB › MIDI', 'elige CONTROLADOR › FM-1 en LAB › MIDI')],
+ [T('Keys / pads: notes 36–51', 'Teclas / pads: notas 36–51'), T('the 16 pads (record them with REC)', 'los 16 pads (grábalos con REC)')],
+ [T('CC 20 · 21 · 22 · 23', 'CC 20 · 21 · 22 · 23'), T('cutoff · decay · drive · delay send of the selected track', 'corte · caída · saturación · envío de delay de la pista elegida')],
+ [T('CC 24 (web)', 'CC 24 (web)'), T('picks the track', 'elige la pista')]], 'tight')}
+<h2>Arturia KeyLab (Essential · MkII · Mk3)</h2>
+<p>{T('Choose KEYLAB and your model (Essential is the default). In Arturia MIDI Control Center set the 8 encoders to CC 21–28 and the 8 faders to CC 41–48. Encoders: drive, comp, swing, human, the XY filter and space, reverb size, delay feedback; faders: the levels of tracks 1–8. The pads play notes 36–51.', 'Elige KEYLAB y tu modelo (Essential es el predeterminado). En Arturia MIDI Control Center pon los 8 encoders en CC 21–28 y los 8 faders en CC 41–48. Encoders: saturación, compresión, swing, humano, el filtro y el espacio del XY, tamaño de reverb, repeticiones del delay; faders: los niveles de las pistas 1–8. Los pads tocan las notas 36–51.')}</p>
+{tip(T('Everything else can be MIDI-learned: right-click any knob › MIDI LEARN, then move a control.', 'Todo lo demás se puede aprender por MIDI: clic derecho en cualquier perilla › APRENDER MIDI, luego mueve un control.'))}''', '', ALL)
+    page(T('PULSAR on the FM-1', 'PULSAR en el FM-1'), f'''{kick('M-VAVE FM-1')}<h1>{T('The FM-1 <i>drives</i> PULSAR', 'El FM-1 <i>maneja</i> a PULSAR')}</h1>
+<p class="lead">{T('Today the FM-1 plays PULSAR as a controller, over USB, in the web edition (Chrome or Edge) and in the plug-in. A native PULSAR firmware for the FM-1 itself is in development: it is not released yet, and nothing in this manual asks you to install firmware.', 'Hoy el FM-1 toca PULSAR como controlador, por USB, en la edición web (Chrome o Edge) y en el plug-in. Un firmware nativo de PULSAR para el propio FM-1 está en desarrollo: todavía no se publica, y nada en este manual te pide instalar firmware.')}</p>
+<h2>{T('Set it up', 'Prepáralo')}</h2>
+<ol><li>{T('Connect the FM-1 by USB (a data cable: many cables only charge).', 'Conecta el FM-1 por USB (un cable de datos: muchos sólo cargan).')}</li>
+<li>{T('Web: open drophlex.github.io/PULSAR in Chrome or Edge and allow MIDI. Plug-in: in Live, the FM-1 as the MIDI input of PULSAR\'s track (MIDI From: FM-1, Monitor In).', 'Web: abre drophlex.github.io/PULSAR en Chrome o Edge y permite MIDI. Plug-in: en Live, el FM-1 como entrada MIDI de la pista de PULSAR (MIDI From: FM-1, Monitor In).')}</li>
+<li>{T('Set the FM-1 to send on channel 16, then LAB › MIDI › CONTROLLER › <b>FM-1</b>.', 'Pon el FM-1 a enviar por el canal 16 y luego LAB › MIDI › CONTROLADOR › <b>FM-1</b>.')}</li></ol>
+<h2>{T('What each control does', 'Qué hace cada control')}</h2>
+{table([T('FM-1', 'FM-1'), 'PULSAR'], [
+ [T('Keys (notes 36–51)', 'Teclas (notas 36–51)'), T('the 16 pads: kick, snare, hats… press REC to write them into the pattern', 'los 16 pads: bombo, tarola, hats… pulsa REC para escribirlos en el patrón')],
+ [T('Knob CC 20', 'Perilla CC 20'), T('cutoff of the selected track', 'corte de la pista elegida')], [T('Knob CC 21', 'Perilla CC 21'), T('decay', 'caída')],
+ [T('Knob CC 22', 'Perilla CC 22'), T('drive', 'saturación')], [T('Knob CC 23', 'Perilla CC 23'), T('delay send', 'envío de delay')],
+ [T('CC 24 (web)', 'CC 24 (web)'), T('which track the knobs move', 'qué pista mueven las perillas')]], 'tight')}
+{tip(T('Pair it with LAB: pick a family and ⚡ GENERATE on the screen, then play fills on the FM-1\'s keys and ride the filter on its knobs.', 'Combínalo con LAB: elige una familia y ⚡ GENERAR en la pantalla, luego toca fills en las teclas del FM-1 y mueve el filtro con sus perillas.'))}''', '', ('fm1', 'all'))
     page(T('Patterns and song', 'Patrones y canción'), f'''{kick(T('Patterns and song', 'Patrones y canción'))}<h1>{T('From a loop <i>to a whole track</i>', 'De un loop <i>a un tema completo</i>')}</h1>
 <div class="two"><div>{img('panel_song', '')}</div><div>
 <p><b>{T('16 patterns', '16 patrones')}</b> — {T('the numbers at the top. While playing, a click queues the next one: it changes at the end of the current pattern (it blinks while waiting). Shift-click copies the current pattern onto another.', 'los números de arriba. Mientras suena, un clic pone el siguiente en espera: cambia al terminar el patrón actual (parpadea mientras espera). Shift+clic copia el patrón actual a otro.')}</p>
@@ -260,19 +315,20 @@ def build():
 <p class="small">{T('Without Terminal: download PULSAR-mac.zip from the latest release on GitHub, unzip it and open “Install PULSAR.command” (right-click → Open). Run the line again to update.', 'Sin Terminal: descarga PULSAR-mac.zip de la última versión en GitHub, descomprímelo y abre “Install PULSAR.command” (clic derecho → Abrir). Vuelve a ejecutar la línea para actualizar.')}</p>
 <h2>{T('What changes in a DAW', 'Qué cambia en un DAW')}</h2>
 {table([T('In Live', 'En Live'), T('PULSAR does', 'PULSAR hace')], [
- [T('Press play', 'Dale play'), T('PULSAR plays with Live’s tempo and lands on Live’s bar; loops and jumps in the arrangement too. With Live stopped, its own PLAY works.', 'PULSAR toca con el tempo de Live y cae en su compás; también en bucles y saltos del arreglo. Con Live detenido funciona su propio PLAY.')],
+ [T('PLAY / STOP (like XO)', 'TOCAR / DETENER (como XO)'), T('PULSAR’s own PLAY and STOP are independent of Live: it plays with Live stopped, always at Live’s tempo. Live’s play starts it on Live’s bar (loops and jumps too); Live’s stop stops it only if Live started it.', 'TOCAR y DETENER de PULSAR son independientes de Live: suena con Live detenido, siempre al tempo de Live. El play de Live lo arranca en su compás (también bucles y saltos); el stop de Live lo detiene sólo si Live lo arrancó.')],
  [T('MIDI notes C1–D#2 (36–51)', 'Notas MIDI C1–D#2 (36–51)'), T('play the 16 pads, from a clip or a pad controller; with REC on they go into the pattern', 'tocan los 16 pads, desde un clip o un controlador de pads; con REC encendido entran al patrón')],
  [T('Multi-out', 'Multi-salida'), T('MIX › OUTPUT 1…8 sends a track to its own output. In Live: on a new audio track, Audio From → PULSAR → Bus 1…8 (Monitor In). Mix each drum on its own channel with Live’s effects.', 'MEZCLA › SALIDA 1…8 manda una pista a su propia salida. En Live: en una pista de audio nueva, Audio From → PULSAR → Bus 1…8 (Monitor In). Mezcla cada tambor en su canal con los efectos de Live.')],
- [T('⇱ MIDI (drag)', '⇱ MIDI (arrastrar)'), T('drag the button onto a MIDI track: the pattern (or the song) becomes a clip that plays PULSAR (notes 36–51); TRACK › DRAG MIDI drags one track', 'arrastra el botón a una pista MIDI: el patrón (o la canción) se vuelve un clip que toca PULSAR (notas 36–51); PISTA › ARRASTRAR MIDI arrastra una sola pista')],
+ [T('⇱ MIDI (drag)', '⇱ MIDI (arrastrar)'), T('drag the button onto a MIDI track: the pattern (or the song) becomes a clip on one channel (1) that plays PULSAR (notes 36–51); TRACK › DRAG MIDI drags one track', 'arrastra el botón a una pista MIDI: el patrón (o la canción) se vuelve un clip que toca PULSAR (notas 36–51); PISTA › ARRASTRAR MIDI arrastra una sola pista')],
  [T('MIDI learn', 'Aprender MIDI'), T('right click a knob, a trick or the XY pad › MIDI LEARN, then move a knob on your controller; saved with the set', 'clic derecho en una perilla, un truco o el pad XY › APRENDER MIDI, luego mueve una perilla de tu controlador; se guarda con el set')],
  [T('Automation', 'Automatización'), T('238 parameters: master, reverb, delay, the 16 perform FX as on/off switches, the pattern, and level · pan · tune · decay · cutoff · reso · drive · sends of each track. Arm automation and play the FX: the moves are recorded in the arrangement. 2.0 adds the XY pad, NOTE REPEAT and PUNCH · GLUE · LOW · HIGH of each track.', '238 parámetros: master, reverb, delay, los 16 efectos de performance como interruptores, el patrón, y nivel · paneo · afinación · decay · corte · resonancia · drive · envíos de cada pista. Arma la automatización y toca los efectos: los movimientos quedan en el arreglo. 2.0 suma el pad XY, REPETIR NOTA y GOLPE · COMPRESIÓN · GRAVES · AGUDOS de cada pista.')],
  [T('Save the set', 'Guarda el set'), T('patterns, song, kit and your own samples are saved inside it', 'patrones, canción, kit y tus propios samples se guardan dentro')],
  ['⤓ MIDI · SAVE', T('open a save window (to ~/Music/PULSAR); drag the .mid onto a track', 'abren una ventana para guardar (en ~/Música/PULSAR); arrastra el .mid a una pista')],
- [T('Audio', 'Audio'), T('record PULSAR’s track in Live (the WAV button is web-only)', 'graba la pista de PULSAR en Live (el botón WAV es sólo de la web)')]], 'tight')}
-''')
+ ['⇱ WAV', T('drag it onto an audio track: the pattern (or the song) as a 24-bit loop, rendered twice through so the tails loop', 'arrástralo a una pista de audio: el patrón (o la canción) como loop de 24 bits, hecho dos veces para que las colas hagan loop')],
+ [T('Drop a .mid', 'Suelta un .mid'), T('drag a MIDI clip from Live or the Finder onto PULSAR: it becomes the pattern (GM drums or notes 36–51)', 'arrastra un clip MIDI desde Live o el Finder sobre PULSAR: se vuelve el patrón (batería GM o notas 36–51)')]], 'tight')}
+''', '', ('vst', 'all'))
     page(T('Recipes', 'Recetas'), f'''{kick(T('Recipes', 'Recetas'))}<h1>{T('Four starting <i>points</i>', 'Cuatro puntos <i>de partida</i>')}</h1>
 <div class="grid2">{''.join(f'<div class="card recipe"><h3>{n}</h3><ol>{"".join(f"<li>{x}</li>" for x in st)}</ol></div>' for n, st in rec)}</div>
-{img('dnb', T('<b>fig. 4</b> — a DRILL N BASS pattern: chopped breaks, rolls on the high snare, a deep sub.', '<b>fig. 4</b> — un patrón DRILL N BASS: breaks picados, redobles en la caja aguda, un sub grave.'))}''')
+{img('dnb', T('<b>fig. 4</b> — a DRILL N BASS pattern: chopped breaks, rolls on the high snare, a deep sub.', '<b>fig. 4</b> — un patrón DRILL N BASS: breaks picados, redobles en la caja aguda, un sub grave.'))}''', '', ALL)
     # 18 credits + back
     page(T('Sounds and credits', 'Sonidos y créditos'), f'''{kick(T('Sounds and credits', 'Sonidos y créditos'))}<h1>{T('Made from <i>the best free drums</i>', 'Hecho con <i>las mejores baterías libres</i>')}</h1>
 <p>{T('Every sound in PULSAR may be shared freely, so PULSAR can be free and open source. The commercial libraries cannot be packed inside another program; you can still load your own with LOAD YOUR SAMPLE.', 'Cada sonido de PULSAR se puede compartir libremente, por eso PULSAR puede ser gratis y de código abierto. Las librerías comerciales no se pueden empaquetar dentro de otro programa; aun así puedes cargar las tuyas con CARGA TU SAMPLE.')}</p>
@@ -281,7 +337,7 @@ def build():
 <p>Dark Funk Durcal {T('design', 'diseño')} · {T('built at', 'construido en')} <b>POLARIS SOUND LAB</b> · Mérida, Yucatán, México<br>
 <a href="{IG}">Instagram @polaris.sound.lab</a> · <a href="{YT}">YouTube @PolarisSoundLab</a><br><a href="{WEB}">drophlex.github.io/PULSAR</a> · <a href="{REPO}">github.com/drophlex/PULSAR</a></p>
 <a class="paypal big" href="{DON}">♥ {T('Support PULSAR · Donate with PayPal', 'Apoya PULSAR · Dona con PayPal')}</a>
-<p class="small">{T('Free and open source software (AGPL-3.0), with no warranty. Names of instruments, machines and artists belong to their owners; PULSAR is not affiliated with them.', 'Software libre y de código abierto (AGPL-3.0), sin garantía. Los nombres de instrumentos, máquinas y artistas pertenecen a sus dueños; PULSAR no está afiliado a ellos.')}</p></div>''')
+<p class="small">{T('Free and open source software (AGPL-3.0), with no warranty. Names of instruments, machines and artists belong to their owners; PULSAR is not affiliated with them.', 'Software libre y de código abierto (AGPL-3.0), sin garantía. Los nombres de instrumentos, máquinas y artistas pertenecen a sus dueños; PULSAR no está afiliado a ellos.')}</p></div>''', '', ALL)
 
 CSS = open(os.path.join(HERE, 'pulsar.css')).read()
 def render(langs, out):
@@ -295,7 +351,9 @@ def render(langs, out):
             allp.append(f'<section class="page {cls}">{body}{foot}</section>')
         npl += len(PAGES)
     open(out, 'w').write(f'<!DOCTYPE html><html><head><meta charset="utf-8"><title>PULSAR · Manual</title><style>{CSS}</style></head><body>{"".join(allp)}</body></html>')
-render(['en'], os.path.join(HERE, 'manual_en.html'))
-render(['es'], os.path.join(HERE, 'manual_es.html'))
-render(['en', 'es'], os.path.join(HERE, 'manual_en_es.html'))
-print('ok', len(PAGES), 'pages per language')
+for ED in ('all', 'web', 'vst', 'fm1'):
+    tag = '' if ED == 'all' else ED + '_'
+    render(['en'], os.path.join(OUT, tag + 'manual_en.html'))
+    render(['es'], os.path.join(OUT, tag + 'manual_es.html'))
+    render(['en', 'es'], os.path.join(OUT, tag + 'manual_en_es.html'))
+    print('ok', ED, len(PAGES), 'pages per language')
