@@ -465,7 +465,7 @@ async function boot() {
     wire();
     if (saved) { try { loadProject(saved); } catch (e) { applyKit('BIG BEAT'); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); } }
     else { applyKit('BIG BEAT'); setP(G.BPM, 132); setP(G.DRIVE, .3); setP(G.COMP, .5); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); }
-    renderAll(); $('#splash').remove(); if (window.Pro) Pro.boot(); if (window.Lab) Lab.boot(); if (window.Hyper) Hyper.boot();
+    renderAll(); $('#splash').remove(); if (window.Pro) Pro.boot(); if (window.Lab) Lab.boot(); if (window.Hyper) Hyper.boot(); if (typeof Coach !== 'undefined') Coach.show();
   };
 }
 boot();

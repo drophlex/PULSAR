@@ -20,7 +20,7 @@ Object.assign(ES, {
 const Lab = {
   fam: 'DIRTY VOLTAGE', kit: 'DIRTY VOLTAGE', density: .5, preview: null, mac: null, macVal: {}, bars: 4, build: null,
   morph: { a: 0, b: 1, amt: .5, seed: 1, lockK: true, lockS: false }, fusion: { a: 'ROBOT DISCO', b: 'DIRTY VOLTAGE', rhythm: .5, timbre: .5, energy: .6, cplx: .5, seed: 7, lockK: true },
-  scenes: null, sceneSlot: 10, pendingScene: null, profile: LS.get('pulsar.ctl') || 'NONE', keylab: LS.get('pulsar.keylab') || 'MK3',
+  scenes: null, sceneSlot: 10, pendingScene: null, profile: LS.get('pulsar.ctl') || 'NONE', keylab: LS.get('pulsar.keylab') || 'ESSENTIAL',
 };
 PARAMS[XGID(6)] = .6; PARAMS[XGID(7)] = 1;   // PULSAR 3 defaults: DIRTY VOLTAGE tone, the safety limiter on (older projects keep what they saved)
 const PREVIEW_SLOT = 15, MORPH_SLOT = 14, BUILD_SLOT = 13;
