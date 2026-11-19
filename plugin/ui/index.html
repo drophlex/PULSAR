@@ -630,7 +630,7 @@ const tr = s => LANG === 'es' && ES[s] ? ES[s] : s;
 function applyLang() { $$('[data-i]').forEach(e => { e.textContent = tr(e.dataset.i); }); $('#langBtn').innerHTML = LANG === 'es' ? 'EN \u00b7 <b>ES</b>' : '<b>EN</b> \u00b7 ES'; }
 
 // ------------------------------------------------------------------ state
-const UI = { view: LS.get('pulsar.view') || 'LIVE', cur: 0, sel: 0, selStep: -1, page: 0, tab: 'SOUND', playing: false, rec: false, fx: 0, fillHold: false, songOn: false, song: [[0, 1]],
+const UI = { view: LS.get('pulsar.view') || 'LAB', cur: 0, sel: 0, selStep: -1, page: 0, tab: 'SOUND', playing: false, rec: false, fx: 0, fillHold: false, songOn: false, song: [[0, 1]],
   style: 'BIG BEAT', cplx: 0.5, seed: 1, pats: [], kit: [], tele: null, clip: null, dirty: -1, sounds: [], soundIdx: {}, userSamples: [], wavRec: false };
 const PARAMS = new Float32Array(P_COUNT);
 PARAMS[XGID(XG.VELSENS)] = 1;

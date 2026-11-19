@@ -90,7 +90,7 @@ struct Engine {
   // ui / telemetry
   float tele[64]; int dirty = 0; int lastTrig[NT];
   // DIRTY VOLTAGE (PULSAR 3) and the safety limiter
-  float dvHp[2] = {0, 0}, dvLp[2] = {0, 0}, dvLp2[2] = {0, 0}, dvHq[2] = {0, 0}, dvHq2[2] = {0, 0}, dvHo[2] = {0, 0}, dvHo2[2] = {0, 0}, dvPrev[2] = {0, 0}, dvTone[2] = {0, 0}, dvIn = 1e-6f, dvOut = 1e-6f, dvMk = 1, limG = 1, rmsAcc = 0, rmsDb = -90, limMin = 1, dvToneK = -1, dvSr = 0, dvAH = 0, dvAL = 0, dvTC = 0; int rmsN = 0;
+  float dvHp[2] = {0, 0}, dvLp[2] = {0, 0}, dvLp2[2] = {0, 0}, dvHq[2] = {0, 0}, dvHq2[2] = {0, 0}, dvHo[2] = {0, 0}, dvHo2[2] = {0, 0}, dvPrev[2] = {0, 0}, dvTone[2] = {0, 0}, dvIn = 1e-6f, dvOut = 1e-6f, dvMk = 1, limG = 1, rmsAcc = 0, rmsDb = -90, limMin = 1, dvToneK = -1, mixPk = 0, dvSr = 0, dvAH = 0, dvAL = 0, dvTC = 0; int rmsN = 0;
   float scope[512]; int scopeW = 0;
 
   void init(float rate, float* mem) {
@@ -497,12 +497,21 @@ struct Engine {
       masterFX(mixL, mixR);
       xyFX(mixL, mixR, xyOn);
       dirtyVoltage(mixL, mixR);
+      // PULSAR 3 gain staging: 16 tracks summed peak well over full scale, which drove the glue's tanh into constant
+      // distortion. The mix gets 6 dB of headroom before the glue, the drive curve is gentler, and a make-up after it
+      // brings the level back; the safety limiter (-1 dBFS) catches only what is left of the peaks.
+      mixL *= 0.5f; mixR *= 0.5f;
       // glue: compressor + drive + soft limit
-      float lvl = maxf(absf(mixL), absf(mixR)); compEnv += (lvl - compEnv) * (lvl > compEnv ? 0.01f : 0.0002f);
+      float lvl = maxf(absf(mixL), absf(mixR)); if (lvl > mixPk) mixPk = lvl;     // (the mix's peak into the glue: the headroom meter) compEnv += (lvl - compEnv) * (lvl > compEnv ? 0.01f : 0.0002f);
       float thr = 0.5f - params[G_COMP] * 0.35f; float g = compEnv > thr ? powf_(thr / compEnv, params[G_COMP] * 0.75f) : 1.f;
       mixL *= g; mixR *= g;
-      float dr = 1.f + params[G_DRIVE] * 4.f; float mv = params[G_MASTER];
-      float oL = tanhf_(mixL * dr) / (dr > 1.5f ? tanhf_(dr) : 1.f) * mv, oR = tanhf_(mixR * dr) / (dr > 1.5f ? tanhf_(dr) : 1.f) * mv;
+      const float drv = clampf(params[G_DRIVE], 0.f, 1.f), dr = 1.f + drv * 2.5f, mv = params[G_MASTER] * 1.6f;
+      // the drive blends in: at 0 the glue is clean (only a soft knee near full scale), turned up it saturates
+      auto glue = [&](float x) {
+        const float ax = absf(x), soft = ax < 0.6f ? x : (x > 0 ? 1.f : -1.f) * (0.6f + 0.4f * tanhf_((ax - 0.6f) / 0.4f));   // clean, a soft knee near full scale
+        const float hot = tanhf_(x * dr) / tanhf_(dr) * 0.9f;                                                               // the drive's colour
+        return soft + (hot - soft) * minf(1.f, drv * 2.f); };
+      float oL = glue(mixL) * mv, oR = glue(mixR) * mv;
       limiter(oL, oR); outL[i] = oL; outR[i] = oR;
       if ((i & 3) == 0) { scope[scopeW] = (outL[i] + outR[i]) * 0.5f; scopeW = (scopeW + 1) & 511; }
     }
@@ -595,7 +604,7 @@ struct Engine {
     tele[0] = playing; tele[1] = bpm(); tele[2] = (float)cur; tele[3] = (float)(queued); tele[4] = (float)(mStep > 0 ? (mStep - 1) % NS : 0);
     tele[5] = (float)fxNow; tele[6] = (float)dirty; tele[7] = (float)songPos; tele[8] = rec;
     for (int t = 0; t < NT; t++) { tele[16 + t] = (float)lastTrig[t]; tele[32 + t] = meter[t]; }
-    tele[48] = (float)mLoop; tele[50] = rmsDb; tele[51] = 20.f * 0.30103f * log2f_(maxf(limMin, 1e-6f)); limMin = 1; tele[52] = dvMk;
+    tele[48] = (float)mLoop; tele[50] = rmsDb; tele[51] = 20.f * 0.30103f * log2f_(maxf(limMin, 1e-6f)); limMin = 1; tele[52] = dvMk; tele[53] = 20.f * 0.30103f * log2f_(maxf(mixPk, 1e-6f)); mixPk = 0;
   }
 
   // live play (pads, MIDI): plays now; while recording, lands on the nearest step (quantized)

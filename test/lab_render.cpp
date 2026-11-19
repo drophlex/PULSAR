@@ -28,7 +28,7 @@ int main() {
   int ns = (int)u32(); std::vector<std::string> path(ns); std::vector<float> bpm(ns); std::vector<int> sl(ns);
   for (int i = 0; i < ns; i++) { path[i] = "sounds/" + str() + ".wav"; bpm[i] = f32(); sl[i] = (int)u32(); }
   int np = (int)u32(), fails = 0; system("mkdir -p /tmp/lab");
-  printf("%-52s %6s %6s %6s %7s %5s\n", "pattern", "bpm", "rms", "peak", "hits/b", "nan");
+  printf("%-52s %6s %6s %6s %7s %5s %7s\n", "pattern", "bpm", "rms", "peak", "hits/b", "nan", "mix pk");
   for (int p = 0; p < np; p++) {
     std::string name = str(); E.init(48000, POOLMEM);
     for (int i = 0; i < ns; i++) { float sr; auto v = loadWav(path[i], sr); float* w = E.poolWrite(); for (size_t k = 0; k < v.size(); k++) w[k] = v[k]; E.addSample((int)v.size(), sr, bpm[i], sl[i]); }
@@ -37,13 +37,13 @@ int main() {
     E.song[0] = { 0, 4 }; E.song[1] = { 1, 3 }; E.song[2] = { 2, 1 }; E.songLen = 3; E.songOn = true;
     const float bp = E.params[G_BPM]; const int N = (int)(48000.0 * 60.0 / bp * 4 * 8);
     std::vector<float> L(N), R(N); E.play();
-    for (int i = 0; i < N; i += 128) E.process(&L[i], &R[i], std::min(128, N - i));
+    float mpk = -90; for (int i = 0; i < N; i += 128) { E.process(&L[i], &R[i], std::min(128, N - i)); if (E.tele[53] > mpk) mpk = E.tele[53]; }
     double e = 0, pk = 0; int nan = 0; for (int i = 0; i < N; i++) { if (!std::isfinite(L[i])) nan++; e += L[i] * L[i] + R[i] * R[i]; pk = fmax(pk, fmax(fabs(L[i]), fabs(R[i]))); }
     int hits = 0; for (int t = 0; t < NT; t++) for (int s = 0; s < 16; s++) if (E.pat[0].t[t].s[s].vel) hits++;
     const double rms = 10 * log10(e / (2.0 * N) + 1e-12);
     const bool ok = nan == 0 && pk <= 0.8915 && rms > -24 && rms < -6 && hits >= 12;
     if (!ok) fails++;
-    printf("%-52s %6.1f %6.1f %6.3f %7d %5d %s\n", name.c_str(), bp, rms, pk, hits, nan, ok ? "" : " <-- check");
+    printf("%-52s %6.1f %6.1f %6.3f %7d %5d %+6.1fdB %s\n", name.c_str(), bp, rms, pk, hits, nan, mpk, ok ? "" : " <-- check");
     char fn[64]; snprintf(fn, sizeof fn, "/tmp/lab/%02d.wav", p + 1); wav(fn, L, R);
   }
   printf(fails ? "lab_render: %d to check\n" : "lab_render ok (36 patterns: audible, no clip over -1 dBFS, no NaN)\n", fails);

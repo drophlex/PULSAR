@@ -19,8 +19,11 @@ for (const fam of [...FAMILIES]) { const st = STYLES[fam], kp = kitParams(fam, I
     const duck = {}; if (st.duck) for (const t of [3, 4, 5, 6, 10, 13, 15]) duck[TPID(t, T.DUCK)] = st.duck;
     OUT.patterns.push({ fam, name: p[0], level: FAM_LEVELS[i], params: Object.assign({}, kp, g, duck), A: [...set.A], B: [...set.B], F: [...set.F] }); }); }
 for (const k of HYBRID_KITS) kitParams(k, IDX);
+if (CLASSIC) { OUT.patterns = []; for (const sty of Object.keys(STYLES).filter(k => !STYLES[k].fam)) { const st = STYLES[sty], kp = kitParams(STYLE_KIT[sty] || sty, IDX);
+  const g = {}; g[G.BPM] = Math.round((st.bpm[0] + st.bpm[1]) / 2); g[G.SWING] = st.swing; g[G.DRIVE] = st.drive; g[G.COMP] = st.comp; g[G.HUMAN] = st.human;
+  const A = generate(sty, 1234, .5); OUT.patterns.push({ fam: sty, name: 'seed 1234', level: 'classic', params: Object.assign({}, kp, g), A: [...A], B: [...vary(A, 5, .4)], F: [...makeFill(A, 6)] }); } }
 `;
-ctx.MAN = man; vm.runInContext(src, ctx);
+ctx.MAN = man; ctx.CLASSIC = process.argv.includes('--classic'); vm.runInContext(src, ctx);
 fs.writeFileSync('/tmp/lab.json', JSON.stringify({ sounds: man.map(m => ({ id: m.id, bpm: m.bpm || 0, slices: m.slices || 16 })), ...ctx.OUT }));
 console.log('dumped', ctx.OUT.patterns.length, 'patterns, pattern bytes', ctx.OUT.patterns[0].A.length);
 // the same as a flat binary for the C++ renderer: sounds (path, bpm, slices), then per pattern: name, params (id, value), A, B, F
