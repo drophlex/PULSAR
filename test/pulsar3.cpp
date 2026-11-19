@@ -81,6 +81,26 @@ int main() {
     for (; done < bar * 6; done += 256) { E.process(L.data(), R.data(), 256); if (at2 < 0 && E.cur == 0) at2 = done; }
     check("select at the end (as before): after the 16-step pattern", at2 > 0);
   }
+  // ---- HYPERLINK routes: TR-8 only (no sound here, a hit for the TR-8 on its note), BOTH, ALTERNATE, MUTE; CCs on the bar
+  {
+    auto routed = [&](int route, int& hw, int& own, double& e) {
+      static Engine* EP = nullptr; delete EP; EP = new Engine(); Engine& E = *EP; E.init(48000, POOLMEM); E.params[TPID(0, T_SYN)] = S_KICK; E.params[TPID(0, T_LEVEL)] = 1; E.params[TXID(0, XT_ROUTE)] = (float)route;
+      for (int s = 0; s < 16; s += 4) E.pat[0].t[0].s[s].vel = 120;
+      std::vector<float> L(48128), R(48128); E.play(); hw = own = 0; e = 0;   /* (a whole number of 256-blocks) */
+      for (int o = 0; o < 48000; o += 256) { E.nev = 0; E.process(L.data() + o, R.data() + o, 256); for (int k = 0; k < E.nev; k++) if (E.ev[k].kind == 0) { own++; if (E.ev[k].hw && E.ev[k].note == 36) hw++; } }
+      for (float x : L) e += x * x; };
+    int hw, own; double e;
+    routed(RT_PULSAR, hw, own, e); check("route PULSAR: sound, nothing for the TR-8", e > 1 && hw == 0 && own == 3);
+    routed(RT_HW, hw, own, e);     check("route TR-8: silent here, the kicks go to the TR-8 on note 36", e < 1e-6 && hw == 3);
+    routed(RT_BOTH, hw, own, e);   check("route BOTH: sound and the kicks for the TR-8", e > 1 && hw == 3);
+    routed(RT_ALT, hw, own, e);    check("route ALTERNATE: one here, the next on the TR-8", e > 1 && (hw == 1 || hw == 2));
+    routed(RT_MUTE, hw, own, e);   check("route MUTE: silent, no event", e < 1e-6 && own == 0);
+    static Engine E; E.init(48000, POOLMEM); E.params[G_BPM] = 120; std::vector<float> L(256), R(256); E.play();
+    for (int k = 0; k < 40; k++) { E.nev = 0; E.process(L.data(), R.data(), 256); }   // into the bar
+    E.hwCC(69, 100, true); int seen = -1, blocks = 0;
+    for (int k = 0; k < 400 && seen < 0; k++, blocks++) { E.nev = 0; E.process(L.data(), R.data(), 256); for (int j = 0; j < E.nev; j++) if (E.ev[j].kind == 1 && E.ev[j].cc == 69 && E.ev[j].vel == 100) seen = E.mStep; }
+    check("Scatter CC on the bar: sent at the downbeat (step 1 of the next bar)", seen == 1);
+  }
   printf(fails ? "pulsar3 FAILED (%d)\n" : "pulsar3 ok\n", fails);
   return fails ? 1 : 0;
 }

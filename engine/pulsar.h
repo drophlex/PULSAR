@@ -31,7 +31,11 @@ inline int TPID(int t, int k) { return G_NGLOBAL + t * T_NPARAM + k; }
 constexpr int X_BASE = G_NGLOBAL + NT * T_NPARAM;
 enum XG { XG_XYON, XG_XYX, XG_XYY, XG_REPEAT, XG_VELSENS, XG_DV, XG_DVTONE, XG_LIMIT, XG_NGLOBAL = 8 };   // performance pad, note repeat rate, pad velocity;
 // PULSAR 3 (in the three free slots, so nothing moves): DIRTY VOLTAGE amount and tone, the safety limiter
-enum XT { XT_PUNCH, XT_COMP, XT_LOW, XT_HIGH, XT_OUT, XT_LOCK, XT_NPARAM = 8 };  // per track: transient, glue, EQ, output bus, generator lock
+enum XT { XT_PUNCH, XT_COMP, XT_LOW, XT_HIGH, XT_OUT, XT_LOCK, XT_ROUTE, XT_HWNOTE, XT_NPARAM = 8 };  // per track: transient, glue, EQ, output bus, generator lock;
+// PULSAR 3 HYPERLINK (the two free slots): where the track plays (PULSAR, the TR-8 over MIDI, both, alternating, muted) and its TR-8 note
+enum ROUTE { RT_PULSAR, RT_HW, RT_BOTH, RT_ALT, RT_MUTE, RT_COUNT };
+// the original TR-8's notes (Roland's MIDI implementation chart, without the 7X7 expansion), as the default per track
+constexpr uint8_t TR8_NOTE[16] = { 36, 38, 39, 42, 46, 0, 0, 37, 43, 49, 0, 47, 51, 0, 0, 50 };
 inline int XG_ID(int k) { return X_BASE + k; }
 inline int TXID(int t, int k) { return X_BASE + XG_NGLOBAL + t * XT_NPARAM + k; }
 constexpr int P_COUNT = X_BASE + XG_NGLOBAL + NT * XT_NPARAM;
@@ -75,7 +79,11 @@ struct Engine {
   // note repeat (hold a pad): the pads held, their velocity, each one's clock
   uint16_t held = 0; int8_t heldVel[NT]; double rClock[NT];
   // what triggered in the last process() call: the plug-in sends it as MIDI
-  struct Ev { int t, at, vel; } ev[256]; int nev = 0; int procPos = 0;
+  struct Ev { int t, at, vel; uint8_t hw, note, cc, kind; } ev[256]; int nev = 0; int procPos = 0;   // kind 0: a hit (hw: also / only to the TR-8, note); 1: a CC to the TR-8
+  struct HwCC { uint8_t cc, v, bar; } hq[32]; int nhq = 0; uint8_t altFlip[NT] = {};
+  // a CC for the hardware: now, or on the next bar (the Scatter Director's changes land on the downbeat)
+  void hwCC(int cc, int v, bool bar) { if (!bar || !playing) { if (nev < 256) { ev[nev] = { -1, procPos, 0, 1, 0, (uint8_t)clampi(cc, 0, 127), 1 }; ev[nev].vel = clampi(v, 0, 127); nev++; } return; }
+    if (nhq < 32) hq[nhq++] = { (uint8_t)clampi(cc, 0, 127), (uint8_t)clampi(v, 0, 127), 1 }; }
   int loopAt = -1;                                     // where the pattern started again in the last process() call (resampling starts there), or -1
   float xyLp[2] = {0, 0}, xyHp[2] = {0, 0}, xyAmt = 0;
   float kAtkF = 0, kRelF = 0, kAtkS = 0, kRelS = 0, kCpA = 0, kCpR = 0, kLo = 0, kHi = 0;
@@ -249,6 +257,7 @@ struct Engine {
   void masterStep() {           // each 1/16 of the pattern grid: perf lanes, motion lanes, pattern changes
     Pattern& Pt = pat[cur];
     int ms = mStep % NS;
+    if ((ms & 15) == 0 && nhq) { for (int k = 0; k < nhq; k++) if (nev < 256) { ev[nev] = { -1, procPos, hq[k].v, 1, 0, hq[k].cc, 1 }; nev++; } nhq = 0; }
     if (rec && playing && (liveFX || perfTake)) { perfTake = true; if (Pt.perf[ms] != liveFX) { Pt.perf[ms] = liveFX; dirty++; } fxNow = liveFX; }
     else fxNow = liveFX | Pt.perf[ms];
     for (int l = 0; l < NLANE; l++) { const Lane& L = Pt.m[l]; if (!L.used) continue; int v = L.v[ms];
@@ -281,7 +290,13 @@ struct Engine {
 
   // ---------------------------------------------------------------- triggering
   void trigger(int t, float vel, int pit, int slice, bool warp) {
-    if (nev < 256) { ev[nev].t = t; ev[nev].at = procPos; ev[nev].vel = clampi((int)(vel * 127.f + 0.5f), 1, 127); nev++; }
+    const int route = clampi((int)params[TXID(t, XT_ROUTE)], 0, RT_COUNT - 1);
+    if (route == RT_MUTE) return;
+    bool audio = route != RT_HW, hw = route == RT_HW || route == RT_BOTH;
+    if (route == RT_ALT) { altFlip[t] ^= 1; audio = altFlip[t]; hw = !altFlip[t]; }      // ALTERNATE: one hit here, the next on the TR-8
+    const int hn = (int)params[TXID(t, XT_HWNOTE)], note = hn > 0 ? hn : TR8_NOTE[t];
+    if (nev < 256) { ev[nev].t = t; ev[nev].at = procPos; ev[nev].vel = clampi((int)(vel * 127.f + 0.5f), 1, 127); ev[nev].hw = hw && note > 0; ev[nev].note = (uint8_t)note; ev[nev].cc = 0; ev[nev].kind = 0; nev++; }
+    if (!audio) return;
     // chokes: an open hat is cut by a closed one in the same group
     int ch = (int)P(t, T_CHOKE);
     if (ch > 0) for (int u = 0; u < NT; u++) if (u != t && (int)P(u, T_CHOKE) == ch) for (auto& v : vo[u]) if (v.on) v.fadeK = 1.f / (0.004f * sr);

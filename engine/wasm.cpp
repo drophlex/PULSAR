@@ -42,3 +42,9 @@ EXPORT int px_loop_at() { return E.loopAt; }
 EXPORT void px_clear(int p) { E.clearPattern(p); }
 EXPORT void px_host(int playing, float bpm, int sync) { E.hostSync = sync; E.hostPlaying = playing; E.hostBpm = bpm; }
 EXPORT int px_dirty() { return E.dirty; }
+// PULSAR 3 HYPERLINK: the block's hits / CCs (16 bytes each: t, at, vel, then hw, note, cc, kind), taken and cleared by the worklet
+EXPORT int px_ev_count() { return E.nev; }
+EXPORT void* px_ev() { return (void*)E.ev; }
+EXPORT int px_ev_size() { return (int)sizeof(E.ev[0]); }
+EXPORT void px_ev_clear() { E.nev = 0; }
+EXPORT void px_hwcc(int cc, int v, int bar) { E.hwCC(cc, v, bar != 0); }
