@@ -69,7 +69,7 @@ int main() {
     return std::vector<double>{ pk / std::sqrt(e / N), e, lo };
   };
   { auto a = crest(XT_PUNCH, 0, S_TOM), b = crest(XT_PUNCH, 1, S_TOM); check("PUNCH: a tom's attack over its body (crest factor up)", b[0] > a[0] * 1.08); }
-  { auto a = crest(XT_COMP, 0), b = crest(XT_COMP, 1); check("COMP: denser (crest factor down), about as loud", b[0] < a[0] * 0.95 && b[1] > a[1] * 0.4); }
+  { auto a = crest(XT_COMP, 0), b = crest(XT_COMP, 1); printf("  comp crest %.2f -> %.2f, energy %.3g -> %.3g\n", a[0], b[0], a[1], b[1]); check("COMP: denser (crest factor down), about as loud", b[0] < a[0] * 0.95 && b[1] > a[1] * 0.4); }
   { auto a = crest(XT_LOW, 0), b = crest(XT_LOW, 1), c = crest(XT_LOW, -1); check("EQ LOW +: the lows up", b[2] > a[2] * 1.5); (void)c; }
   { auto a = crest(XT_LOW, 0, S_KICK), b = crest(XT_LOW, -1, S_KICK); check("EQ LOW -: a kick loses its lows", b[2] < a[2] * 0.3); }
   { auto a = crest(XT_HIGH, 0, S_HAT), b = crest(XT_HIGH, -1, S_HAT), c = crest(XT_HIGH, 1, S_HAT); check("EQ HIGH -/+: a hat quieter / louder", b[1] < a[1] * 0.5 && c[1] > a[1] * 1.5); }

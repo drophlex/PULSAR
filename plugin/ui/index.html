@@ -655,7 +655,7 @@ const UI = { view: LS.get('pulsar.view') || 'LAB', cur: 0, sel: 0, selStep: -1, 
   style: 'BIG BEAT', cplx: 0.5, seed: 1, pats: [], kit: [], tele: null, clip: null, dirty: -1, sounds: [], soundIdx: {}, userSamples: [], wavRec: false };
 const PARAMS = new Float32Array(P_COUNT);
 PARAMS[XGID(XG.VELSENS)] = 1;
-Object.entries({ BPM: 120, SWING: 0, MASTER: .8, REVSIZE: .5, REVTONE: .6, DLYTIME: 3, DLYFB: .4, DLYTONE: .6, COMP: .3, DRIVE: .1, DUCKSRC: 0, DUCKTIME: .35, STUTLEN: 1, HUMAN: 0, WIDTH: 1 }).forEach(([k, v]) => (PARAMS[G[k]] = v));
+Object.entries({ BPM: 120, SWING: 0, MASTER: .8, REVSIZE: .5, REVTONE: .6, DLYTIME: 3, DLYFB: .4, DLYTONE: .6, COMP: .3, DRIVE: 0, DUCKSRC: 0, DUCKTIME: .35, STUTLEN: 1, HUMAN: 0, WIDTH: 1 }).forEach(([k, v]) => (PARAMS[G[k]] = v));
 for (let p = 0; p < NPAT; p++) UI.pats[p] = patNew();
 
 function setP(id, v, send = true) { PARAMS[id] = v; if (send && Bridge.ready) Bridge.param(id, v); if (window.Undo) Undo.touch(); }
@@ -895,7 +895,7 @@ function renderPanel() {
     P.append(h('div', { class: 'hint', style: 'margin-top:8px' }, LANG === 'es' ? 'ARMAR TEMA escribe 8 patrones (intro, groove, variaciones, break, remates) y la canci\u00f3n completa en el estilo elegido. Shift+clic en un n\u00famero de patr\u00f3n copia el actual ah\u00ed.' : 'BUILD TRACK writes 8 patterns (intro, groove, variations, break, fills) and the whole song in the chosen style. Shift-click a pattern number copies the current one there.'));
   } else if (UI.tab === 'MASTER') {
     const gk = gknob;
-    P.append(h('div', { class: 'knobs' }, gk(G.MASTER, 'VOLUME', 0, 1, pct, .8), gk(G.DRIVE, 'DRIVE', 0, 1, pct, .1), gk(G.COMP, 'COMP', 0, 1, pct, .3), gk(G.SWING, 'SWING', 0, .6, pct, 0),
+    P.append(h('div', { class: 'knobs' }, gk(G.MASTER, 'VOLUME', 0, 1, pct, .8), gk(G.DRIVE, 'DRIVE', 0, 1, pct, 0), gk(G.COMP, 'COMP', 0, 1, pct, .3), gk(G.SWING, 'SWING', 0, .6, pct, 0),
       gk(G.REVSIZE, 'REV SIZE', 0, 1, pct, .5), gk(G.REVTONE, 'TONE', 0, 1, pct, .6), gk(G.DLYTIME, 'DLY TIME', 0, 7, v => DLYDIVS[Math.round(v)], 3), gk(G.DLYFB, 'DLY FB', 0, .95, pct, .4),
       gk(G.HUMAN, 'HUMAN', 0, 1, pct, 0), gk(G.DUCKTIME, 'DUCK', 0.02, 1, v => Math.round(v * 1000) + 'ms', .35), gk(G.WIDTH, 'WIDTH', 0, 1.5, pct, 1), gk(G.STUTLEN, 'STUTTER', 0, 3, v => ['1/8', '1/16', '1/32', '1/48'][Math.round(v)], 1)));
     const cm = h('button', { class: 'full' }, tr('CLEAR MOTION')); cm.onclick = () => { clearMotion(UI.pats[UI.cur]); pushPat(UI.cur); renderFX(); }; P.append(cm);
@@ -921,7 +921,7 @@ function setFX(m) { UI.fx = m; Bridge.post({ t: 'fx', mask: m }); $$('.fx').forE
 function renderMacros() {
   const m = $('#macros'); m.innerHTML = '';
   const gk = gknob;
-  m.append(gk(G.DRIVE, 'DRIVE', 0, 1, pct, .1), gk(G.COMP, 'COMP', 0, 1, pct, .3), gk(G.HUMAN, 'HUMAN', 0, 1, pct, 0), gk(G.MASTER, 'VOLUME', 0, 1, pct, .8));
+  m.append(gk(G.DRIVE, 'DRIVE', 0, 1, pct, 0), gk(G.COMP, 'COMP', 0, 1, pct, .3), gk(G.HUMAN, 'HUMAN', 0, 1, pct, 0), gk(G.MASTER, 'VOLUME', 0, 1, pct, .8));
 }
 
 // ------------------------------------------------------------------ generate, vary, build
@@ -963,13 +963,15 @@ function wavDone(Ls, Rs) {
 }
 const b64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 32768) s += String.fromCharCode.apply(null, u8.subarray(i, i + 32768)); return btoa(s); };
 const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
-function projectJSON() { return JSON.stringify({ app: 'PULSAR', v: 2, params: [...PARAMS], pats: UI.pats.map(b64), song: UI.song, songOn: UI.songOn, kit: UI.kit, style: UI.style, cplx: UI.cplx,
+function projectJSON() { return JSON.stringify({ app: 'PULSAR', v: 3, params: [...PARAMS], pats: UI.pats.map(b64), song: UI.song, songOn: UI.songOn, kit: UI.kit, style: UI.style, cplx: UI.cplx,
   sampleIds: Array.from({ length: NT }, (_, t) => { const s = UI.sounds.find(x => x.idx === (tp(t, T.SMP) | 0)); return s ? s.id : null; }) }); }
-const uiJSON = () => JSON.stringify({ kit: UI.kit, style: UI.style, cplx: UI.cplx });
+const uiJSON = () => JSON.stringify({ v: 3, kit: UI.kit, style: UI.style, cplx: UI.cplx });
 function loadProject(txt) {
   const j = JSON.parse(txt); if (j.app !== 'PULSAR') throw new Error('not a PULSAR file');
   j.params.forEach((v, i) => { if (i < P_COUNT) PARAMS[i] = v; }); if (j.params.length <= X_BASE) { for (let i = X_BASE; i < P_COUNT; i++) PARAMS[i] = 0; PARAMS[XGID(XG.VELSENS)] = 1; } UI.pats = j.pats.map(unb64); UI.song = j.song; UI.songOn = j.songOn; UI.kit = j.kit; UI.style = j.style || UI.style; UI.cplx = j.cplx ?? .5;
   (j.sampleIds || []).forEach((id, t) => { if (id && UI.soundIdx[id] !== undefined) PARAMS[TPID(t, T.SMP)] = UI.soundIdx[id]; });
+  // projects saved before PULSAR 3.3 carry the old, much heavier drive: bring it to the new scale once (saved again as v3)
+  if (!j.v || j.v < 3) { PARAMS[G.DRIVE] = Math.min(.15, PARAMS[G.DRIVE] * DRIVE_SCALE); for (let t = 0; t < NT; t++) PARAMS[TPID(t, T.DRIVE)] *= .6; }
   pushAll(); renderAll();
 }
 function save() { download(`PULSAR-${UI.style.replace(/ /g, '-')}.pulsar`, projectJSON(), 'application/json'); if (Bridge.kind === 'web') LS.set('pulsar.project', projectJSON()); toast(tr('saved')); }

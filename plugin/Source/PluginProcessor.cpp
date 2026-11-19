@@ -99,6 +99,7 @@ bool PulsarProcessor::isBusesLayoutSupported(const BusesLayout& l) const {
 }
 
 void PulsarProcessor::prepareToPlay(double rate, int) {
+  setLatencySamples(juce::jlimit(8, 1023, (int)(0.0015 * rate)));   // the limiter's look-ahead
   if (std::abs(rate - sr) < 1) return;
   const juce::SpinLock::ScopedLockType sl(lock);
   // a new rate: the engine starts again at that rate with the same project and samples (each sample keeps its own rate)

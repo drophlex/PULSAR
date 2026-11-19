@@ -86,7 +86,7 @@ struct Engine {
     if (nhq < 32) hq[nhq++] = { (uint8_t)clampi(cc, 0, 127), (uint8_t)clampi(v, 0, 127), 1 }; }
   int loopAt = -1;                                     // where the pattern started again in the last process() call (resampling starts there), or -1
   float xyLp[2] = {0, 0}, xyHp[2] = {0, 0}, xyAmt = 0;
-  float kAtkF = 0, kRelF = 0, kAtkS = 0, kRelS = 0, kCpA = 0, kCpR = 0, kLo = 0, kHi = 0;
+  float kMcA = 0, kMcR = 0, kAtkF = 0, kRelF = 0, kAtkS = 0, kRelS = 0, kCpA = 0, kCpR = 0, kLo = 0, kHi = 0;
   float coef(float sec) const { return 1.f - expf_(-1.f / maxf(1.f, sec * sr)); }
   float duckEnv = 0; float hostBpm = 0; bool hostSync = false, hostPlaying = false; double hostPpq = 0;
   // fx
@@ -108,7 +108,7 @@ struct Engine {
     params[G_DUCKSRC] = 0; params[G_DUCKTIME] = 0.35f; params[G_STUTLEN] = 1; params[G_HUMAN] = 0; params[G_WIDTH] = 1;
     params[XG_ID(XG_XYON)] = 0; params[XG_ID(XG_XYX)] = 0; params[XG_ID(XG_XYY)] = 0; params[XG_ID(XG_REPEAT)] = 0; params[XG_ID(XG_VELSENS)] = 1; params[XG_ID(XG_DV)] = 0; params[XG_ID(XG_DVTONE)] = 0.6f; params[XG_ID(XG_LIMIT)] = 1;
     held = 0; nev = 0;
-    kAtkF = coef(0.0003f); kRelF = coef(0.15f); kAtkS = coef(0.02f); kRelS = coef(0.15f); kCpA = 1.f; kCpR = coef(0.12f);
+    kAtkF = coef(0.0003f); kRelF = coef(0.15f); kAtkS = coef(0.02f); kRelS = coef(0.15f); kCpA = 1.f; kCpR = coef(0.12f); kMcA = coef(0.01f); kMcR = coef(0.2f);
     kLo = 1.f - expf_(-TAU * 120.f / sr); kHi = 1.f - expf_(-TAU * 6000.f / sr);
     // everything that runs on survives no re-init (a new sample rate in the plug-in starts clean)
     duckEnv = 0; compEnv = 0; fxCut = 1; fxHp = 0; fxLpZ[0] = fxLpZ[1] = fxHpZ[0] = fxHpZ[1] = 0; crushHold[0] = crushHold[1] = 0; crushPh = 0; gatePh = 0;
@@ -519,10 +519,10 @@ struct Engine {
       mixL *= 0.5f; mixR *= 0.5f;
       // glue: compressor + drive + soft limit
       float lvl = maxf(absf(mixL), absf(mixR)); if (lvl > mixPk) mixPk = lvl;     // the mix's peak into the glue: the headroom meter
-      compEnv += (lvl - compEnv) * (lvl > compEnv ? 0.004f : 0.00012f);                // (PULSAR 3.1: this line had been swallowed by the comment above, so COMP did nothing)
-      float thr = 0.5f - params[G_COMP] * 0.35f; float g = compEnv > thr ? powf_(thr / compEnv, params[G_COMP] * 0.75f) : 1.f;
+      compEnv += (lvl - compEnv) * (lvl > compEnv ? kMcA : kMcR);                // (PULSAR 3.1: this line had been swallowed by the comment above, so COMP did nothing)
+      float thr = 0.5f - params[G_COMP] * 0.25f; float g = compEnv > thr ? powf_(thr / compEnv, params[G_COMP] * 0.5f) : 1.f;   // gentle glue: at most ~2:1
       mixL *= g; mixR *= g;
-      const float drv = clampf(params[G_DRIVE], 0.f, 1.f), dr = 1.f + drv * 1.6f, mv = params[G_MASTER] * 1.6f;
+      const float drv = clampf(params[G_DRIVE], 0.f, 1.f), dr = 1.f + drv * 1.6f, mv = params[G_MASTER] * 1.25f;   // (was 1.6: the mix sat on the limiter)
       // the drive blends in: at 0 the glue is clean (only a soft knee near full scale), turned up it saturates
       auto glue = [&](float x) {
         const float ax = absf(x), soft = ax < 0.6f ? x : (x > 0 ? 1.f : -1.f) * (0.6f + 0.4f * tanhf_((ax - 0.6f) / 0.4f));   // clean, a soft knee near full scale
@@ -569,13 +569,24 @@ struct Engine {
     L = L * (1.f - wet) + o[0] * dvMk * wet; R = R * (1.f - wet) + o[1] * dvMk * wet;
   }
   // the safety limiter: -1 dBFS ceiling, instant attack, 80 ms release; and the meter (RMS, dBFS, 300 ms)
+  static constexpr int LA_N = 1024; float laL[LA_N] = {}, laR[LA_N] = {}, laPk = 0, laStep = 0; int laW = 0, laHold = 0;
   void limiter(float& L, float& R) {
     rmsAcc += L * L + R * R; if (++rmsN >= (int)(0.3f * sr)) { rmsDb = 10.f * 0.30103f * log2f_(rmsAcc / (2.f * rmsN) + 1e-12f); rmsAcc = 0; rmsN = 0; }
-    if (params[XG_ID(XG_LIMIT)] < 0.5f) { limG = 1; return; }
+    // PULSAR 3.3: a look-ahead limiter. The old one dropped its gain within one sample on every peak, which clips the
+    // waveform (crunch on every kick). Now the signal is always delayed 1.5 ms (on or off, so the timing never changes)
+    // and the gain ramps down in a straight line so it reaches the peak's level exactly when the peak arrives, then
+    // glides back up over 120 ms.
     const float ceil = 0.891f, pk = maxf(absf(L), absf(R));
-    if (pk * limG > ceil) limG = ceil / pk; else limG += (1.f - limG) * (1.f / (0.08f * sr));
+    const int D = clampi((int)(0.0015f * sr), 8, LA_N - 1);
+    laL[laW] = L; laR[laW] = R; const int rd = (laW - D + LA_N) % LA_N; laW = (laW + 1) % LA_N;
+    L = laL[rd]; R = laR[rd];
+    if (params[XG_ID(XG_LIMIT)] < 0.5f) { limG = 1; laPk = 0; return; }
+    if (pk > laPk) { laPk = pk; laHold = D; const float w = laPk > ceil ? ceil / laPk : 1.f; if (w < limG) laStep = (w - limG) / (float)D; }
+    else if (laHold > 0) laHold--; else laPk += (pk - laPk) * (1.f / (0.12f * sr));
+    const float want = laPk > ceil ? ceil / laPk : 1.f;
+    if (limG > want) limG = maxf(want, limG + laStep); else limG += (want - limG) * (1.f / (0.12f * sr));
     if (limG < limMin) limMin = limG;
-    L *= limG; R *= limG;
+    L = clampf(L * limG, -ceil, ceil); R = clampf(R * limG, -ceil, ceil);   // (the clamp is only a guard: the ramp gets there first)
   }
   void masterFX(float& L, float& R) {
     hist[0][hW] = L; hist[1][hW] = R; int w = hW; hW = (hW + 1) & (HLEN - 1);
