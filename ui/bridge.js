@@ -17,7 +17,7 @@ class PulsarProc extends AudioWorkletProcessor {
       case 'params': { const p = new Float32Array(this.mem(), X.px_params(), X.px_param_count()); for (const [id, v] of d.list) X.px_param(id, v); break; }
       case 'play': X.px_play(); break;
       case 'stop': X.px_stop(); break;
-      case 'select': X.px_select(d.p, d.now ? 1 : 0); break;
+      case 'select': X.px_select(d.p, d.now ? 1 : d.bar ? 2 : 0); break;
       case 'rec': X.px_rec(d.on ? 1 : 0); break;
       case 'fx': X.px_fx(d.mask); break;
       case 'fill': X.px_fill(d.on ? 1 : 0); break;

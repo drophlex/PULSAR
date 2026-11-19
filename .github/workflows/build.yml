@@ -1,8 +1,8 @@
 name: Build PULSAR plug-in (macOS)
 on:
   push:
-    branches: [main]
-    paths: ['engine/**', 'plugin/**', 'ui/**', 'installer/**', '.github/workflows/build.yml']
+    branches: [main, pulsar-3]
+    paths: ['engine/**', 'plugin/**', 'ui/**', 'installer/**', 'test/**', 'sounds/**', '.github/workflows/build.yml']
   workflow_dispatch:
 permissions:
   contents: write
@@ -15,6 +15,11 @@ jobs:
         run: |
           clang++ -std=c++20 -O2 -o features test/features.cpp && ./features
           clang++ -std=c++20 -O2 -o voices test/voices.cpp && ./voices | tail -3
+      - name: PULSAR 3 tests (DIRTY VOLTAGE, limiter, bar switch; MIDI import; the 36 family patterns through the engine)
+        run: |
+          clang++ -std=c++20 -O2 -o pulsar3 test/pulsar3.cpp && ./pulsar3
+          node test/midi_import.test.mjs
+          node test/lab_dump.mjs && clang++ -std=c++20 -O2 -o lab_render test/lab_render.cpp && ./lab_render
       - name: Configure (universal arm64 + x86_64)
         run: cmake -S plugin -B build -G Xcode -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
       - name: Build VST3 + AU + Standalone
@@ -45,6 +50,7 @@ jobs:
           name: PULSAR-mac
           path: PULSAR-mac.zip
       - name: Publish release
+        if: github.ref == 'refs/heads/main'          # a work branch (pulsar-3) builds and tests, it does not release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v2.0.${{ github.run_number }}

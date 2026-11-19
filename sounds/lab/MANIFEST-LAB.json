@@ -1,0 +1,472 @@
+[
+ {
+  "file": "sounds/lab/kick riot.wav",
+  "made_by": "kick(): sine 260->46 Hz (k 30 ms), click, tanh x6, + distorted noise burst; seeds 1, 2",
+  "seconds": 0.55,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/kick voltage.wav",
+  "made_by": "kick(): sine 180->50 Hz (k 22 ms), hard click, tanh x3.5 (dense, short); seed 3",
+  "seconds": 0.42,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/kick robot.wav",
+  "made_by": "kick(): sine 140->52 Hz (k 35 ms), soft click, round (disco); seed 4",
+  "seconds": 0.5,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/kick pressure.wav",
+  "made_by": "kick(): sine 220->42 Hz (k 50 ms), long body, tanh x2.6 (big beat boom); seed 5",
+  "seconds": 0.7,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/kick fractal.wav",
+  "made_by": "kick(): sine 400->70 Hz (k 12 ms), very short (braindance tick-kick); seed 6",
+  "seconds": 0.22,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/snare riot.wav",
+  "made_by": "snare(): 190 Hz body + band-passed noise (90 ms), tanh x5; seed 11",
+  "seconds": 0.35,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/snare pressure.wav",
+  "made_by": "snare(): 170 Hz body + noise (140 ms), tanh x2.4 (big crack); seed 12",
+  "seconds": 0.42,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/clap robot.wav",
+  "made_by": "clap(): 3 noise bursts 10 ms apart, band-pass 1.3 kHz, 100 ms tail; seed 21",
+  "seconds": 0.4,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/clap voltage.wav",
+  "made_by": "clap(): 4 bursts 8 ms, 1.8 kHz, short gated tail, tanh x3; seed 22",
+  "seconds": 0.32,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/hat robot.wav",
+  "made_by": "hat(): noise high-passed at 7 kHz, 25 ms decay; seed 31",
+  "seconds": 0.12,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/hat robot open.wav",
+  "made_by": "hat(): noise high-passed at 6.5 kHz, 160 ms decay; seed 32",
+  "seconds": 0.5,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/hat voltage.wav",
+  "made_by": "hat(): 9 kHz, 14 ms, tanh x2; seed 33",
+  "seconds": 0.08,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/metal hit.wav",
+  "made_by": "metal(): six square partials at inharmonic ratios from 410 Hz, high-passed, 120 ms",
+  "seconds": 0.6,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/metal anvil.wav",
+  "made_by": "metal(): five partials from 290 Hz, 250 ms, tanh x2.5",
+  "seconds": 0.9,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/tick fractal.wav",
+  "made_by": "tick(): 2 ms noise click high-passed at 3 kHz; seed 41",
+  "seconds": 0.05,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/fm glass.wav",
+  "made_by": "fmperc(): 880 Hz carrier, ratio 3.53, index 4, 80 ms",
+  "seconds": 0.35,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/fm knock.wav",
+  "made_by": "fmperc(): 220 Hz, ratio 1.41, index 6, 50 ms",
+  "seconds": 0.25,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/zap down.wav",
+  "made_by": "sine 3 kHz->80 Hz (k 50 ms), 120 ms",
+  "seconds": 0.35,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/glitch blip.wav",
+  "made_by": "square 1.8 kHz then 600 Hz, 90 ms",
+  "seconds": 0.09,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/riser saw.wav",
+  "made_by": "two saws rising 3 octaves from 110 Hz over 2.2 s, opening low-pass, rising level",
+  "seconds": 2.2,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/drop boom.wav",
+  "made_by": "sine 120->34 Hz (k 250 ms), 700 ms decay, tanh x1.8 (the drop)",
+  "seconds": 2.0,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/drone sub.wav",
+  "made_by": "sine 43.65 Hz (F1), 300 ms in, 400 ms out",
+  "seconds": 2.2,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/bass robot.wav",
+  "made_by": "saw C2 through a resonant low-pass (res .55) swept 2.6 kHz->200 Hz in 70 ms: elastic disco bass",
+  "seconds": 0.6,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/bass grit.wav",
+  "made_by": "saw + square detuned 0.5 %, low-pass 2.1 kHz->300 Hz, tanh x4: abrasive electro bass",
+  "seconds": 0.6,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/bass reese.wav",
+  "made_by": "two saws +/- 0.4 % (beating), low-pass 900 Hz, 500 ms",
+  "seconds": 0.9,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/bass acid.wav",
+  "made_by": "square through a very resonant low-pass (res .85) swept 3.4 kHz->180 Hz",
+  "seconds": 0.6,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/bass sub.wav",
+  "made_by": "pure sine C2, 400 ms",
+  "seconds": 0.7,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/bass fm.wav",
+  "made_by": "FM C2, ratio 1, index 2.5, 300 ms",
+  "seconds": 0.6,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/bass mono drive.wav",
+  "made_by": "saw low-passed at 700 Hz, tanh x6: mono-safe dirty bass",
+  "seconds": 0.6,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/bass pluck.wav",
+  "made_by": "saw + octave, low-pass 5.3 kHz->300 Hz in 30 ms, 90 ms: funky pluck",
+  "seconds": 0.35,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/stab dark.wav",
+  "made_by": "saw chord C3 minor 7 (0 3 7 10), low-pass 2.6 kHz, 110 ms, tanh x1.8",
+  "seconds": 0.4,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/stab robot.wav",
+  "made_by": "pulse (30 %) chord C3 major 7, low-pass 3.2 kHz, 90 ms",
+  "seconds": 0.4,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/lab/stab rave.wav",
+  "made_by": "saw chord C3 5th + octave + minor 10th, 4.2 kHz, 180 ms, tanh x2.2",
+  "seconds": 0.5,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/architech hat.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (architech-hat.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.075,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/chembech kick.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (chembech-kick.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.23,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/dfd crash.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (dfd-crash.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.34,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/durcal kick.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (durcal-kick.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.18,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/gambu snare.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (gambu-snare.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.18,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/karl openhat.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (karl-openhat.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.25,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/manu rim.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (manu-rim.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.1,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/meni cowbell.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (meni-cowbell.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.25,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/palm snare.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (palm-snare.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.16,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/polaris zap.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (polaris-zap.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.24,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/quesa fm.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (quesa-fm.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.18,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/rufi tamb.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (rufi-tamb.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.23,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/sub kick.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (sub-kick.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.21,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ },
+ {
+  "file": "sounds/dfd pack/tere clap.wav",
+  "made_by": "one-shot from the DFD LIVE PACK (tere-clap.wav), peak-normalized to 0.92, 4 ms end fade",
+  "seconds": 0.17,
+  "rate": 44100,
+  "bits": 16,
+  "channels": 1,
+  "licence": "CC0",
+  "third_party_audio": false
+ }
+]

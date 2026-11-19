@@ -31,7 +31,7 @@ EXPORT int px_sample_count() { return E.nSmp; }
 EXPORT void px_reset_samples(int keep) { if (keep < E.nSmp) { E.nSmp = keep; E.poolUsed = keep > 0 ? E.smp[keep - 1].off + E.smp[keep - 1].len : 0; } }
 EXPORT void px_play() { E.play(); }
 EXPORT void px_stop() { E.stop(); }
-EXPORT void px_select(int p, int now) { E.select(p, now); }
+EXPORT void px_select(int p, int now) { E.select(p, now == 1, now == 2); }   // now: 0 at the pattern's end, 1 at once, 2 at the next bar
 EXPORT void px_rec(int on) { E.rec = on; E.perfTake = false; }
 EXPORT void px_fx(int mask) { E.liveFX = (uint16_t)mask; if (!E.playing) E.fxNow = (uint16_t)mask; }
 EXPORT void px_fill(int on) { E.fillHeld = on; }

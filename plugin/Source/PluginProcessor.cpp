@@ -218,7 +218,7 @@ void PulsarProcessor::message(const juce::var& m) {
     else if (t == "params") { if (auto* a = m["list"].getArray()) for (auto& e : *a) { int id = (int)e[0]; E.setParam(id, (float)(double)e[1]); if (id >= 0 && id < P_COUNT && hostOf[id] >= 0) touched.push_back(-1 - hostOf[id]); } }
     else if (t == "play") { E.play(); hostStarted = false; }
     else if (t == "stop") { E.stop(); hostStarted = false; }
-    else if (t == "select") { E.select((int)m["p"], (bool)m["now"]); }
+    else if (t == "select") { E.select((int)m["p"], (bool)m["now"], (bool)m.getProperty("bar", false)); }
     else if (t == "rec") { E.rec = (bool)m["on"]; E.perfTake = false; }
     else if (t == "fx") { const int mask = (int)m["mask"]; const uint16_t old = uiFX; uiFX = (uint16_t)mask; E.liveFX = uiFX; if (!E.playing) E.fxNow = uiFX;
       for (int k = 0; k < 16; k++) if (((old ^ uiFX) >> k) & 1) for (size_t i = 0; i < hp.size(); i++) if (hp[i].eng == -1 - k) touched.push_back((int)i); }
@@ -226,6 +226,9 @@ void PulsarProcessor::message(const juce::var& m) {
     else if (t == "pad") { E.padDown((int)m["t2"], (int)m["vel"]); }
     else if (t == "padUp") { E.padUp((int)m["t2"]); }
     else if (t == "resample") { const int len = juce::jlimit(256, (int)(sr * 30), (int)m["len"]); if (!rsDone.load()) { rsBuf.assign((size_t)len, 0.f); rsLen = len; rsN = 0; rsArm = true; } }
+    else if (t == "learnSet") {       // PULSAR 3: a controller profile writes its mappings straight into MIDI learn
+      const juce::String key = m["key"].toString(); const int cc = (int)m["cc"];
+      if (cc >= 0 && cc < 128) for (size_t i = 0; i < hp.size(); i++) if (params[i]->getParameterID() == key) { for (auto& x : learn) if (x == (int)i) x = -1; learn[(size_t)cc] = (int)i; break; } }
     else if (t == "learn") { const juce::String key = m["key"].toString(); learnArm = -1;
       for (size_t i = 0; i < hp.size(); i++) if (params[i]->getParameterID() == key) learnArm = (int)i;
       if (key == "clear") { learn.fill(-1); } else if (key.startsWith("forget:")) { for (auto& x : learn) if (x >= 0 && params[(size_t)x]->getParameterID() == key.substring(7)) x = -1; } }

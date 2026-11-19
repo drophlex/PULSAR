@@ -29,7 +29,8 @@ enum GP {   // global
 inline int TPID(int t, int k) { return G_NGLOBAL + t * T_NPARAM + k; }
 // v2 parameters, appended after the original 400 so older projects, sets and automation keep their numbers
 constexpr int X_BASE = G_NGLOBAL + NT * T_NPARAM;
-enum XG { XG_XYON, XG_XYX, XG_XYY, XG_REPEAT, XG_VELSENS, XG_NGLOBAL = 8 };     // performance pad, note repeat rate, pad velocity
+enum XG { XG_XYON, XG_XYX, XG_XYY, XG_REPEAT, XG_VELSENS, XG_DV, XG_DVTONE, XG_LIMIT, XG_NGLOBAL = 8 };   // performance pad, note repeat rate, pad velocity;
+// PULSAR 3 (in the three free slots, so nothing moves): DIRTY VOLTAGE amount and tone, the safety limiter
 enum XT { XT_PUNCH, XT_COMP, XT_LOW, XT_HIGH, XT_OUT, XT_LOCK, XT_NPARAM = 8 };  // per track: transient, glue, EQ, output bus, generator lock
 inline int XG_ID(int k) { return X_BASE + k; }
 inline int TXID(int t, int k) { return X_BASE + XG_NGLOBAL + t * XT_NPARAM + k; }
@@ -63,7 +64,7 @@ struct Engine {
   Sample smp[MAXSMP]; int nSmp = 0; int poolUsed = 0; float* pool = nullptr; int poolCap = POOL; bool silent = false;
   Voice vo[NT][2]; int vcur[NT];
   // transport
-  bool playing = false, rec = false, fillHeld = false; int cur = 0, queued = -1, songPos = 0, songRep = 0;
+  bool playing = false, rec = false, fillHeld = false; int cur = 0, queued = -1, songPos = 0, songRep = 0; bool queueBar = false;   // queueBar: switch at the next bar, not the pattern's end
   double mClock = 0; int mStep = 0, mLoop = 0;                   // master 1/16 grid (pattern length, perf lanes, motion)
   double tClock[NT]; int tStep[NT], tLoop[NT];                    // each track: own length and speed (polymeter)
   struct Pend { float at; int8_t vel; int8_t pit; uint8_t slice, ratIdx; float panJ; bool warp; } pend[NT][24]; int npend[NT];
@@ -88,6 +89,8 @@ struct Engine {
   float crushHold[2] = {0, 0}, crushPh = 0; float compEnv = 0; float gatePh = 0;
   // ui / telemetry
   float tele[64]; int dirty = 0; int lastTrig[NT];
+  // DIRTY VOLTAGE (PULSAR 3) and the safety limiter
+  float dvHp[2] = {0, 0}, dvLp[2] = {0, 0}, dvLp2[2] = {0, 0}, dvHq[2] = {0, 0}, dvHq2[2] = {0, 0}, dvHo[2] = {0, 0}, dvHo2[2] = {0, 0}, dvPrev[2] = {0, 0}, dvTone[2] = {0, 0}, dvIn = 1e-6f, dvOut = 1e-6f, dvMk = 1, limG = 1, rmsAcc = 0, rmsDb = -90, limMin = 1, dvToneK = -1, dvSr = 0, dvAH = 0, dvAL = 0, dvTC = 0; int rmsN = 0;
   float scope[512]; int scopeW = 0;
 
   void init(float rate, float* mem) {
@@ -95,7 +98,7 @@ struct Engine {
     params[G_BPM] = 120; params[G_SWING] = 0; params[G_MASTER] = 0.8f; params[G_REVSIZE] = 0.5f; params[G_REVTONE] = 0.6f;
     params[G_DLYTIME] = 3; params[G_DLYFB] = 0.4f; params[G_DLYTONE] = 0.6f; params[G_COMP] = 0.3f; params[G_DRIVE] = 0.1f;
     params[G_DUCKSRC] = 0; params[G_DUCKTIME] = 0.35f; params[G_STUTLEN] = 1; params[G_HUMAN] = 0; params[G_WIDTH] = 1;
-    params[XG_ID(XG_XYON)] = 0; params[XG_ID(XG_XYX)] = 0; params[XG_ID(XG_XYY)] = 0; params[XG_ID(XG_REPEAT)] = 0; params[XG_ID(XG_VELSENS)] = 1;
+    params[XG_ID(XG_XYON)] = 0; params[XG_ID(XG_XYX)] = 0; params[XG_ID(XG_XYY)] = 0; params[XG_ID(XG_REPEAT)] = 0; params[XG_ID(XG_VELSENS)] = 1; params[XG_ID(XG_DV)] = 0; params[XG_ID(XG_DVTONE)] = 0.6f; params[XG_ID(XG_LIMIT)] = 1;
     held = 0; nev = 0;
     kAtkF = coef(0.0003f); kRelF = coef(0.15f); kAtkS = coef(0.02f); kRelS = coef(0.15f); kCpA = 1.f; kCpR = coef(0.12f);
     kLo = 1.f - expf_(-TAU * 120.f / sr); kHi = 1.f - expf_(-TAU * 6000.f / sr);
@@ -181,7 +184,7 @@ struct Engine {
   // ---------------------------------------------------------------- transport
   void play() { if (playing) return; playing = true; resetClocks(); if (songOn && songLen > 0) { songPos = 0; songRep = 0; cur = song[0].pat; } fxPrev = 0; }
   void stop() { playing = false; for (int t = 0; t < NT; t++) npend[t] = 0; }
-  void select(int p, bool now) { if (p < 0 || p >= NPAT) return; if (!playing || now) { cur = p; resetClocks(); queued = -1; } else queued = p; }
+  void select(int p, bool now, bool bar = false) { if (p < 0 || p >= NPAT) return; if (!playing || now) { cur = p; resetClocks(); queued = -1; } else { queued = p; queueBar = bar; } }
 
   bool condOK(int c, int t, bool first) {
     int L = tLoop[t];
@@ -261,8 +264,10 @@ struct Engine {
         if (mStep >= len) {      // end of the pattern
           mStep = 0; mLoop++; perfTake = false;
           if (songOn && songLen > 0) { if (++songRep >= (song[songPos].rep < 1 ? 1 : song[songPos].rep)) { songRep = 0; songPos = (songPos + 1) % songLen; int np = song[songPos].pat; if (np != cur) { cur = np; for (int t = 0; t < NT; t++) { tClock[t] = 0; tStep[t] = 0; tLoop[t] = 0; } mLoop = 0; } } }
-          else if (queued >= 0) { cur = queued; queued = -1; for (int t = 0; t < NT; t++) { tClock[t] = 0; tStep[t] = 0; tLoop[t] = 0; } mLoop = 0; }
+          else if (queued >= 0) { cur = queued; queued = -1; queueBar = false; for (int t = 0; t < NT; t++) { tClock[t] = 0; tStep[t] = 0; tLoop[t] = 0; } mLoop = 0; }
         }
+        else if (queued >= 0 && queueBar && mStep > 0 && (mStep & 15) == 0 && !(songOn && songLen > 0)) {   // PULSAR 3: on the bar (DROP, scenes)
+          cur = queued; queued = -1; queueBar = false; mStep = 0; mLoop = 0; perfTake = false; for (int t = 0; t < NT; t++) { tClock[t] = 0; tStep[t] = 0; tLoop[t] = 0; } }
         if (mStep == 0 && loopAt < 0) loopAt = procPos;
         masterStep(); mStep++; mClock += stepM;
       }
@@ -491,17 +496,61 @@ struct Engine {
         mixL += yl * 0.8f; mixR += yr * 0.8f; }
       masterFX(mixL, mixR);
       xyFX(mixL, mixR, xyOn);
+      dirtyVoltage(mixL, mixR);
       // glue: compressor + drive + soft limit
       float lvl = maxf(absf(mixL), absf(mixR)); compEnv += (lvl - compEnv) * (lvl > compEnv ? 0.01f : 0.0002f);
       float thr = 0.5f - params[G_COMP] * 0.35f; float g = compEnv > thr ? powf_(thr / compEnv, params[G_COMP] * 0.75f) : 1.f;
       mixL *= g; mixR *= g;
       float dr = 1.f + params[G_DRIVE] * 4.f; float mv = params[G_MASTER];
-      outL[i] = tanhf_(mixL * dr) / (dr > 1.5f ? tanhf_(dr) : 1.f) * mv; outR[i] = tanhf_(mixR * dr) / (dr > 1.5f ? tanhf_(dr) : 1.f) * mv;
+      float oL = tanhf_(mixL * dr) / (dr > 1.5f ? tanhf_(dr) : 1.f) * mv, oR = tanhf_(mixR * dr) / (dr > 1.5f ? tanhf_(dr) : 1.f) * mv;
+      limiter(oL, oR); outL[i] = oL; outR[i] = oR;
       if ((i & 3) == 0) { scope[scopeW] = (outL[i] + outR[i]) * 0.5f; scopeW = (scopeW + 1) & 511; }
     }
     teleUpdate();
   }
 
+  // DIRTY VOLTAGE: safety high-pass (30 Hz), the lows below 140 Hz in mono and only lightly saturated, the rest through two
+  // saturation stages run at twice the sample rate (the midpoint is saturated too and the pair averaged), a tone low-pass,
+  // and a slow loudness match (in vs out RMS) so that more drive is not simply louder. Off (amount 0) it is bypassed.
+  void dirtyVoltage(float& L, float& R) {
+    const float amt = clampf(params[XG_ID(XG_DV)], 0.f, 1.f);
+    if (amt < 0.001f) { dvPrev[0] = L; dvPrev[1] = R; dvMk = 1; return; }
+    const float tone = clampf(params[XG_ID(XG_DVTONE)], 0.f, 1.f);
+    if (tone != dvToneK || sr != dvSr) { dvToneK = tone; dvSr = sr; dvAH = 1.f - expf_(-TAU * 30.f / sr); dvAL = 1.f - expf_(-TAU * 140.f / sr); dvTC = 1.f - expf_(-TAU * (2500.f * powf_(7.f, tone)) / sr); }
+    const float aH = dvAH; dvHp[0] += (L - dvHp[0]) * aH; dvHp[1] += (R - dvHp[1]) * aH;
+    float x[2] = { L - dvHp[0], R - dvHp[1] };
+    const float aL = dvAL;
+    for (int c = 0; c < 2; c++) { dvLp[c] += (x[c] - dvLp[c]) * aL; dvLp2[c] += (dvLp[c] - dvLp2[c]) * aL; }   // the lows: 12 dB/oct at 140 Hz
+    const float low = (dvLp2[0] + dvLp2[1]) * 0.5f, lowS = tanhf_(low * (1.f + amt * 2.5f)) / (1.f + amt * 0.9f);
+    const float g = 1.f + amt * 14.f, bias = 0.2f * amt, b0 = tanhf_(bias);
+    auto sat = [&](float v) { float y = tanhf_(v * g + bias) - b0; y = y * 1.4f; return y / (1.f + absf(y)) * 1.35f; };   // stage 1 asymmetric, stage 2 soft clip
+    const float tc = dvTC;
+    float o[2];
+    for (int c = 0; c < 2; c++) {
+      float hi = x[c] - dvLp2[c];                                              // the rest, kept clear of the lows (2 x HP at 140 Hz)
+      dvHq[c] += (hi - dvHq[c]) * aL; hi -= dvHq[c]; dvHq2[c] += (hi - dvHq2[c]) * aL; hi -= dvHq2[c];
+      const float mid = (hi + dvPrev[c]) * 0.5f; dvPrev[c] = hi;
+      float hs = (sat(mid) + sat(hi)) * 0.5f;
+      dvHo[c] += (hs - dvHo[c]) * aL; hs -= dvHo[c]; dvHo2[c] += (hs - dvHo2[c]) * aL; hs -= dvHo2[c];   // and after: what the saturation made below 140 Hz goes too
+      dvTone[c] += (hs - dvTone[c]) * tc;
+      o[c] = lowS + dvTone[c];
+    }
+    const float inL = L * L + R * R, outE = o[0] * o[0] + o[1] * o[1], k = 1.f / (0.3f * sr);
+    dvIn += (inL - dvIn) * k; dvOut += (outE - dvOut) * k;
+    float want = sqrtf_(dvIn / maxf(dvOut, 1e-9f)); want = clampf(want, 0.25f, 1.5f);
+    dvMk += (want - dvMk) * (1.f / (0.05f * sr));
+    const float wet = clampf(amt * 3.f, 0.f, 1.f);             // the first third of the knob fades the chain in
+    L = L * (1.f - wet) + o[0] * dvMk * wet; R = R * (1.f - wet) + o[1] * dvMk * wet;
+  }
+  // the safety limiter: -1 dBFS ceiling, instant attack, 80 ms release; and the meter (RMS, dBFS, 300 ms)
+  void limiter(float& L, float& R) {
+    rmsAcc += L * L + R * R; if (++rmsN >= (int)(0.3f * sr)) { rmsDb = 10.f * 0.30103f * log2f_(rmsAcc / (2.f * rmsN) + 1e-12f); rmsAcc = 0; rmsN = 0; }
+    if (params[XG_ID(XG_LIMIT)] < 0.5f) { limG = 1; return; }
+    const float ceil = 0.891f, pk = maxf(absf(L), absf(R));
+    if (pk * limG > ceil) limG = ceil / pk; else limG += (1.f - limG) * (1.f / (0.08f * sr));
+    if (limG < limMin) limMin = limG;
+    L *= limG; R *= limG;
+  }
   void masterFX(float& L, float& R) {
     hist[0][hW] = L; hist[1][hW] = R; int w = hW; hW = (hW + 1) & (HLEN - 1);
     uint16_t f = fxNow, rise = f & ~fxPrev; fxPrev = f;
@@ -546,7 +595,7 @@ struct Engine {
     tele[0] = playing; tele[1] = bpm(); tele[2] = (float)cur; tele[3] = (float)(queued); tele[4] = (float)(mStep > 0 ? (mStep - 1) % NS : 0);
     tele[5] = (float)fxNow; tele[6] = (float)dirty; tele[7] = (float)songPos; tele[8] = rec;
     for (int t = 0; t < NT; t++) { tele[16 + t] = (float)lastTrig[t]; tele[32 + t] = meter[t]; }
-    tele[48] = (float)mLoop;
+    tele[48] = (float)mLoop; tele[50] = rmsDb; tele[51] = 20.f * 0.30103f * log2f_(maxf(limMin, 1e-6f)); limMin = 1; tele[52] = dvMk;
   }
 
   // live play (pads, MIDI): plays now; while recording, lands on the nearest step (quantized)
