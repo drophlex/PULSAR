@@ -31,7 +31,7 @@ EXPORT int px_sample_count() { return E.nSmp; }
 EXPORT void px_reset_samples(int keep) { if (keep < E.nSmp) { E.nSmp = keep; E.poolUsed = keep > 0 ? E.smp[keep - 1].off + E.smp[keep - 1].len : 0; } }
 EXPORT void px_play() { E.play(); }
 EXPORT void px_stop() { E.stop(); }
-EXPORT void px_select(int p, int now) { E.select(p, now); }
+EXPORT void px_select(int p, int now) { E.select(p, now == 1, now == 2); }   // now: 0 at the pattern's end, 1 at once, 2 at the next bar
 EXPORT void px_rec(int on) { E.rec = on; E.perfTake = false; }
 EXPORT void px_fx(int mask) { E.liveFX = (uint16_t)mask; if (!E.playing) E.fxNow = (uint16_t)mask; }
 EXPORT void px_fill(int on) { E.fillHeld = on; }
@@ -42,3 +42,9 @@ EXPORT int px_loop_at() { return E.loopAt; }
 EXPORT void px_clear(int p) { E.clearPattern(p); }
 EXPORT void px_host(int playing, float bpm, int sync) { E.hostSync = sync; E.hostPlaying = playing; E.hostBpm = bpm; }
 EXPORT int px_dirty() { return E.dirty; }
+// PULSAR 3 HYPERLINK: the block's hits / CCs (16 bytes each: t, at, vel, then hw, note, cc, kind), taken and cleared by the worklet
+EXPORT int px_ev_count() { return E.nev; }
+EXPORT void* px_ev() { return (void*)E.ev; }
+EXPORT int px_ev_size() { return (int)sizeof(E.ev[0]); }
+EXPORT void px_ev_clear() { E.nev = 0; }
+EXPORT void px_hwcc(int cc, int v, int bar) { E.hwCC(cc, v, bar != 0); }

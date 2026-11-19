@@ -24,7 +24,7 @@ const tr = s => LANG === 'es' && ES[s] ? ES[s] : s;
 function applyLang() { $$('[data-i]').forEach(e => { e.textContent = tr(e.dataset.i); }); $('#langBtn').innerHTML = LANG === 'es' ? 'EN · <b>ES</b>' : '<b>EN</b> · ES'; }
 
 // ------------------------------------------------------------------ state
-const UI = { view: LS.get('pulsar.view') || 'LIVE', cur: 0, sel: 0, selStep: -1, page: 0, tab: 'SOUND', playing: false, rec: false, fx: 0, fillHold: false, songOn: false, song: [[0, 1]],
+const UI = { view: LS.get('pulsar.view') || 'LAB', cur: 0, sel: 0, selStep: -1, page: 0, tab: 'SOUND', playing: false, rec: false, fx: 0, fillHold: false, songOn: false, song: [[0, 1]],
   style: 'BIG BEAT', cplx: 0.5, seed: 1, pats: [], kit: [], tele: null, clip: null, dirty: -1, sounds: [], soundIdx: {}, userSamples: [], wavRec: false };
 const PARAMS = new Float32Array(P_COUNT);
 PARAMS[XGID(XG.VELSENS)] = 1;
@@ -442,7 +442,7 @@ function wire() {
     else if (k === 'arrowup') { UI.sel = (UI.sel + NT - 1) % NT; renderRows(); renderPanel(); } else if (k === 'arrowdown') { UI.sel = (UI.sel + 1) % NT; renderRows(); renderPanel(); }
   });
   document.addEventListener('keyup', e => { const fi = FXKEYS.indexOf(e.key.toLowerCase()); if (fi >= 0) fxUp(fi); });
-  if (navigator.requestMIDIAccess) navigator.requestMIDIAccess().then(m => { const bind = () => m.inputs.forEach(i => (i.onmidimessage = ev => { const [s, n, v] = ev.data; if ((s & 0xf0) === 0x90 && v > 0 && n >= 36 && n < 52) Bridge.post({ t: 'pad', t2: n - 36, vel: v }); })); bind(); m.onstatechange = bind; }).catch(() => {});
+  if (navigator.requestMIDIAccess) navigator.requestMIDIAccess().then(m => { const bind = () => m.inputs.forEach(i => (i.onmidimessage = ev => { const [s, n, v] = ev.data; if (window.Hyper && Hyper.st.on && (s & 15) === Hyper.st.ch - 1) return; /* the TR-8's own notes: heard by HYPERLINK, never doubled */ if ((s & 0xf0) === 0x90 && v > 0 && n >= 36 && n < 52) Bridge.post({ t: 'pad', t2: n - 36, vel: v }); })); bind(); m.onstatechange = bind; }).catch(() => {});
   if (Bridge.kind === 'web') setInterval(() => LS.set('pulsar.project', projectJSON()), 15000);
   else { let last = ''; setInterval(() => { const u = uiJSON(); if (u !== last) { last = u; Bridge._call('setUi', [u]); } }, 1500); $('#wavBtn').style.display = 'none'; }
   // the plug-in: follow the DAW's transport
@@ -465,7 +465,7 @@ async function boot() {
     wire();
     if (saved) { try { loadProject(saved); } catch (e) { applyKit('BIG BEAT'); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); } }
     else { applyKit('BIG BEAT'); setP(G.BPM, 132); setP(G.DRIVE, .3); setP(G.COMP, .5); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); }
-    renderAll(); $('#splash').remove(); if (window.Pro) Pro.boot();
+    renderAll(); $('#splash').remove(); if (window.Pro) Pro.boot(); if (window.Lab) Lab.boot(); if (window.Hyper) Hyper.boot(); if (typeof Coach !== 'undefined') Coach.show();
   };
 }
 boot();

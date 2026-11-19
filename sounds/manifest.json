@@ -1234,5 +1234,439 @@
   "bpm": 96,
   "bars": 2,
   "slices": 32
+ },
+ {
+  "id": "lab/kick riot",
+  "group": "lab",
+  "name": "kick riot",
+  "cat": "kick",
+  "len": 0.55,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/kick voltage",
+  "group": "lab",
+  "name": "kick voltage",
+  "cat": "kick",
+  "len": 0.42,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/kick robot",
+  "group": "lab",
+  "name": "kick robot",
+  "cat": "kick",
+  "len": 0.5,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/kick pressure",
+  "group": "lab",
+  "name": "kick pressure",
+  "cat": "kick",
+  "len": 0.7,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/kick fractal",
+  "group": "lab",
+  "name": "kick fractal",
+  "cat": "kick",
+  "len": 0.22,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/snare riot",
+  "group": "lab",
+  "name": "snare riot",
+  "cat": "snare",
+  "len": 0.35,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/snare pressure",
+  "group": "lab",
+  "name": "snare pressure",
+  "cat": "snare",
+  "len": 0.42,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/clap robot",
+  "group": "lab",
+  "name": "clap robot",
+  "cat": "snare",
+  "len": 0.4,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/clap voltage",
+  "group": "lab",
+  "name": "clap voltage",
+  "cat": "snare",
+  "len": 0.32,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/hat robot",
+  "group": "lab",
+  "name": "hat robot",
+  "cat": "hat",
+  "len": 0.12,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/hat robot open",
+  "group": "lab",
+  "name": "hat robot open",
+  "cat": "cymbal",
+  "len": 0.5,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/hat voltage",
+  "group": "lab",
+  "name": "hat voltage",
+  "cat": "hat",
+  "len": 0.08,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/metal hit",
+  "group": "lab",
+  "name": "metal hit",
+  "cat": "perc",
+  "len": 0.6,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/metal anvil",
+  "group": "lab",
+  "name": "metal anvil",
+  "cat": "perc",
+  "len": 0.9,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/tick fractal",
+  "group": "lab",
+  "name": "tick fractal",
+  "cat": "perc",
+  "len": 0.05,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/fm glass",
+  "group": "lab",
+  "name": "fm glass",
+  "cat": "perc",
+  "len": 0.35,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/fm knock",
+  "group": "lab",
+  "name": "fm knock",
+  "cat": "perc",
+  "len": 0.25,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/zap down",
+  "group": "lab",
+  "name": "zap down",
+  "cat": "perc",
+  "len": 0.35,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/glitch blip",
+  "group": "lab",
+  "name": "glitch blip",
+  "cat": "perc",
+  "len": 0.09,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/riser saw",
+  "group": "lab",
+  "name": "riser saw",
+  "cat": "perc",
+  "len": 2.2,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/drop boom",
+  "group": "lab",
+  "name": "drop boom",
+  "cat": "kick",
+  "len": 2.0,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/drone sub",
+  "group": "lab",
+  "name": "drone sub",
+  "cat": "kick",
+  "len": 2.2,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0"
+ },
+ {
+  "id": "lab/bass robot",
+  "group": "lab",
+  "name": "bass robot",
+  "cat": "bass",
+  "len": 0.6,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 36
+ },
+ {
+  "id": "lab/bass grit",
+  "group": "lab",
+  "name": "bass grit",
+  "cat": "bass",
+  "len": 0.6,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 36
+ },
+ {
+  "id": "lab/bass reese",
+  "group": "lab",
+  "name": "bass reese",
+  "cat": "bass",
+  "len": 0.9,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 36
+ },
+ {
+  "id": "lab/bass acid",
+  "group": "lab",
+  "name": "bass acid",
+  "cat": "bass",
+  "len": 0.6,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 36
+ },
+ {
+  "id": "lab/bass sub",
+  "group": "lab",
+  "name": "bass sub",
+  "cat": "bass",
+  "len": 0.7,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 36
+ },
+ {
+  "id": "lab/bass fm",
+  "group": "lab",
+  "name": "bass fm",
+  "cat": "bass",
+  "len": 0.6,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 36
+ },
+ {
+  "id": "lab/bass mono drive",
+  "group": "lab",
+  "name": "bass mono drive",
+  "cat": "bass",
+  "len": 0.6,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 36
+ },
+ {
+  "id": "lab/bass pluck",
+  "group": "lab",
+  "name": "bass pluck",
+  "cat": "bass",
+  "len": 0.35,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 36
+ },
+ {
+  "id": "lab/stab dark",
+  "group": "lab",
+  "name": "stab dark",
+  "cat": "perc",
+  "len": 0.4,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 48
+ },
+ {
+  "id": "lab/stab robot",
+  "group": "lab",
+  "name": "stab robot",
+  "cat": "perc",
+  "len": 0.4,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 48
+ },
+ {
+  "id": "lab/stab rave",
+  "group": "lab",
+  "name": "stab rave",
+  "cat": "perc",
+  "len": 0.5,
+  "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)",
+  "lic": "CC0",
+  "root": 48
+ },
+ {
+  "id": "dfd pack/architech hat",
+  "group": "dfd pack",
+  "name": "architech hat",
+  "cat": "hat",
+  "len": 0.075,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/chembech kick",
+  "group": "dfd pack",
+  "name": "chembech kick",
+  "cat": "kick",
+  "len": 0.23,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/dfd crash",
+  "group": "dfd pack",
+  "name": "dfd crash",
+  "cat": "cymbal",
+  "len": 0.34,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/durcal kick",
+  "group": "dfd pack",
+  "name": "durcal kick",
+  "cat": "kick",
+  "len": 0.18,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/gambu snare",
+  "group": "dfd pack",
+  "name": "gambu snare",
+  "cat": "snare",
+  "len": 0.18,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/karl openhat",
+  "group": "dfd pack",
+  "name": "karl openhat",
+  "cat": "cymbal",
+  "len": 0.25,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/manu rim",
+  "group": "dfd pack",
+  "name": "manu rim",
+  "cat": "perc",
+  "len": 0.1,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/meni cowbell",
+  "group": "dfd pack",
+  "name": "meni cowbell",
+  "cat": "perc",
+  "len": 0.25,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/palm snare",
+  "group": "dfd pack",
+  "name": "palm snare",
+  "cat": "snare",
+  "len": 0.16,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/polaris zap",
+  "group": "dfd pack",
+  "name": "polaris zap",
+  "cat": "perc",
+  "len": 0.24,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/quesa fm",
+  "group": "dfd pack",
+  "name": "quesa fm",
+  "cat": "perc",
+  "len": 0.18,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/rufi tamb",
+  "group": "dfd pack",
+  "name": "rufi tamb",
+  "cat": "perc",
+  "len": 0.23,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/sub kick",
+  "group": "dfd pack",
+  "name": "sub kick",
+  "cat": "kick",
+  "len": 0.21,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
+ },
+ {
+  "id": "dfd pack/tere clap",
+  "group": "dfd pack",
+  "name": "tere clap",
+  "cat": "snare",
+  "len": 0.17,
+  "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)",
+  "lic": "CC0"
  }
 ]

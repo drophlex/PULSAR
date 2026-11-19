@@ -99,4 +99,7 @@ void PulsarEditor::timerCallback() {
   if (const int c = proc.takeLearnDone(); c >= 0) { juce::DynamicObject::Ptr l = new juce::DynamicObject(); l->setProperty("cc", c); web->emitEventIfBrowserIsVisible("learned", juce::var(l.get())); }
   if (const int i = proc.takeCcTouched(); i >= 0) { proc.syncHost(i); web->emitEventIfBrowserIsVisible("ccMoved", proc.ccInfo(i)); }
   if (auto r = proc.takeResample(); r.isObject()) web->emitEventIfBrowserIsVisible("resampled", r);
+  // HYPERLINK: what the TR-8 played since the last frame (note, velocity, PULSAR's step) for GHOST GROOVE and the MIDI monitor
+  if (auto hw = proc.takeHwIn(); !hw.empty()) { juce::Array<juce::var> a; for (auto& x : hw) { juce::Array<juce::var> e; e.add(x.note); e.add(x.vel); e.add(x.step); a.add(e); }
+    juce::DynamicObject::Ptr h = new juce::DynamicObject(); h->setProperty("list", a); web->emitEventIfBrowserIsVisible("hwIn", juce::var(h.get())); }
 }

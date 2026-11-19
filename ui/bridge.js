@@ -17,7 +17,7 @@ class PulsarProc extends AudioWorkletProcessor {
       case 'params': { const p = new Float32Array(this.mem(), X.px_params(), X.px_param_count()); for (const [id, v] of d.list) X.px_param(id, v); break; }
       case 'play': X.px_play(); break;
       case 'stop': X.px_stop(); break;
-      case 'select': X.px_select(d.p, d.now ? 1 : 0); break;
+      case 'select': X.px_select(d.p, d.now ? 1 : d.bar ? 2 : 0); break;
       case 'rec': X.px_rec(d.on ? 1 : 0); break;
       case 'fx': X.px_fx(d.mask); break;
       case 'fill': X.px_fill(d.on ? 1 : 0); break;
@@ -31,12 +31,18 @@ class PulsarProc extends AudioWorkletProcessor {
       case 'song': { new Uint8Array(this.mem(), X.px_song(), 128).set(d.bytes); X.px_song_set(d.n, d.on ? 1 : 0); break; }
       case 'sample': { const free = X.px_pool_free(); let idx = -1; if (d.data.length <= free) { new Float32Array(this.mem(), X.px_pool_write(), d.data.length).set(d.data); idx = X.px_add_sample(d.data.length, d.sr, d.bpm || 0, d.slices || 16); } this.port.postMessage({ t: 'sampleIdx', id: d.id, idx }); break; }
       case 'resetSamples': X.px_reset_samples(d.keep); break;
+      case 'hyperlink': this.hl = d.on; break;
+      case 'hwcc': X.px_hwcc(d.cc, d.v, d.bar ? 1 : 0); break;
       case 'recAudio': this.rec = d.on; if (!d.on) { this.port.postMessage({ t: 'recdata', L: this.recL, R: this.recR }); this.recL = []; this.recR = []; this.recN = 0; } break;
     }
   }
   process(inputs, outputs) {
     const X = this.X, o = outputs[0], n = o[0].length;
-    X.px_process(n);
+    X.px_ev_clear(); X.px_process(n);
+    if (this.hl) { const cnt = X.px_ev_count(); if (cnt) { const sz = X.px_ev_size(), base = X.px_ev(), dv = new DataView(this.mem()), list = [];
+        for (let k = 0; k < cnt; k++) { const o2 = base + k * sz, at = dv.getInt32(o2 + 4, true), vel = dv.getInt32(o2 + 8, true), hw = dv.getUint8(o2 + 12), note = dv.getUint8(o2 + 13), cc = dv.getUint8(o2 + 14), kind = dv.getUint8(o2 + 15);
+          if (kind === 1) list.push([1, cc, vel, at]); else if (hw) list.push([0, note, vel, at]); }
+        if (list.length) this.port.postMessage({ t: 'hw', list, time: currentTime, sr: sampleRate }); } }
     const L = new Float32Array(this.mem(), X.px_out_l(), n), R = new Float32Array(this.mem(), X.px_out_r(), n);
     o[0].set(L); if (o[1]) o[1].set(R);
     if (this.rec) { this.recL.push(L.slice()); this.recR.push(R.slice()); }
@@ -72,6 +78,7 @@ const Bridge = {
   _msg(d) {
     if (d.t === 'tele') this.onTele && this.onTele(d.tele, d.scope);
     else if (d.t === 'resampled') this.onResampled && this.onResampled(d.data);
+    else if (d.t === 'hw') this.onHw && this.onHw(d);
     else if (d.t === 'recdata') this.recCb && this.recCb(d.L, d.R);
     else { const f = this._wait[d.id]; delete this._wait[d.id]; f && f(d); }
   },
@@ -93,6 +100,7 @@ const Bridge = {
     B.addEventListener('learned', d => this.onLearned && this.onLearned(d));
     B.addEventListener('ccMoved', d => this.onCcMoved && this.onCcMoved(d));
     B.addEventListener('resampled', d => this.onResampledPlugin && this.onResampledPlugin(d));
+    B.addEventListener('hwIn', d => this.onHwIn && this.onHwIn(d.list));
     this.ready = true; this.sampleRate = await this._call('sampleRate', []);
   },
   _call(name, args) {

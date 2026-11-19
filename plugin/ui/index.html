@@ -155,6 +155,56 @@ button:disabled{opacity:.35;cursor:default}
 @media (max-width:1100px){#main{grid-template-columns:1fr}#side{position:fixed;right:0;top:0;bottom:0;width:340px;z-index:30;transform:translateX(100%);transition:transform .2s}#side.open{transform:none}#sideBtn{display:inline-block!important}}
 @media (max-width:1250px){#scope,#macros{display:none}#perf{grid-template-columns:1fr auto}}
 @media (max-width:760px){.row{grid-template-columns:20px 20px 74px 1fr 0}.ln{display:none}#fxGrid{grid-template-columns:repeat(8,1fr)}.fx{height:38px}#macros,#scope{display:none}#perf{grid-template-columns:1fr}#perf2{justify-content:center}}
+
+/* ---- PULSAR 3 &#xb7; DFD LIVE LAB ---- */
+#labV{padding:4px 2px 18px;display:flex;flex-direction:column;gap:10px;min-width:0;max-width:100%;overflow-x:hidden}
+.lsec{min-width:0}
+.lsec{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px}
+.lsec h3{margin:0 0 8px;font:800 11px var(--font);letter-spacing:.22em;color:var(--dim);text-transform:uppercase}
+.lsec.qs h3{color:var(--beam)}.lsec.dv h3{color:#ff2e6a}.lsec.rave h3{color:var(--gold)}.lsec.macs h3{color:var(--acid)}.lsec.scenes h3{color:var(--violet)}
+.lrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lrow label{font:700 10px var(--font);letter-spacing:.14em;color:var(--dim)}
+.lrow input[type=number]{width:64px;background:var(--panel2);color:var(--text);border:1px solid var(--line2);border-radius:6px;padding:6px;font:600 12px var(--mono)}
+.lrow select,.lkit{background:var(--panel2);color:var(--text);border:1px solid var(--line2);border-radius:6px;padding:7px 8px;font:600 12px var(--font)}
+.ldesc{margin:8px 0 0;font-size:11.5px;color:var(--dim);line-height:1.45}
+.lfams{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-bottom:8px}
+.lfams button{border-left:4px solid var(--fc);font:800 11px var(--font);letter-spacing:.06em;padding:10px 6px;white-space:normal;min-width:0}
+.lfams button.on{background:color-mix(in srgb,var(--fc) 22%,var(--panel2));color:#fff;border-color:var(--fc)}
+#labV button.big{font-weight:800;padding:10px 16px;border-color:var(--hot);color:#ffd8cc;background:linear-gradient(#3a1b0f,#2a1209)}
+#labV button.big.hot{border-color:var(--gold);color:#ffe9b8;background:linear-gradient(#3a2c0f,#241a06)}
+#labV button.ok{border-color:var(--acid);color:var(--acid)}
+.lprev{position:sticky;top:0;z-index:5;display:flex;gap:8px;align-items:center;background:#16200a;border:1px solid var(--acid);border-radius:10px;padding:8px 12px;font:700 12px var(--font);color:var(--acid)}
+.lprev span{flex:1}
+.lbank{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.lcol{display:flex;flex-direction:column;gap:4px}
+.lcol>b{font:800 10px var(--font);letter-spacing:.14em;color:var(--fc);padding:2px 2px 4px;border-bottom:2px solid var(--fc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lpat{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:7px 8px;gap:2px;border-left:3px solid transparent}
+.lpat:hover{border-left-color:var(--fc)}
+.lpat span{font:700 11.5px var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.lpat small,.lscene small{font:600 9.5px var(--mono);color:var(--dim)}
+.lmacs{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.lhold{min-width:74px;min-height:52px;font-weight:800;border-color:var(--hot)!important}
+.lhold.on{background:var(--hot)!important;color:#000}
+#labV button.rec.on{border-color:var(--acid);color:var(--acid)}
+.lmeter{position:relative;flex:1;min-width:240px;height:30px;background:var(--panel2);border:1px solid var(--line2);border-radius:6px;overflow:hidden}
+.lmeter i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#1a6f86,#46e0ff 70%,#ffc54d 88%,#ff2e6a)}
+.lmeter span{position:relative;display:block;padding:7px 10px;font:600 11px var(--mono);color:#fff;text-shadow:0 1px 2px #000}
+.lscenes{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+.lscene{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 8px;border-top:3px solid var(--fc);text-align:left}
+.lscene span{font:800 11.5px var(--font);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.lscene.on{background:color-mix(in srgb,var(--fc) 20%,var(--panel2))}
+/* HYPERLINK */
+.lsec.hyper h3{color:var(--gold)} .lsec h3.sub{margin:14px 0 6px;font-size:10px;color:var(--dim2)}
+.hlstat{font:700 11px var(--mono);color:var(--dim)} .hlstat.on{color:var(--acid)}
+.hlmx{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 14px;margin-top:6px}
+.hlrow{display:flex;align-items:center;gap:6px;min-width:0}.hlrow>b{font:700 10.5px var(--font);width:96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hlrow .chips button{padding:4px 6px;font-size:10px}.hlrow .chips button.on.r1{background:#3a2c0f;border-color:var(--gold);color:var(--gold)}.hlrow .chips button.on.r2{border-color:var(--acid);color:var(--acid)}.hlrow .chips button.on.r4{border-color:var(--hot);color:var(--hot)}
+.hlrow select{padding:4px;font-size:11px}
+.hlmon{background:#05060a;border:1px solid var(--line);border-radius:6px;padding:8px;font:500 11px var(--mono);color:var(--beam);height:120px;overflow:auto;margin:0}
+@media (max-width:900px){.hlmx{grid-template-columns:1fr}}
+@media (max-width:900px){.lfams{grid-template-columns:repeat(3,minmax(0,1fr))}.lmeter{min-width:0;flex-basis:100%}.lbank{grid-template-columns:repeat(2,minmax(0,1fr))}.lscenes{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:640px){#app{max-width:100vw;overflow-x:hidden}#top .grp{flex-wrap:wrap;max-width:100%;min-width:0}#top #style{max-width:52vw}#top{overflow-x:hidden}}
+@media (max-width:520px){.lbank{grid-template-columns:1fr}.lscenes{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -194,7 +244,7 @@ button:disabled{opacity:.35;cursor:default}
 <input type="file" id="fileIn" accept=".pulsar,.json" style="display:none"><input type="file" id="smpIn" accept="audio/*,.wav,.aif,.aiff,.mp3,.flac,.ogg" style="display:none">
 <script>
 const WASM_B64 = "";
-const SOUNDS = [{"id": "70s kit/kick", "group": "70s kit", "name": "kick", "cat": "kick", "len": 1.146, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/kick", "group": "70s retro", "name": "kick", "cat": "kick", "len": 1.288, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/kick soft", "group": "70s kit", "name": "kick soft", "cat": "kick", "len": 1.156, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s kit/snare", "group": "70s kit", "name": "snare", "cat": "snare", "len": 0.879, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/snare", "group": "70s retro", "name": "snare", "cat": "snare", "len": 1.336, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/snare ghost", "group": "70s kit", "name": "snare ghost", "cat": "snare", "len": 1.476, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s kit/snare rim", "group": "70s kit", "name": "snare rim", "cat": "snare", "len": 1.072, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/snare rim", "group": "70s retro", "name": "snare rim", "cat": "snare", "len": 1.434, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/sidestick", "group": "70s kit", "name": "sidestick", "cat": "rim", "len": 1.738, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/sidestick", "group": "70s retro", "name": "sidestick", "cat": "rim", "len": 1.642, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat closed", "group": "70s kit", "name": "hat closed", "cat": "hat", "len": 0.761, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat closed", "group": "70s retro", "name": "hat closed", "cat": "hat", "len": 0.773, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat tight", "group": "70s kit", "name": "hat tight", "cat": "hat", "len": 0.707, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat tight", "group": "70s retro", "name": "hat tight", "cat": "hat", "len": 0.748, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat half", "group": "70s kit", "name": "hat half", "cat": "hat", "len": 2.084, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat half", "group": "70s retro", "name": "hat half", "cat": "hat", "len": 2.065, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat loose", "group": "70s kit", "name": "hat loose", "cat": "hat", "len": 1.136, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat loose", "group": "70s retro", "name": "hat loose", "cat": "hat", "len": 1.085, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat open", "group": "70s kit", "name": "hat open", "cat": "open", "len": 2.2, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat open", "group": "70s retro", "name": "hat open", "cat": "open", "len": 2.2, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat foot", "group": "70s kit", "name": "hat foot", "cat": "hat", "len": 0.657, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat foot", "group": "70s retro", "name": "hat foot", "cat": "hat", "len": 0.657, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/tom high", "group": "70s kit", "name": "tom high", "cat": "tom", "len": 1.178, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/tom high", "group": "70s retro", "name": "tom high", "cat": "tom", "len": 1.214, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/tom mid", "group": "70s kit", "name": "tom mid", "cat": "tom", "len": 1.291, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/tom mid", "group": "70s retro", "name": "tom mid", "cat": "tom", "len": 1.376, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/tom low", "group": "70s kit", "name": "tom low", "cat": "tom", "len": 1.958, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/tom low", "group": "70s retro", "name": "tom low", "cat": "tom", "len": 2.103, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "breaks/brk funky 101", "group": "breaks", "name": "brk funky 101", "cat": "break", "len": 4.752, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 101, "bars": 2, "slices": 32}, {"id": "breaks/brk drummer 98", "group": "breaks", "name": "brk drummer 98", "cat": "break", "len": 4.898, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 98, "bars": 2, "slices": 32}, {"id": "breaks/brk hot 116", "group": "breaks", "name": "brk hot 116", "cat": "break", "len": 4.138, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 116, "bars": 2, "slices": 32}, {"id": "breaks/brk riot 136", "group": "breaks", "name": "brk riot 136", "cat": "break", "len": 3.529, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 136, "bars": 2, "slices": 32}, {"id": "breaks/brk crate 92", "group": "breaks", "name": "brk crate 92", "cat": "break", "len": 5.217, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 92, "bars": 2, "slices": 32}, {"id": "breaks/brk rush 140", "group": "breaks", "name": "brk rush 140", "cat": "break", "len": 3.429, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 140, "bars": 2, "slices": 32}, {"id": "breaks/brk stomp 104", "group": "breaks", "name": "brk stomp 104", "cat": "break", "len": 4.615, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 104, "bars": 2, "slices": 32}, {"id": "breaks/brk ghost 88", "group": "breaks", "name": "brk ghost 88", "cat": "break", "len": 5.455, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 88, "bars": 2, "slices": 32}, {"id": "rhythm box/kick", "group": "rhythm box", "name": "kick", "cat": "kick", "len": 0.4, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/kick accent", "group": "rhythm box", "name": "kick accent", "cat": "kick", "len": 0.38, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/snare", "group": "rhythm box", "name": "snare", "cat": "snare", "len": 0.211, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/snare accent", "group": "rhythm box", "name": "snare accent", "cat": "snare", "len": 0.259, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/rim", "group": "rhythm box", "name": "rim", "cat": "rim", "len": 0.05, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/hat", "group": "rhythm box", "name": "hat", "cat": "hat", "len": 0.037, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/hat metal", "group": "rhythm box", "name": "hat metal", "cat": "hat", "len": 0.151, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/cymbal", "group": "rhythm box", "name": "cymbal", "cat": "cym", "len": 0.621, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/bongo high", "group": "rhythm box", "name": "bongo high", "cat": "perc", "len": 0.129, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/bongo low", "group": "rhythm box", "name": "bongo low", "cat": "perc", "len": 0.135, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/conga", "group": "rhythm box", "name": "conga", "cat": "perc", "len": 0.409, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/cowbell", "group": "rhythm box", "name": "cowbell", "cat": "perc", "len": 0.16, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/guiro", "group": "rhythm box", "name": "guiro", "cat": "perc", "len": 0.365, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/tambourine", "group": "rhythm box", "name": "tambourine", "cat": "perc", "len": 0.291, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/kick", "group": "80s studio", "name": "kick", "cat": "kick", "len": 0.203, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/kick alt", "group": "80s studio", "name": "kick alt", "cat": "kick", "len": 0.117, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/snare", "group": "80s studio", "name": "snare", "cat": "snare", "len": 0.14, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/snare high", "group": "80s studio", "name": "snare high", "cat": "snare", "len": 0.086, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/clap", "group": "80s studio", "name": "clap", "cat": "clap", "len": 0.191, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/stick", "group": "80s studio", "name": "stick", "cat": "rim", "len": 0.108, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/hat closed", "group": "80s studio", "name": "hat closed", "cat": "hat", "len": 0.115, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/hat open", "group": "80s studio", "name": "hat open", "cat": "open", "len": 0.613, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/ride", "group": "80s studio", "name": "ride", "cat": "cym", "len": 1.266, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/crash", "group": "80s studio", "name": "crash", "cat": "cym", "len": 1.234, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/tom high", "group": "80s studio", "name": "tom high", "cat": "tom", "len": 0.294, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/tom low", "group": "80s studio", "name": "tom low", "cat": "tom", "len": 0.62, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/conga", "group": "80s studio", "name": "conga", "cat": "perc", "len": 0.275, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/cowbell", "group": "80s studio", "name": "cowbell", "cat": "perc", "len": 0.175, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/cabasa", "group": "80s studio", "name": "cabasa", "cat": "perc", "len": 0.079, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/tambourine", "group": "80s studio", "name": "tambourine", "cat": "perc", "len": 0.158, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "studio kit/kick", "group": "studio kit", "name": "kick", "cat": "kick", "len": 0.697, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/kick soft", "group": "studio kit", "name": "kick soft", "cat": "kick", "len": 0.929, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/snare", "group": "studio kit", "name": "snare", "cat": "snare", "len": 0.334, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/snare soft", "group": "studio kit", "name": "snare soft", "cat": "snare", "len": 0.317, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/rimshot", "group": "studio kit", "name": "rimshot", "cat": "snare", "len": 0.415, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/sidestick", "group": "studio kit", "name": "sidestick", "cat": "rim", "len": 0.441, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/tom high", "group": "studio kit", "name": "tom high", "cat": "tom", "len": 2.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/tom mid", "group": "studio kit", "name": "tom mid", "cat": "tom", "len": 1.723, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/tom low", "group": "studio kit", "name": "tom low", "cat": "tom", "len": 2.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/hat tight", "group": "studio kit", "name": "hat tight", "cat": "hat", "len": 0.344, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/hat loose", "group": "studio kit", "name": "hat loose", "cat": "hat", "len": 0.422, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/hat open", "group": "studio kit", "name": "hat open", "cat": "open", "len": 2.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/hat foot", "group": "studio kit", "name": "hat foot", "cat": "hat", "len": 0.698, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/ride", "group": "studio kit", "name": "ride", "cat": "cym", "len": 3.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/ride bell", "group": "studio kit", "name": "ride bell", "cat": "cym", "len": 3.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/crash", "group": "studio kit", "name": "crash", "cat": "cym", "len": 3.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/china", "group": "studio kit", "name": "china", "cat": "cym", "len": 3.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "big kit/kick", "group": "big kit", "name": "kick", "cat": "kick", "len": 0.822, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/snare", "group": "big kit", "name": "snare", "cat": "snare", "len": 0.604, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/rimshot", "group": "big kit", "name": "rimshot", "cat": "snare", "len": 0.511, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/sidestick", "group": "big kit", "name": "sidestick", "cat": "rim", "len": 0.953, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/hat closed", "group": "big kit", "name": "hat closed", "cat": "hat", "len": 0.628, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/hat tight", "group": "big kit", "name": "hat tight", "cat": "hat", "len": 0.486, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/hat open", "group": "big kit", "name": "hat open", "cat": "open", "len": 2.4, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/ride", "group": "big kit", "name": "ride", "cat": "cym", "len": 3.0, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/crash", "group": "big kit", "name": "crash", "cat": "cym", "len": 3.0, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/tom high", "group": "big kit", "name": "tom high", "cat": "tom", "len": 1.396, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/tom mid", "group": "big kit", "name": "tom mid", "cat": "tom", "len": 1.249, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/tom floor", "group": "big kit", "name": "tom floor", "cat": "tom", "len": 2.302, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 10 piccolo", "group": "snares", "name": "snare 10 piccolo", "cat": "snare", "len": 0.526, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 12 tight", "group": "snares", "name": "snare 12 tight", "cat": "snare", "len": 0.573, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 14 brass", "group": "snares", "name": "snare 14 brass", "cat": "snare", "len": 0.894, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 14 steel", "group": "snares", "name": "snare 14 steel", "cat": "snare", "len": 0.671, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 14 maple", "group": "snares", "name": "snare 14 maple", "cat": "snare", "len": 0.546, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 16 fat", "group": "snares", "name": "snare 16 fat", "cat": "snare", "len": 0.535, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 20 tight", "group": "snares", "name": "snare 20 tight", "cat": "snare", "len": 0.59, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/rimshot 13", "group": "snares", "name": "rimshot 13", "cat": "snare", "len": 0.575, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 12 ghost", "group": "snares", "name": "snare 12 ghost", "cat": "snare", "len": 0.543, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/hand clap", "group": "snares", "name": "hand clap", "cat": "clap", "len": 0.632, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/tambourine", "group": "snares", "name": "tambourine", "cat": "perc", "len": 0.611, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/kick", "group": "odd kit", "name": "kick", "cat": "kick", "len": 0.828, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/snare 13", "group": "odd kit", "name": "snare 13", "cat": "snare", "len": 0.593, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/snare 22", "group": "odd kit", "name": "snare 22", "cat": "snare", "len": 0.739, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/hat", "group": "odd kit", "name": "hat", "cat": "hat", "len": 0.815, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/cymbal", "group": "odd kit", "name": "cymbal", "cat": "cym", "len": 3.0, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/block", "group": "odd kit", "name": "block", "cat": "perc", "len": 0.617, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "designed/kick punch", "group": "designed", "name": "kick punch", "cat": "kick", "len": 0.485, "src": "PULSAR (synthesis + SM Drums transient)", "lic": "CC0"}, {"id": "designed/kick rave", "group": "designed", "name": "kick rave", "cat": "kick", "len": 0.572, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/kick boom", "group": "designed", "name": "kick boom", "cat": "kick", "len": 1.652, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/kick gabber", "group": "designed", "name": "kick gabber", "cat": "kick", "len": 0.798, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/kick big beat", "group": "designed", "name": "kick big beat", "cat": "kick", "len": 1.236, "src": "PULSAR (Big Rusty Drums + synthesis)", "lic": "CC0"}, {"id": "designed/kick electro", "group": "designed", "name": "kick electro", "cat": "kick", "len": 0.928, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/snare big beat", "group": "designed", "name": "snare big beat", "cat": "snare", "len": 0.844, "src": "PULSAR (Big Rusty + Frankensnare)", "lic": "CC0"}, {"id": "designed/snare jungle", "group": "designed", "name": "snare jungle", "cat": "snare", "len": 0.483, "src": "PULSAR (Frankensnare, tuned up)", "lic": "CC0"}, {"id": "designed/snare electro", "group": "designed", "name": "snare electro", "cat": "snare", "len": 0.266, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/clap stack", "group": "designed", "name": "clap stack", "cat": "clap", "len": 0.709, "src": "PULSAR (Frankensnare claps, layered)", "lic": "CC0"}, {"id": "designed/hat metal closed", "group": "designed", "name": "hat metal closed", "cat": "hat", "len": 0.08, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/hat metal open", "group": "designed", "name": "hat metal open", "cat": "open", "len": 0.553, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/fm blip", "group": "designed", "name": "fm blip", "cat": "perc", "len": 0.258, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/fm wood", "group": "designed", "name": "fm wood", "cat": "perc", "len": 0.128, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/zap", "group": "designed", "name": "zap", "cat": "perc", "len": 0.305, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/noise riser", "group": "designed", "name": "noise riser", "cat": "perc", "len": 1.933, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "breaks hifi/brk big 120", "group": "breaks hifi", "name": "brk big 120", "cat": "break", "len": 4.0, "src": "played in PULSAR on SM Drums + Big Rusty Drums", "lic": "CC0", "bpm": 120, "bars": 2, "slices": 32}, {"id": "breaks hifi/brk heavy 108", "group": "breaks hifi", "name": "brk heavy 108", "cat": "break", "len": 4.444, "src": "played in PULSAR on SM Drums + Big Rusty Drums", "lic": "CC0", "bpm": 108, "bars": 2, "slices": 32}, {"id": "breaks hifi/brk tight 132", "group": "breaks hifi", "name": "brk tight 132", "cat": "break", "len": 3.636, "src": "played in PULSAR on SM Drums + Big Rusty Drums", "lic": "CC0", "bpm": 132, "bars": 2, "slices": 32}, {"id": "breaks hifi/brk ride 126", "group": "breaks hifi", "name": "brk ride 126", "cat": "break", "len": 3.81, "src": "played in PULSAR on SM Drums + Big Rusty Drums", "lic": "CC0", "bpm": 126, "bars": 2, "slices": 32}, {"id": "breaks hifi/brk shuffle 96", "group": "breaks hifi", "name": "brk shuffle 96", "cat": "break", "len": 5.0, "src": "played in PULSAR on SM Drums + Big Rusty Drums", "lic": "CC0", "bpm": 96, "bars": 2, "slices": 32}];
+const SOUNDS = [{"id": "70s kit/kick", "group": "70s kit", "name": "kick", "cat": "kick", "len": 1.146, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/kick", "group": "70s retro", "name": "kick", "cat": "kick", "len": 1.288, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/kick soft", "group": "70s kit", "name": "kick soft", "cat": "kick", "len": 1.156, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s kit/snare", "group": "70s kit", "name": "snare", "cat": "snare", "len": 0.879, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/snare", "group": "70s retro", "name": "snare", "cat": "snare", "len": 1.336, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/snare ghost", "group": "70s kit", "name": "snare ghost", "cat": "snare", "len": 1.476, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s kit/snare rim", "group": "70s kit", "name": "snare rim", "cat": "snare", "len": 1.072, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/snare rim", "group": "70s retro", "name": "snare rim", "cat": "snare", "len": 1.434, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/sidestick", "group": "70s kit", "name": "sidestick", "cat": "rim", "len": 1.738, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/sidestick", "group": "70s retro", "name": "sidestick", "cat": "rim", "len": 1.642, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat closed", "group": "70s kit", "name": "hat closed", "cat": "hat", "len": 0.761, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat closed", "group": "70s retro", "name": "hat closed", "cat": "hat", "len": 0.773, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat tight", "group": "70s kit", "name": "hat tight", "cat": "hat", "len": 0.707, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat tight", "group": "70s retro", "name": "hat tight", "cat": "hat", "len": 0.748, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat half", "group": "70s kit", "name": "hat half", "cat": "hat", "len": 2.084, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat half", "group": "70s retro", "name": "hat half", "cat": "hat", "len": 2.065, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat loose", "group": "70s kit", "name": "hat loose", "cat": "hat", "len": 1.136, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat loose", "group": "70s retro", "name": "hat loose", "cat": "hat", "len": 1.085, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat open", "group": "70s kit", "name": "hat open", "cat": "open", "len": 2.2, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat open", "group": "70s retro", "name": "hat open", "cat": "open", "len": 2.2, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/hat foot", "group": "70s kit", "name": "hat foot", "cat": "hat", "len": 0.657, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/hat foot", "group": "70s retro", "name": "hat foot", "cat": "hat", "len": 0.657, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/tom high", "group": "70s kit", "name": "tom high", "cat": "tom", "len": 1.178, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/tom high", "group": "70s retro", "name": "tom high", "cat": "tom", "len": 1.214, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/tom mid", "group": "70s kit", "name": "tom mid", "cat": "tom", "len": 1.291, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/tom mid", "group": "70s retro", "name": "tom mid", "cat": "tom", "len": 1.376, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "70s kit/tom low", "group": "70s kit", "name": "tom low", "cat": "tom", "len": 1.958, "src": "Gogodze Phu Vol II (Karoryfer)", "lic": "CC0"}, {"id": "70s retro/tom low", "group": "70s retro", "name": "tom low", "cat": "tom", "len": 2.103, "src": "Gogodze Phu Vol II, retro mic", "lic": "CC0"}, {"id": "breaks/brk funky 101", "group": "breaks", "name": "brk funky 101", "cat": "break", "len": 4.752, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 101, "bars": 2, "slices": 32}, {"id": "breaks/brk drummer 98", "group": "breaks", "name": "brk drummer 98", "cat": "break", "len": 4.898, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 98, "bars": 2, "slices": 32}, {"id": "breaks/brk hot 116", "group": "breaks", "name": "brk hot 116", "cat": "break", "len": 4.138, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 116, "bars": 2, "slices": 32}, {"id": "breaks/brk riot 136", "group": "breaks", "name": "brk riot 136", "cat": "break", "len": 3.529, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 136, "bars": 2, "slices": 32}, {"id": "breaks/brk crate 92", "group": "breaks", "name": "brk crate 92", "cat": "break", "len": 5.217, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 92, "bars": 2, "slices": 32}, {"id": "breaks/brk rush 140", "group": "breaks", "name": "brk rush 140", "cat": "break", "len": 3.429, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 140, "bars": 2, "slices": 32}, {"id": "breaks/brk stomp 104", "group": "breaks", "name": "brk stomp 104", "cat": "break", "len": 4.615, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 104, "bars": 2, "slices": 32}, {"id": "breaks/brk ghost 88", "group": "breaks", "name": "brk ghost 88", "cat": "break", "len": 5.455, "src": "played in PULSAR on the Gogodze kit (CC0)", "lic": "CC0", "bpm": 88, "bars": 2, "slices": 32}, {"id": "rhythm box/kick", "group": "rhythm box", "name": "kick", "cat": "kick", "len": 0.4, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/kick accent", "group": "rhythm box", "name": "kick accent", "cat": "kick", "len": 0.38, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/snare", "group": "rhythm box", "name": "snare", "cat": "snare", "len": 0.211, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/snare accent", "group": "rhythm box", "name": "snare accent", "cat": "snare", "len": 0.259, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/rim", "group": "rhythm box", "name": "rim", "cat": "rim", "len": 0.05, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/hat", "group": "rhythm box", "name": "hat", "cat": "hat", "len": 0.037, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/hat metal", "group": "rhythm box", "name": "hat metal", "cat": "hat", "len": 0.151, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/cymbal", "group": "rhythm box", "name": "cymbal", "cat": "cym", "len": 0.621, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/bongo high", "group": "rhythm box", "name": "bongo high", "cat": "perc", "len": 0.129, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/bongo low", "group": "rhythm box", "name": "bongo low", "cat": "perc", "len": 0.135, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/conga", "group": "rhythm box", "name": "conga", "cat": "perc", "len": 0.409, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/cowbell", "group": "rhythm box", "name": "cowbell", "cat": "perc", "len": 0.16, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/guiro", "group": "rhythm box", "name": "guiro", "cat": "perc", "len": 0.365, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "rhythm box/tambourine", "group": "rhythm box", "name": "tambourine", "cat": "perc", "len": 0.291, "src": "oramics/sampled CR-78 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/kick", "group": "80s studio", "name": "kick", "cat": "kick", "len": 0.203, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/kick alt", "group": "80s studio", "name": "kick alt", "cat": "kick", "len": 0.117, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/snare", "group": "80s studio", "name": "snare", "cat": "snare", "len": 0.14, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/snare high", "group": "80s studio", "name": "snare high", "cat": "snare", "len": 0.086, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/clap", "group": "80s studio", "name": "clap", "cat": "clap", "len": 0.191, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/stick", "group": "80s studio", "name": "stick", "cat": "rim", "len": 0.108, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/hat closed", "group": "80s studio", "name": "hat closed", "cat": "hat", "len": 0.115, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/hat open", "group": "80s studio", "name": "hat open", "cat": "open", "len": 0.613, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/ride", "group": "80s studio", "name": "ride", "cat": "cym", "len": 1.266, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/crash", "group": "80s studio", "name": "crash", "cat": "cym", "len": 1.234, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/tom high", "group": "80s studio", "name": "tom high", "cat": "tom", "len": 0.294, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/tom low", "group": "80s studio", "name": "tom low", "cat": "tom", "len": 0.62, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/conga", "group": "80s studio", "name": "conga", "cat": "perc", "len": 0.275, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/cowbell", "group": "80s studio", "name": "cowbell", "cat": "perc", "len": 0.175, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/cabasa", "group": "80s studio", "name": "cabasa", "cat": "perc", "len": 0.079, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "80s studio/tambourine", "group": "80s studio", "name": "tambourine", "cat": "perc", "len": 0.158, "src": "oramics/sampled LM-2 (marked Public Domain)", "lic": "Public Domain"}, {"id": "studio kit/kick", "group": "studio kit", "name": "kick", "cat": "kick", "len": 0.697, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/kick soft", "group": "studio kit", "name": "kick soft", "cat": "kick", "len": 0.929, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/snare", "group": "studio kit", "name": "snare", "cat": "snare", "len": 0.334, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/snare soft", "group": "studio kit", "name": "snare soft", "cat": "snare", "len": 0.317, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/rimshot", "group": "studio kit", "name": "rimshot", "cat": "snare", "len": 0.415, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/sidestick", "group": "studio kit", "name": "sidestick", "cat": "rim", "len": 0.441, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/tom high", "group": "studio kit", "name": "tom high", "cat": "tom", "len": 2.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/tom mid", "group": "studio kit", "name": "tom mid", "cat": "tom", "len": 1.723, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/tom low", "group": "studio kit", "name": "tom low", "cat": "tom", "len": 2.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/hat tight", "group": "studio kit", "name": "hat tight", "cat": "hat", "len": 0.344, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/hat loose", "group": "studio kit", "name": "hat loose", "cat": "hat", "len": 0.422, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/hat open", "group": "studio kit", "name": "hat open", "cat": "open", "len": 2.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/hat foot", "group": "studio kit", "name": "hat foot", "cat": "hat", "len": 0.698, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/ride", "group": "studio kit", "name": "ride", "cat": "cym", "len": 3.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/ride bell", "group": "studio kit", "name": "ride bell", "cat": "cym", "len": 3.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/crash", "group": "studio kit", "name": "crash", "cat": "cym", "len": 3.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "studio kit/china", "group": "studio kit", "name": "china", "cat": "cym", "len": 3.0, "src": "SM Drums (public domain)", "lic": "Public Domain"}, {"id": "big kit/kick", "group": "big kit", "name": "kick", "cat": "kick", "len": 0.822, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/snare", "group": "big kit", "name": "snare", "cat": "snare", "len": 0.604, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/rimshot", "group": "big kit", "name": "rimshot", "cat": "snare", "len": 0.511, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/sidestick", "group": "big kit", "name": "sidestick", "cat": "rim", "len": 0.953, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/hat closed", "group": "big kit", "name": "hat closed", "cat": "hat", "len": 0.628, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/hat tight", "group": "big kit", "name": "hat tight", "cat": "hat", "len": 0.486, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/hat open", "group": "big kit", "name": "hat open", "cat": "open", "len": 2.4, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/ride", "group": "big kit", "name": "ride", "cat": "cym", "len": 3.0, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/crash", "group": "big kit", "name": "crash", "cat": "cym", "len": 3.0, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/tom high", "group": "big kit", "name": "tom high", "cat": "tom", "len": 1.396, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/tom mid", "group": "big kit", "name": "tom mid", "cat": "tom", "len": 1.249, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "big kit/tom floor", "group": "big kit", "name": "tom floor", "cat": "tom", "len": 2.302, "src": "Big Rusty Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 10 piccolo", "group": "snares", "name": "snare 10 piccolo", "cat": "snare", "len": 0.526, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 12 tight", "group": "snares", "name": "snare 12 tight", "cat": "snare", "len": 0.573, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 14 brass", "group": "snares", "name": "snare 14 brass", "cat": "snare", "len": 0.894, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 14 steel", "group": "snares", "name": "snare 14 steel", "cat": "snare", "len": 0.671, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 14 maple", "group": "snares", "name": "snare 14 maple", "cat": "snare", "len": 0.546, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 16 fat", "group": "snares", "name": "snare 16 fat", "cat": "snare", "len": 0.535, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 20 tight", "group": "snares", "name": "snare 20 tight", "cat": "snare", "len": 0.59, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/rimshot 13", "group": "snares", "name": "rimshot 13", "cat": "snare", "len": 0.575, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/snare 12 ghost", "group": "snares", "name": "snare 12 ghost", "cat": "snare", "len": 0.543, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/hand clap", "group": "snares", "name": "hand clap", "cat": "clap", "len": 0.632, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "snares/tambourine", "group": "snares", "name": "tambourine", "cat": "perc", "len": 0.611, "src": "Frankensnare, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/kick", "group": "odd kit", "name": "kick", "cat": "kick", "len": 0.828, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/snare 13", "group": "odd kit", "name": "snare 13", "cat": "snare", "len": 0.593, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/snare 22", "group": "odd kit", "name": "snare 22", "cat": "snare", "len": 0.739, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/hat", "group": "odd kit", "name": "hat", "cat": "hat", "len": 0.815, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/cymbal", "group": "odd kit", "name": "cymbal", "cat": "cym", "len": 3.0, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "odd kit/block", "group": "odd kit", "name": "block", "cat": "perc", "len": 0.617, "src": "Unruly Drums, Karoryfer (CC0)", "lic": "CC0"}, {"id": "designed/kick punch", "group": "designed", "name": "kick punch", "cat": "kick", "len": 0.485, "src": "PULSAR (synthesis + SM Drums transient)", "lic": "CC0"}, {"id": "designed/kick rave", "group": "designed", "name": "kick rave", "cat": "kick", "len": 0.572, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/kick boom", "group": "designed", "name": "kick boom", "cat": "kick", "len": 1.652, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/kick gabber", "group": "designed", "name": "kick gabber", "cat": "kick", "len": 0.798, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/kick big beat", "group": "designed", "name": "kick big beat", "cat": "kick", "len": 1.236, "src": "PULSAR (Big Rusty Drums + synthesis)", "lic": "CC0"}, {"id": "designed/kick electro", "group": "designed", "name": "kick electro", "cat": "kick", "len": 0.928, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/snare big beat", "group": "designed", "name": "snare big beat", "cat": "snare", "len": 0.844, "src": "PULSAR (Big Rusty + Frankensnare)", "lic": "CC0"}, {"id": "designed/snare jungle", "group": "designed", "name": "snare jungle", "cat": "snare", "len": 0.483, "src": "PULSAR (Frankensnare, tuned up)", "lic": "CC0"}, {"id": "designed/snare electro", "group": "designed", "name": "snare electro", "cat": "snare", "len": 0.266, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/clap stack", "group": "designed", "name": "clap stack", "cat": "clap", "len": 0.709, "src": "PULSAR (Frankensnare claps, layered)", "lic": "CC0"}, {"id": "designed/hat metal closed", "group": "designed", "name": "hat metal closed", "cat": "hat", "len": 0.08, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/hat metal open", "group": "designed", "name": "hat metal open", "cat": "open", "len": 0.553, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/fm blip", "group": "designed", "name": "fm blip", "cat": "perc", "len": 0.258, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/fm wood", "group": "designed", "name": "fm wood", "cat": "perc", "len": 0.128, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/zap", "group": "designed", "name": "zap", "cat": "perc", "len": 0.305, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "designed/noise riser", "group": "designed", "name": "noise riser", "cat": "perc", "len": 1.933, "src": "PULSAR synthesis", "lic": "CC0"}, {"id": "breaks hifi/brk big 120", "group": "breaks hifi", "name": "brk big 120", "cat": "break", "len": 4.0, "src": "played in PULSAR on SM Drums + Big Rusty Drums", "lic": "CC0", "bpm": 120, "bars": 2, "slices": 32}, {"id": "breaks hifi/brk heavy 108", "group": "breaks hifi", "name": "brk heavy 108", "cat": "break", "len": 4.444, "src": "played in PULSAR on SM Drums + Big Rusty Drums", "lic": "CC0", "bpm": 108, "bars": 2, "slices": 32}, {"id": "breaks hifi/brk tight 132", "group": "breaks hifi", "name": "brk tight 132", "cat": "break", "len": 3.636, "src": "played in PULSAR on SM Drums + Big Rusty Drums", "lic": "CC0", "bpm": 132, "bars": 2, "slices": 32}, {"id": "breaks hifi/brk ride 126", "group": "breaks hifi", "name": "brk ride 126", "cat": "break", "len": 3.81, "src": "played in PULSAR on SM Drums + Big Rusty Drums", "lic": "CC0", "bpm": 126, "bars": 2, "slices": 32}, {"id": "breaks hifi/brk shuffle 96", "group": "breaks hifi", "name": "brk shuffle 96", "cat": "break", "len": 5.0, "src": "played in PULSAR on SM Drums + Big Rusty Drums", "lic": "CC0", "bpm": 96, "bars": 2, "slices": 32}, {"id": "lab/kick riot", "group": "lab", "name": "kick riot", "cat": "kick", "len": 0.55, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/kick voltage", "group": "lab", "name": "kick voltage", "cat": "kick", "len": 0.42, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/kick robot", "group": "lab", "name": "kick robot", "cat": "kick", "len": 0.5, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/kick pressure", "group": "lab", "name": "kick pressure", "cat": "kick", "len": 0.7, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/kick fractal", "group": "lab", "name": "kick fractal", "cat": "kick", "len": 0.22, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/snare riot", "group": "lab", "name": "snare riot", "cat": "snare", "len": 0.35, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/snare pressure", "group": "lab", "name": "snare pressure", "cat": "snare", "len": 0.42, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/clap robot", "group": "lab", "name": "clap robot", "cat": "snare", "len": 0.4, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/clap voltage", "group": "lab", "name": "clap voltage", "cat": "snare", "len": 0.32, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/hat robot", "group": "lab", "name": "hat robot", "cat": "hat", "len": 0.12, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/hat robot open", "group": "lab", "name": "hat robot open", "cat": "cymbal", "len": 0.5, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/hat voltage", "group": "lab", "name": "hat voltage", "cat": "hat", "len": 0.08, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/metal hit", "group": "lab", "name": "metal hit", "cat": "perc", "len": 0.6, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/metal anvil", "group": "lab", "name": "metal anvil", "cat": "perc", "len": 0.9, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/tick fractal", "group": "lab", "name": "tick fractal", "cat": "perc", "len": 0.05, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/fm glass", "group": "lab", "name": "fm glass", "cat": "perc", "len": 0.35, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/fm knock", "group": "lab", "name": "fm knock", "cat": "perc", "len": 0.25, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/zap down", "group": "lab", "name": "zap down", "cat": "perc", "len": 0.35, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/glitch blip", "group": "lab", "name": "glitch blip", "cat": "perc", "len": 0.09, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/riser saw", "group": "lab", "name": "riser saw", "cat": "perc", "len": 2.2, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/drop boom", "group": "lab", "name": "drop boom", "cat": "kick", "len": 2.0, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/drone sub", "group": "lab", "name": "drone sub", "cat": "kick", "len": 2.2, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0"}, {"id": "lab/bass robot", "group": "lab", "name": "bass robot", "cat": "bass", "len": 0.6, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 36}, {"id": "lab/bass grit", "group": "lab", "name": "bass grit", "cat": "bass", "len": 0.6, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 36}, {"id": "lab/bass reese", "group": "lab", "name": "bass reese", "cat": "bass", "len": 0.9, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 36}, {"id": "lab/bass acid", "group": "lab", "name": "bass acid", "cat": "bass", "len": 0.6, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 36}, {"id": "lab/bass sub", "group": "lab", "name": "bass sub", "cat": "bass", "len": 0.7, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 36}, {"id": "lab/bass fm", "group": "lab", "name": "bass fm", "cat": "bass", "len": 0.6, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 36}, {"id": "lab/bass mono drive", "group": "lab", "name": "bass mono drive", "cat": "bass", "len": 0.6, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 36}, {"id": "lab/bass pluck", "group": "lab", "name": "bass pluck", "cat": "bass", "len": 0.35, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 36}, {"id": "lab/stab dark", "group": "lab", "name": "stab dark", "cat": "perc", "len": 0.4, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 48}, {"id": "lab/stab robot", "group": "lab", "name": "stab robot", "cat": "perc", "len": 0.4, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 48}, {"id": "lab/stab rave", "group": "lab", "name": "stab rave", "cat": "perc", "len": 0.5, "src": "PULSAR 3 synthesis (tools/build_lab_sounds.py)", "lic": "CC0", "root": 48}, {"id": "dfd pack/architech hat", "group": "dfd pack", "name": "architech hat", "cat": "hat", "len": 0.075, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/chembech kick", "group": "dfd pack", "name": "chembech kick", "cat": "kick", "len": 0.23, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/dfd crash", "group": "dfd pack", "name": "dfd crash", "cat": "cymbal", "len": 0.34, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/durcal kick", "group": "dfd pack", "name": "durcal kick", "cat": "kick", "len": 0.18, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/gambu snare", "group": "dfd pack", "name": "gambu snare", "cat": "snare", "len": 0.18, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/karl openhat", "group": "dfd pack", "name": "karl openhat", "cat": "cymbal", "len": 0.25, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/manu rim", "group": "dfd pack", "name": "manu rim", "cat": "perc", "len": 0.1, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/meni cowbell", "group": "dfd pack", "name": "meni cowbell", "cat": "perc", "len": 0.25, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/palm snare", "group": "dfd pack", "name": "palm snare", "cat": "snare", "len": 0.16, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/polaris zap", "group": "dfd pack", "name": "polaris zap", "cat": "perc", "len": 0.24, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/quesa fm", "group": "dfd pack", "name": "quesa fm", "cat": "perc", "len": 0.18, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/rufi tamb", "group": "dfd pack", "name": "rufi tamb", "cat": "perc", "len": 0.23, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/sub kick", "group": "dfd pack", "name": "sub kick", "cat": "kick", "len": 0.21, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}, {"id": "dfd pack/tere clap", "group": "dfd pack", "name": "tere clap", "cat": "snare", "len": 0.17, "src": "DFD LIVE PACK, Polaris Sound Lab (original synthesis)", "lic": "CC0"}];
 
 /* ---- model.js ---- */
 /* model.js \u2014 PULSAR data: parameters, pattern bytes, kits, the style generators and MIDI export */
@@ -478,7 +528,7 @@ class PulsarProc extends AudioWorkletProcessor {
       case 'params': { const p = new Float32Array(this.mem(), X.px_params(), X.px_param_count()); for (const [id, v] of d.list) X.px_param(id, v); break; }
       case 'play': X.px_play(); break;
       case 'stop': X.px_stop(); break;
-      case 'select': X.px_select(d.p, d.now ? 1 : 0); break;
+      case 'select': X.px_select(d.p, d.now ? 1 : d.bar ? 2 : 0); break;
       case 'rec': X.px_rec(d.on ? 1 : 0); break;
       case 'fx': X.px_fx(d.mask); break;
       case 'fill': X.px_fill(d.on ? 1 : 0); break;
@@ -492,12 +542,18 @@ class PulsarProc extends AudioWorkletProcessor {
       case 'song': { new Uint8Array(this.mem(), X.px_song(), 128).set(d.bytes); X.px_song_set(d.n, d.on ? 1 : 0); break; }
       case 'sample': { const free = X.px_pool_free(); let idx = -1; if (d.data.length <= free) { new Float32Array(this.mem(), X.px_pool_write(), d.data.length).set(d.data); idx = X.px_add_sample(d.data.length, d.sr, d.bpm || 0, d.slices || 16); } this.port.postMessage({ t: 'sampleIdx', id: d.id, idx }); break; }
       case 'resetSamples': X.px_reset_samples(d.keep); break;
+      case 'hyperlink': this.hl = d.on; break;
+      case 'hwcc': X.px_hwcc(d.cc, d.v, d.bar ? 1 : 0); break;
       case 'recAudio': this.rec = d.on; if (!d.on) { this.port.postMessage({ t: 'recdata', L: this.recL, R: this.recR }); this.recL = []; this.recR = []; this.recN = 0; } break;
     }
   }
   process(inputs, outputs) {
     const X = this.X, o = outputs[0], n = o[0].length;
-    X.px_process(n);
+    X.px_ev_clear(); X.px_process(n);
+    if (this.hl) { const cnt = X.px_ev_count(); if (cnt) { const sz = X.px_ev_size(), base = X.px_ev(), dv = new DataView(this.mem()), list = [];
+        for (let k = 0; k < cnt; k++) { const o2 = base + k * sz, at = dv.getInt32(o2 + 4, true), vel = dv.getInt32(o2 + 8, true), hw = dv.getUint8(o2 + 12), note = dv.getUint8(o2 + 13), cc = dv.getUint8(o2 + 14), kind = dv.getUint8(o2 + 15);
+          if (kind === 1) list.push([1, cc, vel, at]); else if (hw) list.push([0, note, vel, at]); }
+        if (list.length) this.port.postMessage({ t: 'hw', list, time: currentTime, sr: sampleRate }); } }
     const L = new Float32Array(this.mem(), X.px_out_l(), n), R = new Float32Array(this.mem(), X.px_out_r(), n);
     o[0].set(L); if (o[1]) o[1].set(R);
     if (this.rec) { this.recL.push(L.slice()); this.recR.push(R.slice()); }
@@ -533,6 +589,7 @@ const Bridge = {
   _msg(d) {
     if (d.t === 'tele') this.onTele && this.onTele(d.tele, d.scope);
     else if (d.t === 'resampled') this.onResampled && this.onResampled(d.data);
+    else if (d.t === 'hw') this.onHw && this.onHw(d);
     else if (d.t === 'recdata') this.recCb && this.recCb(d.L, d.R);
     else { const f = this._wait[d.id]; delete this._wait[d.id]; f && f(d); }
   },
@@ -554,6 +611,7 @@ const Bridge = {
     B.addEventListener('learned', d => this.onLearned && this.onLearned(d));
     B.addEventListener('ccMoved', d => this.onCcMoved && this.onCcMoved(d));
     B.addEventListener('resampled', d => this.onResampledPlugin && this.onResampledPlugin(d));
+    B.addEventListener('hwIn', d => this.onHwIn && this.onHwIn(d.list));
     this.ready = true; this.sampleRate = await this._call('sampleRate', []);
   },
   _call(name, args) {
@@ -589,7 +647,7 @@ const tr = s => LANG === 'es' && ES[s] ? ES[s] : s;
 function applyLang() { $$('[data-i]').forEach(e => { e.textContent = tr(e.dataset.i); }); $('#langBtn').innerHTML = LANG === 'es' ? 'EN \u00b7 <b>ES</b>' : '<b>EN</b> \u00b7 ES'; }
 
 // ------------------------------------------------------------------ state
-const UI = { view: LS.get('pulsar.view') || 'LIVE', cur: 0, sel: 0, selStep: -1, page: 0, tab: 'SOUND', playing: false, rec: false, fx: 0, fillHold: false, songOn: false, song: [[0, 1]],
+const UI = { view: LS.get('pulsar.view') || 'LAB', cur: 0, sel: 0, selStep: -1, page: 0, tab: 'SOUND', playing: false, rec: false, fx: 0, fillHold: false, songOn: false, song: [[0, 1]],
   style: 'BIG BEAT', cplx: 0.5, seed: 1, pats: [], kit: [], tele: null, clip: null, dirty: -1, sounds: [], soundIdx: {}, userSamples: [], wavRec: false };
 const PARAMS = new Float32Array(P_COUNT);
 PARAMS[XGID(XG.VELSENS)] = 1;
@@ -1007,7 +1065,7 @@ function wire() {
     else if (k === 'arrowup') { UI.sel = (UI.sel + NT - 1) % NT; renderRows(); renderPanel(); } else if (k === 'arrowdown') { UI.sel = (UI.sel + 1) % NT; renderRows(); renderPanel(); }
   });
   document.addEventListener('keyup', e => { const fi = FXKEYS.indexOf(e.key.toLowerCase()); if (fi >= 0) fxUp(fi); });
-  if (navigator.requestMIDIAccess) navigator.requestMIDIAccess().then(m => { const bind = () => m.inputs.forEach(i => (i.onmidimessage = ev => { const [s, n, v] = ev.data; if ((s & 0xf0) === 0x90 && v > 0 && n >= 36 && n < 52) Bridge.post({ t: 'pad', t2: n - 36, vel: v }); })); bind(); m.onstatechange = bind; }).catch(() => {});
+  if (navigator.requestMIDIAccess) navigator.requestMIDIAccess().then(m => { const bind = () => m.inputs.forEach(i => (i.onmidimessage = ev => { const [s, n, v] = ev.data; if (window.Hyper && Hyper.st.on && (s & 15) === Hyper.st.ch - 1) return; /* the TR-8's own notes: heard by HYPERLINK, never doubled */ if ((s & 0xf0) === 0x90 && v > 0 && n >= 36 && n < 52) Bridge.post({ t: 'pad', t2: n - 36, vel: v }); })); bind(); m.onstatechange = bind; }).catch(() => {});
   if (Bridge.kind === 'web') setInterval(() => LS.set('pulsar.project', projectJSON()), 15000);
   else { let last = ''; setInterval(() => { const u = uiJSON(); if (u !== last) { last = u; Bridge._call('setUi', [u]); } }, 1500); $('#wavBtn').style.display = 'none'; }
   // the plug-in: follow the DAW's transport
@@ -1030,11 +1088,228 @@ async function boot() {
     wire();
     if (saved) { try { loadProject(saved); } catch (e) { applyKit('BIG BEAT'); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); } }
     else { applyKit('BIG BEAT'); setP(G.BPM, 132); setP(G.DRIVE, .3); setP(G.COMP, .5); UI.pats[0] = generate('BIG BEAT', 7, .45); pushAll(); }
-    renderAll(); $('#splash').remove(); if (window.Pro) Pro.boot();
+    renderAll(); $('#splash').remove(); if (window.Pro) Pro.boot(); if (window.Lab) Lab.boot(); if (window.Hyper) Hyper.boot(); if (typeof Coach !== 'undefined') Coach.show();
   };
 }
 boot();
 if (window.__JUCE__ && window.__JUCE__.backend) setTimeout(() => $('#splash') && $('#splash').onclick(), 400);
+
+/* ---- families.js ---- */
+/* families.js \u2014 PULSAR 3 \u00b7 DFD LIVE LAB: six creative families, each with its own kit, generator, tempo, feel and six named
+   starting patterns (simple / complex / extreme). Original patterns written by code; no loop, riff or recording of anyone.
+   Design notes (internal): the families study the general technique of a scene, never a record:
+     FRACTAL RHYTHM   \u2013 braindance: asymmetric grooves, odd lengths, micro offsets, fine probabilities, fragile vs heavy
+     HYPERBREAK       \u2013 drill: chopped breaks, fast pitched ratchets, articulate sub lines, resolution changes, polymeter
+     CHEMICAL PRESSURE\u2013 big beat: heavy layered breaks, accents, sweeps, tension percussion, build and drop
+     RIOT MACHINE     \u2013 rave breaks: aggressive breaks, industrial kicks, stabs, risers, parallel distortion, a safe ceiling
+     ROBOT DISCO      \u2013 French electro / filter house: four on the floor, elastic bass, swung hats, funk percussion, pump
+     DIRTY VOLTAGE    \u2013 dark electro house: dense kicks, abrasive mono bass, short stabs, gates, dry drops, stutters
+   Loaded after model.js: it adds STYLES / KITS entries and extends generate(), so VARY, BUILD TRACK, MIDI export, locks
+   and DICE work on the families too. Track layout (as the other styles): 0 kick, 1 snare, 2 clap, 3 hat, 4 open hat,
+   5-6 breaks, 7-9 percussion, 10 bass (pitched steps), 11 fx, 12 ghost, 13 shaker, 14 riser / drop, 15 stab (pitched). */
+Object.assign(ES, {
+  'FRACTAL RHYTHM': 'RITMO FRACTAL', 'HYPERBREAK': 'HYPERBREAK', 'CHEMICAL PRESSURE': 'PRESI\u00d3N QU\u00cdMICA', 'RIOT MACHINE': 'M\u00c1QUINA DE MOT\u00cdN',
+  'ROBOT DISCO': 'DISCO ROBOT', 'DIRTY VOLTAGE': 'VOLTAJE SUCIO', 'simple': 'sencillo', 'complex': 'complejo', 'extreme': 'extremo'
+});
+const FAMILIES = ['FRACTAL RHYTHM', 'HYPERBREAK', 'CHEMICAL PRESSURE', 'RIOT MACHINE', 'ROBOT DISCO', 'DIRTY VOLTAGE'];
+const FAM_COLOR = { 'FRACTAL RHYTHM': '#a77bff', 'HYPERBREAK': '#46e0ff', 'CHEMICAL PRESSURE': '#ff5a36', 'RIOT MACHINE': '#ffc54d', 'ROBOT DISCO': '#c6ff3d', 'DIRTY VOLTAGE': '#ff2e6a' };
+Object.assign(STYLES, {
+  'FRACTAL RHYTHM':    { bpm: [124, 152], swing: 0, drive: .08, comp: .3, human: .05, dv: 0, duck: 0, fam: 1, desc: ['Asymmetric grooves, odd lengths, micro offsets. ORDER \u2194 CHAOS on COMPLEX.', 'Grooves asim\u00e9tricos, largos impares, micro desplazamientos. ORDEN \u2194 CAOS en COMPLEJO.'] },
+  'HYPERBREAK':        { bpm: [164, 184], swing: 0, drive: .2, comp: .45, human: .04, dv: 0, duck: .15, fam: 1, desc: ['Breaks chopped at speed, pitched ratchets, an articulate sub line.', 'Breaks picados a toda velocidad, ratchets afinados, una l\u00ednea de sub articulada.'] },
+  'CHEMICAL PRESSURE': { bpm: [116, 132], swing: .05, drive: .18, comp: .45, human: .12, dv: .12, duck: .1, fam: 1, desc: ['Heavy layered breaks, big accents, sweeps and tension.', 'Breaks pesados en capas, acentos grandes, barridos y tensi\u00f3n.'] },
+  'RIOT MACHINE':      { bpm: [132, 146], swing: 0, drive: .16, comp: .45, human: .05, dv: .2, duck: .1, fam: 1, desc: ['Aggressive breaks, industrial kicks, stabs and risers.', 'Breaks agresivos, bombos industriales, stabs y risers.'] },
+  'ROBOT DISCO':       { bpm: [116, 126], swing: .08, drive: .12, comp: .45, human: .03, dv: 0, duck: .55, fam: 1, desc: ['Four on the floor, an elastic bass, swung hats and the pump.', 'Cuatro por cuatro, un bajo el\u00e1stico, hats con swing y el bombeo.'] },
+  'DIRTY VOLTAGE':     { bpm: [124, 130], swing: .02, drive: .1, comp: .45, human: 0, dv: .55, duck: .45, fam: 1, desc: ['Dark electro house: dense kicks, abrasive mono bass, short stabs, dry drops.', 'Electro house oscuro: bombos densos, bajo mono abrasivo, stabs cortos, drops secos.'] },
+});
+const L_ = (n, s, role, p) => SND(n, 'smp', s, role, p || {});
+KITS['FRACTAL RHYTHM'] = [L_('KICK', 'lab/kick fractal', 'KICK'), L_('SNARE', 'odd kit/snare 13', 'SNARE', { SENDR: .12 }), L_('PICCOLO', 'snares/snare 10 piccolo', 'SNARE', { TUNE: 4, LEVEL: .55 }),
+  L_('TICK', 'lab/tick fractal', 'HAT', { LEVEL: .55, PAN: .3 }), L_('METAL', 'designed/hat metal open', 'CYMBAL', { CHOKE: 1, LEVEL: .35 }), SND('BREAK A', 'brk', 'breaks hifi/brk tight 132', 'BREAK', { DECAY: .12 }),
+  SND('BREAK B', 'brk', 'breaks/brk ghost 88', 'BREAK', { DECAY: .15, ERA: 2 }), L_('GLASS', 'lab/fm glass', 'PERC', { PAN: -.45, SENDD: .25, LEVEL: .5 }), L_('KNOCK', 'lab/fm knock', 'PERC', { PAN: .45, LEVEL: .55 }),
+  L_('BLOCK', 'odd kit/block', 'PERC', { LEVEL: .45, SENDR: .2 }), L_('SUB', 'lab/bass sub', 'KICK', { LEVEL: .6 }), L_('BLIP', 'lab/glitch blip', 'PERC', { LEVEL: .35, SENDD: .3 }),
+  L_('GHOST', 'snares/snare 12 ghost', 'SNARE', { LEVEL: .4 }), L_('SIDESTICK', 'studio kit/sidestick', 'PERC', { LEVEL: .45 }), SND('NOISE', 'syn', 'NOISE', 'PERC', { DECAY: .06, TONE: .9, LEVEL: .3 }),
+  L_('PLUCK', 'lab/bass pluck', 'PERC', { LEVEL: .45, TUNE: 12, SENDD: .2 })];
+KITS['HYPERBREAK'] = [L_('KICK', 'studio kit/kick', 'KICK'), L_('SNARE', 'designed/snare jungle', 'SNARE', { SENDR: .06 }), L_('SNARE HI', 'snares/snare 10 piccolo', 'SNARE', { TUNE: 6, LEVEL: .55 }),
+  L_('HAT', 'studio kit/hat tight', 'HAT', { CHOKE: 1, LEVEL: .5 }), L_('OPEN', 'studio kit/hat open', 'CYMBAL', { CHOKE: 1, LEVEL: .4, DECAY: .45 }), SND('BREAK A', 'brk', 'breaks hifi/brk tight 132', 'BREAK', { DECAY: .18 }),
+  SND('BREAK B', 'brk', 'breaks/brk rush 140', 'BREAK', { DECAY: .14, TUNE: 2 }), L_('GHOST', 'snares/snare 12 ghost', 'SNARE', { LEVEL: .45 }), L_('TOM', 'studio kit/tom mid', 'PERC', { LEVEL: .5 }),
+  L_('RIDE', 'studio kit/ride', 'CYMBAL', { LEVEL: .3 }), L_('BASS', 'lab/bass fm', 'KICK', { LEVEL: .62, DECAY: .45 }), L_('ZAP', 'lab/zap down', 'PERC', { LEVEL: .4 }),
+  L_('ROLL', 'snares/snare 12 tight', 'SNARE', { LEVEL: .45, TUNE: 2 }), L_('TICK', 'lab/tick fractal', 'HAT', { LEVEL: .4 }), L_('DROP', 'lab/drop boom', 'KICK', { LEVEL: .5 }),
+  L_('REESE', 'lab/bass reese', 'PERC', { LEVEL: .4, TUNE: 12 })];
+KITS['CHEMICAL PRESSURE'] = [L_('KICK', 'lab/kick pressure', 'KICK'), L_('SNARE', 'lab/snare pressure', 'SNARE', { SENDR: .14 }), L_('CLAP', 'designed/clap stack', 'SNARE', { SENDR: .18, LEVEL: .55 }),
+  L_('HAT', 'big kit/hat closed', 'HAT', { CHOKE: 1, LEVEL: .55 }), L_('OPEN', 'big kit/hat open', 'CYMBAL', { CHOKE: 1, LEVEL: .5, DECAY: .6 }), SND('BREAK A', 'brk', 'breaks hifi/brk big 120', 'BREAK', { DECAY: .35, DRIVE: .3 }),
+  SND('BREAK B', 'brk', 'breaks hifi/brk heavy 108', 'BREAK', { DECAY: .3, ERA: 4, DRIVE: .2 }), L_('METAL', 'lab/metal hit', 'PERC', { LEVEL: .4, SENDD: .3 }), L_('TOM', 'big kit/tom floor', 'PERC', { SENDR: .15 }),
+  L_('CRASH', 'big kit/crash', 'CYMBAL', { LEVEL: .45 }), L_('BASS', 'lab/bass acid', 'KICK', { LEVEL: .55 }), L_('ZAP', 'designed/zap', 'PERC', { LEVEL: .45, SENDD: .35 }),
+  L_('GHOST', 'studio kit/snare soft', 'SNARE', { LEVEL: .4 }), L_('TAMB', 'snares/tambourine', 'HAT', { LEVEL: .42 }), L_('RISER', 'lab/riser saw', 'PERC', { LEVEL: .4, SENDR: .3 }),
+  L_('STAB', 'lab/stab rave', 'PERC', { LEVEL: .45, SENDD: .2 })];
+KITS['RIOT MACHINE'] = [L_('KICK', 'lab/kick riot', 'KICK'), L_('SNARE', 'lab/snare riot', 'SNARE', { SENDR: .1 }), L_('CLAP', 'designed/clap stack', 'SNARE', { LEVEL: .5, SENDR: .2 }),
+  L_('HAT', 'designed/hat metal closed', 'HAT', { CHOKE: 1, LEVEL: .5 }), L_('OPEN', 'designed/hat metal open', 'CYMBAL', { CHOKE: 1, LEVEL: .45 }), SND('BREAK A', 'brk', 'breaks/brk riot 136', 'BREAK', { DECAY: .3, ERA: 1, DRIVE: .35 }),
+  SND('BREAK B', 'brk', 'breaks/brk funky 101', 'BREAK', { DECAY: .28, DRIVE: .25 }), L_('ANVIL', 'lab/metal anvil', 'PERC', { LEVEL: .4, SENDR: .2 }), L_('TOM', 'big kit/tom floor', 'PERC', { LEVEL: .5, DRIVE: .3 }),
+  L_('CRASH', 'big kit/crash', 'CYMBAL', { LEVEL: .42 }), L_('BASS', 'lab/bass mono drive', 'KICK', { LEVEL: .5 }), L_('ZAP', 'lab/zap down', 'PERC', { LEVEL: .45 }),
+  L_('GHOST', 'snares/snare 12 ghost', 'SNARE', { LEVEL: .4 }), L_('TAMB', 'rhythm box/tambourine', 'HAT', { LEVEL: .4 }), L_('RISER', 'lab/riser saw', 'PERC', { LEVEL: .42, SENDR: .3 }),
+  L_('STAB', 'lab/stab rave', 'PERC', { LEVEL: .5, SENDR: .2 })];
+KITS['ROBOT DISCO'] = [L_('KICK', 'lab/kick robot', 'KICK'), L_('CLAP', 'lab/clap robot', 'SNARE', { SENDR: .16 }), L_('SNARE', '80s studio/snare', 'SNARE', { LEVEL: .45, SENDR: .2 }),
+  L_('HAT', 'lab/hat robot', 'HAT', { CHOKE: 1, LEVEL: .5 }), L_('OPEN', 'lab/hat robot open', 'CYMBAL', { CHOKE: 1, LEVEL: .45 }), SND('BREAK A', 'brk', 'breaks hifi/brk shuffle 96', 'BREAK', { DECAY: .3, CUT: .55 }),
+  SND('BREAK B', 'brk', 'breaks/brk drummer 98', 'BREAK', { DECAY: .3, CUT: .6 }), L_('COWBELL', '80s studio/cowbell', 'PERC', { LEVEL: .38 }), L_('CONGA', '80s studio/conga', 'PERC', { LEVEL: .45, PAN: .35 }),
+  L_('CRASH', '80s studio/crash', 'CYMBAL', { LEVEL: .35 }), L_('BASS', 'lab/bass robot', 'KICK', { LEVEL: .62 }), L_('ZAP', 'designed/zap', 'PERC', { LEVEL: .35, SENDD: .3 }),
+  L_('RIM', '80s studio/stick', 'PERC', { LEVEL: .4, PAN: -.3 }), L_('CABASA', '80s studio/cabasa', 'HAT', { LEVEL: .38 }), L_('RISER', 'designed/noise riser', 'PERC', { LEVEL: .35, SENDR: .3 }),
+  L_('STAB', 'lab/stab robot', 'PERC', { LEVEL: .45, SENDD: .25 })];
+KITS['DIRTY VOLTAGE'] = [L_('KICK', 'lab/kick voltage', 'KICK'), L_('CLAP', 'lab/clap voltage', 'SNARE', { SENDR: .12 }), L_('SNARE', 'dfd pack/gambu snare', 'SNARE', { LEVEL: .5 }),
+  L_('HAT', 'lab/hat voltage', 'HAT', { CHOKE: 1, LEVEL: .5 }), L_('OPEN', 'dfd pack/karl openhat', 'CYMBAL', { CHOKE: 1, LEVEL: .42 }), SND('BREAK A', 'brk', 'breaks hifi/brk tight 132', 'BREAK', { DECAY: .2, DRIVE: .3, CUT: .7 }),
+  SND('BREAK B', 'brk', 'breaks/brk riot 136', 'BREAK', { DECAY: .2, ERA: 3 }), L_('METAL', 'lab/metal hit', 'PERC', { LEVEL: .38 }), L_('FM', 'dfd pack/quesa fm', 'PERC', { LEVEL: .42 }),
+  L_('CRASH', 'dfd pack/dfd crash', 'CYMBAL', { LEVEL: .36 }), L_('BASS', 'lab/bass grit', 'KICK', { LEVEL: .58 }), L_('ZAP', 'dfd pack/polaris zap', 'PERC', { LEVEL: .42 }),
+  L_('BLIP', 'lab/glitch blip', 'PERC', { LEVEL: .35 }), L_('TICK', 'dfd pack/architech hat', 'HAT', { LEVEL: .38 }), L_('DROP', 'lab/drop boom', 'KICK', { LEVEL: .55 }),
+  L_('STAB', 'lab/stab dark', 'PERC', { LEVEL: .48, SENDD: .2 })];
+// the two loudest kits sit a little lower in the mix, so the master is not driven into a wall (less fatigue, the same punch)
+for (const k of ['CHEMICAL PRESSURE', 'RIOT MACHINE']) KITS[k] = KITS[k].map(x => SND(x.n, x.m, x.s, x.role, Object.assign({}, x.p, { LEVEL: (x.p.LEVEL ?? .72) * .66 })));
+// two hybrid kits: one family's drums with another's bass and stabs (no new files)
+KITS['DISCO VOLTAGE'] = KITS['ROBOT DISCO'].map((x, i) => [10, 15, 11].includes(i) ? KITS['DIRTY VOLTAGE'][i] : x);
+KITS['FRACTAL BREAKS'] = KITS['HYPERBREAK'].map((x, i) => [3, 7, 8, 11, 15].includes(i) ? KITS['FRACTAL RHYTHM'][i] : x);
+const HYBRID_KITS = ['DISCO VOLTAGE', 'FRACTAL BREAKS'];
+
+// the keys the pitched parts play in: semitones from C (the bass samples are at C2)
+const FAM_SCALE = { minor: [0, 3, 5, 7, 10], phryg: [0, 1, 3, 7, 8], dorian: [0, 2, 3, 7, 9, 10] };
+
+// ------------------------------------------------------------------ the generators
+function famGenerate(style, seed, c, b) {
+  const r = RNG(seed ^ 0x5bd1e995), put = (t, s, vel, extra = {}) => setStep(b, t, s, Object.assign({ vel }, extra));
+  const line = (t, str, v = {}) => g16(str).forEach((vel, s) => vel && put(t, s, vel, v));
+  const pick = a => r.pick(a), ch = p => r.chance(p);
+  const k0 = pick([0, 2, 3, 5, 7, 8, 10]), key = k0 > 6 ? k0 - 12 : k0, sc = FAM_SCALE[pick(['minor', 'minor', 'phryg', 'dorian'])];   // the key: F#..F around C
+  const deg = (d, oct = 0) => key + sc[((d % sc.length) + sc.length) % sc.length] + 12 * (Math.floor(d / sc.length) + oct);
+  const brk = (t, order, ratP, vel = 92) => { const ord = BREAK_ORDERS[order];
+    for (let s = 0; s < 16; s++) { let sl = ord(s); if (ch(c * .35)) sl = r.int(32); const rat = ch(ratP) ? pick([2, 3, 4, 6]) : 1;
+      put(t, s, vel + r.int(30), { slice: sl % 32, rat, rmode: rat > 1 ? pick([0, 1, 3]) : 0, rprob: 100 }); } };
+  const ghost = (t, p, lo = 22) => { for (let s = 0; s < 16; s++) if (ch(p) && getStep(b, t, s).vel === 0 && s % 4) put(t, s, lo + r.int(20)); };
+  switch (style) {
+    case 'FRACTAL RHYTHM': {
+      // a grid that is never quite square: the kick moves, the parts run at odd lengths, everything leans by a few %
+      for (let s = 0; s < 16; s++) if (s === 0 || ch(.1 + c * .14)) put(0, s, 96 + r.int(31), { mic: s && ch(.4) ? r.int(24) - 12 : 0, prob: s === 0 ? 100 : 70 + r.int(30) });
+      line(1, pick(['....X.......X...', '.....X......X...', '....X......X....']), { mic: pick([0, 4, -3]) });
+      if (c > .45) for (let s = 0; s < 16; s++) if (ch(.08 + c * .1)) put(2, s, 50 + r.int(50), { rat: pick([3, 5, 6]), rmode: pick([1, 3, 5]), rprob: 60, pit: pick([0, 5, 7, 12]) });
+      setTrkLen(b, 3, pick([7, 9, 11, 13])); for (let s = 0; s < 13; s++) if (ch(.5)) put(3, s, 30 + r.int(70), { prob: 55 + r.int(45), mic: r.int(16) - 8, rat: ch(c * .2) ? pick([2, 3]) : 1 });
+      setTrkLen(b, 7, pick([5, 7])); for (let s = 0; s < 7; s++) if (ch(.45)) put(7, s, 50 + r.int(60), { pit: pick([0, 3, 7, 10, 12, 15, 19]) });
+      setTrkLen(b, 8, pick([6, 10, 12])); setTrkSpeed(b, 8, pick([1, 3])); for (let s = 0; s < 12; s++) if (ch(.3)) put(8, s, 50 + r.int(50), { pit: pick([-5, 0, 2, 7]) });
+      setTrkDir(b, 9, pick([2, 3])); for (let s = 0; s < 16; s++) if (ch(.18)) put(9, s, 40 + r.int(50));
+      for (let s = 0; s < 16; s++) if (ch(.12 + c * .25)) put(5, s, 70 + r.int(50), { slice: r.int(32), rat: ch(c * .3) ? pick([2, 3, 4]) : 1, rmode: pick([0, 2, 4]) });
+      // the sub: a few long notes, fragile against the noise
+      [0, 6, 10].forEach(s => ch(.7) && put(10, s, 90, { pit: deg(pick([0, 0, 2, 4]) , 0) }));
+      for (let s = 0; s < 16; s++) if (ch(.1 * c + .05)) put(11, s, 50 + r.int(40), { rat: pick([1, 2, 8]), rmode: 5, rprob: 60 });
+      for (let s = 0; s < 16; s++) if (ch(.15)) put(12, s, 30 + r.int(40), { mic: r.int(30) - 15 });
+      setTrkLen(b, 15, pick([10, 14])); for (let s = 0; s < 14; s++) if (ch(.22)) put(15, s, 60 + r.int(40), { pit: deg(r.int(8)) });
+      if (c > .75) { setTrkSpeed(b, 13, 2); for (let s = 0; s < 16; s++) if (ch(.4)) put(13, s, 30 + r.int(50), { prob: 60 }); }
+      break; }
+    case 'HYPERBREAK': {
+      line(0, pick(['X.........X.....', 'X.....X...X.....', 'X..X......X..X..']));
+      line(1, '....X.......X...');
+      brk(5, pick(['jungle', 'think', 'roll']), .25 + c * .4);
+      for (let s = 0; s < 16; s++) if (ch(.25 + c * .35)) put(6, s, 80 + r.int(40), { slice: r.int(32), rat: pick([1, 2, 3, 4, 6, 8]), rmode: pick([0, 1, 3, 4]), rprob: 50 + r.int(50), pit: pick([0, 0, 2, 5, 7, -3, 12]) });
+      for (let s = 0; s < 16; s++) if (ch(.18 + c * .25)) put(2, s, 60 + r.int(60), { rat: pick([2, 3, 4, 6, 8]), rmode: pick([1, 3, 5]), pit: pick([0, 2, 4, 7, 12]) });
+      setTrkSpeed(b, 3, ch(.5) ? 2 : 1); for (let s = 0; s < 16; s++) if (ch(.45 + c * .2)) put(3, s, 35 + r.int(60));
+      ghost(7, .25 + c * .2);
+      // an articulate sub line: short notes, octave leaps, slides of pitch with ratchets
+      for (let s = 0; s < 16; s++) if (s === 0 || ch(.28 + c * .2)) put(10, s, 85 + r.int(35), { pit: deg(pick([0, 0, 1, 2, 3, 4]), ch(.25) ? 1 : 0), rat: ch(c * .25) ? 2 : 1, rmode: 3 });
+      if (c > .4) { setTrkLen(b, 8, pick([5, 6, 7])); for (let s = 0; s < 7; s++) if (ch(.4)) put(8, s, 60 + r.int(50), { pit: pick([0, 3, 5, 7]) }); }
+      if (c > .5) { put(12, 14, 80, { rat: 6, rmode: 1 }); put(12, 15, 95, { rat: 8, rmode: 3 }); }
+      if (c > .7) { setTrkSpeed(b, 13, 2); for (let s = 0; s < 16; s++) if (ch(.5)) put(13, s, 30 + r.int(50)); }
+      put(14, 0, 70, { cond: 6 }); line(9, pick(['x...x...x...x...', '................']), { prob: 70 });
+      for (let s = 0; s < 16; s++) if (ch(.06)) put(15, s, 60, { pit: deg(r.int(5)) });
+      break; }
+    case 'CHEMICAL PRESSURE': {
+      line(0, pick(['X.....X...X.....', 'X.........X..X..', 'X..X......X.....', 'X.....X.X.....X.']));
+      line(1, '....X.......X...'); line(2, '....X.......X...');
+      brk(5, pick(['straight', 'stab', 'think']), c * .2, 100);
+      if (ch(.5 + c * .3)) for (let s = 0; s < 16; s++) if (getStep(b, 0, s).vel || ch(.2)) put(6, s, 85 + r.int(30), { slice: (s * 2) % 32 });
+      line(3, pick(['x.x.x.x.x.x.x.x.', 'xoxoxoxoxoxoxoxo'])); line(13, 'oxoxoxoxoxoxoxox', { prob: 85 });
+      if (ch(.6)) line(4, '..............x.');
+      for (let s = 0; s < 16; s++) if (ch(.08 + c * .12)) put(7, s, 70 + r.int(40), { pit: pick([0, 5, 7]) });
+      if (c > .35) { put(8, 12, 80); put(8, 13, 90); put(8, 14, 100, { pit: -3 }); put(8, 15, 110, { pit: -5 }); }
+      put(9, 0, 90, { cond: 6 });
+      // the acid bass answers the kick
+      for (let s = 0; s < 16; s++) if ((s % 4 === 2 || s % 8 === 7) && ch(.6)) put(10, s, 90 + r.int(30), { pit: deg(pick([0, 0, 1, 2, 4])) });
+      if (ch(.5)) put(11, pick([7, 11, 15]), 90);
+      ghost(12, .12 + c * .2);
+      put(14, 0, 80, { cond: 9 });                                                       // the riser on the 4th of every 4 loops
+      for (let s = 0; s < 16; s++) if (s % 8 === 6 && ch(.6)) put(15, s, 90, { pit: deg(pick([0, 2])) });
+      if (c > .65) put(1, 15, 70, { rat: 4, rmode: 1 });
+      break; }
+    case 'RIOT MACHINE': {
+      line(0, pick(['X...X...X...X...', 'X.....X...X...X.', 'X...X...X..X.X..']));
+      line(1, pick(['....X.......X...', '....X.......X..X'])); if (ch(.6)) line(2, '....X.......X...');
+      brk(5, pick(['straight', 'roll', 'jungle']), c * .3, 100);
+      for (let s = 0; s < 16; s++) if (ch(.2 + c * .3)) put(6, s, 85 + r.int(35), { slice: r.int(32), rat: ch(c * .3) ? pick([2, 4]) : 1 });
+      line(3, '..x...x...x...x.'); line(4, pick(['..X...X...X...X.', '..x.......x.....']));
+      for (let s = 0; s < 16; s++) if (ch(.07 + c * .1)) put(7, s, 90 + r.int(30), { pit: pick([0, -5, 7]) });
+      put(9, 0, 100, { cond: 6 });
+      // the stab: offbeat hits on a minor chord shape; the bass doubles the root under the kick
+      const stab = pick(['..X...X...X...X.', '...X..X....X..X.', '..X..X..X..X..X.']);
+      g16(stab).forEach((v, s) => v && put(15, s, 100, { pit: deg(pick([0, 0, 0, 3])) }));
+      for (let s = 0; s < 16; s += 4) if (ch(.55)) put(10, s + pick([0, 2, 3]), 95, { pit: deg(0) });
+      if (ch(.6)) put(11, pick([6, 14]), 95);
+      for (let s = 0; s < 16; s++) if (ch(.4)) put(13, s, 40 + r.int(40));
+      put(14, 0, 85, { cond: 9 });
+      if (c > .6) { put(12, 13, 70, { rat: 3 }); put(12, 14, 85, { rat: 4, rmode: 1 }); put(12, 15, 100, { rat: 6, rmode: 1 }); }
+      break; }
+    case 'ROBOT DISCO': {
+      line(0, 'X...X...X...X...'); line(1, '....X.......X...');
+      if (c > .3) line(2, '....x.......x...', { prob: 60 });
+      line(3, pick(['..x...x...x...x.', '.ox..ox..ox..ox.', 'oxoxoxoxoxoxoxox'])); line(4, '..x...x...x...x.', { prob: c > .5 ? 80 : 100 });
+      // the elastic bass: root on the off-beat, octave jumps, a 7th, sometimes the 5th; tuned to the key
+      const shape = pick(['..X..XX...X..X.X', '..X.X..X..X.X..X', 'X..X..X...X..XX.', '..XX..X...XX..X.']);
+      g16(shape).forEach((v, s) => { if (!v) return; const d = pick([0, 0, 0, 3, 4, 5]); put(10, s, 85 + r.int(35), { pit: deg(d, d === 5 ? 0 : (ch(.25) ? 1 : 0)) }); });
+      // stabs: a chord on the and of a beat, filter-house style
+      g16(pick(['......X.......X.', '..X.......X.....', '...X......X..X..'])).forEach((v, s) => v && put(15, s, 90, { pit: deg(pick([0, 0, 2])) }));
+      for (let s = 0; s < 16; s++) if (s % 4 === 3 && ch(.35)) put(7, s, 60 + r.int(30));
+      for (let s = 0; s < 16; s++) if (ch(.18 + c * .15)) put(8, s, 55 + r.int(40), { pit: pick([0, 0, 5, 7]) });
+      line(13, 'xoxoxoxoxoxoxoxo', { prob: 80 }); line(12, pick(['...x......x.....', '.......x.......x']));
+      if (c > .55) for (let s = 0; s < 16; s++) if (ch(.18)) put(5, s, 60 + r.int(30), { slice: r.int(32) });
+      put(9, 0, 80, { cond: 6 }); put(14, 0, 70, { cond: 9 });
+      break; }
+    case 'DIRTY VOLTAGE': {
+      line(0, pick(['X...X...X...X...', 'X...X...X...X..x', 'X...X...X..XX...']));
+      line(1, '....X.......X...'); line(2, '....X.......X...', { prob: 100 });
+      line(3, pick(['xoxoxoxoxoxoxoxo', 'x.xox.xox.xox.xo', 'oxoxoxoxoxoxoxox'])); line(4, '..x...x...x...x.', { prob: 70 });
+      // the bass: a rolling, syncopated mono line off the kick, octave stabs, the odd flat 2nd for menace
+      const rolls = pick(['.XXX.XXX.XXX.XXX', '..XX..XX..XX..XX', '.X.X.XX..X.X.XX.', '..X..X.X..X..XXX']);
+      g16(rolls).forEach((v, s) => { if (!v) return; const d = ch(.15) ? 1 : 0; put(10, s, 80 + r.int(40) + (s % 4 === 1 ? 0 : 10), { pit: deg(d === 1 && ch(.5) ? 1 : 0, ch(.18) ? 1 : 0) }); });
+      // short dark chords on the syncopations; a gate on the off-beat hats
+      g16(pick(['...X..X.......X.', '......X..X....X.', '..X.......X..X..'])).forEach((v, s) => v && put(15, s, 95, { pit: deg(pick([0, 0, 1, 3])) }));
+      for (let s = 0; s < 16; s++) if (ch(.08 + c * .14)) put(12, s, 60 + r.int(40), { rat: pick([2, 3, 4, 8]), rmode: pick([0, 5]), rprob: 70 });
+      for (let s = 0; s < 16; s++) if (s % 4 === 2 && ch(.25)) put(7, s, 60 + r.int(30), { pit: pick([0, 7]) });
+      if (ch(.5)) put(11, pick([7, 15]), 90); if (ch(.35)) put(8, pick([3, 11]), 80, { pit: pick([0, 5]) });
+      line(13, '.x.x.x.x.x.x.x.x', { prob: 60 });
+      put(9, 0, 80, { cond: 6 }); put(14, 0, 95, { cond: 9 });
+      if (c > .55) for (let s = 0; s < 16; s++) if (ch(.15)) put(5, s, 60 + r.int(30), { slice: r.int(32), rat: pick([1, 2]) });
+      if (c > .75) { put(1, 15, 80, { rat: 4, rmode: 1 }); put(2, 14, 70, { rat: 3 }); }
+      break; }
+  }
+  // complexity: extra life, but the kick and the snare keep the groove (the way back is always there)
+  if (c > .25) for (let t = 2; t < NT; t++) for (let s = 0; s < 16; s++) { const st = getStep(b, t, s); if (!st.vel || t === 10 || t === 15) continue;
+    if (ch(c * .12)) setStep(b, t, s, { prob: 60 + r.int(35) });
+    if ((t === 3 || t === 12 || t === 13) && ch(c * .25)) setStep(b, t, s, { mic: r.int(14) - 7 }); }
+  return b;
+}
+{ const base = generate;
+  generate = function (style, seed, complexity, bytes) {
+    if (!STYLES[style] || !STYLES[style].fam) return base(style, seed, complexity, bytes);
+    const b = bytes || patNew();
+    for (let t = 0; t < NT; t++) { for (let s = 0; s < NS; s++) clearStep(b, t, s); setTrkLen(b, t, 16); setTrkSpeed(b, t, 1); setTrkDir(b, t, 0); }
+    b[0] = 16; b[1] = 0;
+    return famGenerate(style, seed, complexity, b);
+  }; }
+
+// ------------------------------------------------------------------ 36 named starting patterns: six per family (simple \u00b7 complex \u00b7 extreme)
+const FAM_PATTERNS = {
+  'FRACTAL RHYTHM':    [['GLASS STAIRS', 4111, .22], ['PRIME GARDEN', 4127, .3], ['TIDAL CLOCK', 4153, .55], ['BROKEN ORRERY', 4159, .62], ['SHATTER WALTZ', 4177, .88], ['NEGATIVE SPACE', 4201, .95]],
+  'HYPERBREAK':        [['CHROME RUNNER', 5101, .25], ['FERRITE', 5113, .32], ['SPLIT SECOND', 5119, .55], ['GEARBOX JAZZ', 5147, .6], ['FLUX OVERRUN', 5153, .88], ['NINE HANDS', 5167, .97]],
+  'CHEMICAL PRESSURE': [['BLOCK PARTY 99', 6101, .22], ['VAT STOMP', 6113, .3], ['REAGENT', 6121, .5], ['WAREHOUSE SUN', 6133, .6], ['FUME CHAMBER', 6143, .85], ['CATALYST', 6151, .93]],
+  'RIOT MACHINE':      [['BARRICADE', 7103, .22], ['SIREN DUST', 7109, .3], ['STEEL MARCH', 7121, .52], ['RIOT ACT', 7127, .6], ['FLARE STORM', 7151, .85], ['NO CURFEW', 7159, .95]],
+  'ROBOT DISCO':       [['CHROME BOOGIE', 8101, .2], ['TIN HEART', 8111, .28], ['VELVET CIRCUIT', 8117, .5], ['MIRRORBALL OS', 8123, .58], ['SERVO FUNK', 8147, .82], ['LATE SHIFT', 8161, .9]],
+  'DIRTY VOLTAGE':     [['LIVE WIRE', 9103, .22], ['GROUND LOOP', 9109, .3], ['OVERCURRENT', 9127, .52], ['ARC FLASH', 9133, .6], ['MELTDOWN', 9151, .86], ['BLACKOUT', 9157, .96]],
+};
+const FAM_LEVELS = ['simple', 'simple', 'complex', 'complex', 'extreme', 'extreme'];
+function famPatternBPM(fam, i) { const st = STYLES[fam], [n, seed] = FAM_PATTERNS[fam][i]; void n; const r = RNG(Math.imul(seed, 2654435761) ^ 0x9e3779b9); r(); return Math.round(st.bpm[0] + r() * (st.bpm[1] - st.bpm[0])); }
+// A (the pattern), B (a variation one step more complex), and a fill: three patterns for one starting point
+function famPatternSet(fam, i) { const [, seed, c] = FAM_PATTERNS[fam][i]; const A = generate(fam, seed, c), B = vary(generate(fam, seed + 7, Math.min(1, c + .15)), seed + 3, .35), F = makeFill(A, seed + 5);
+  return { A, B, F }; }
 
 /* ---- pro.js ---- */
 /* pro.js \u2014 PULSAR 2: undo / redo, the performance pad and note repeat, PUNCH / COMP / EQ and the outputs, locks, dice and
@@ -1280,6 +1555,488 @@ function renderHelp2() {
 <h3>DAW Y CONTROLADORES</h3><p><b>\u21f1 MIDI</b>: arrastra el patr\u00f3n (o la canci\u00f3n) a una pista MIDI de Ableton; toca PULSAR (notas 36\u201351). <b>Clic derecho</b> en cualquier perilla, bot\u00f3n de efecto o el pad XY \u203a APRENDER MIDI, y mueve un control de tu teclado. <kbd>Cmd</kbd>+<kbd>Z</kbd> deshacer, <kbd>Shift</kbd>+<kbd>Cmd</kbd>+<kbd>Z</kbd> rehacer.</p>`;
     $('#helpBox').insertAdjacentHTML('beforeend', LANG === 'es' ? es : en); };
 }
+
+/* ---- lab.js ---- */
+/* lab.js \u2014 PULSAR 3 \u00b7 DFD LIVE LAB: a third view (LAB) beside LIVE and GRID. It has the six families and their 36 starting
+   patterns (preview, commit, cancel), nine macros with RECOVER, the DIRTY VOLTAGE module with its meter, RAVE BUILDER,
+   DNA MORPH A/B, FUSION MORPH, 16 editable scenes launched on the bar, MIDI file import (SMF 0/1) and controller profiles
+   (FM-1, Arturia KeyLab). Loaded after pro.js. Everything here writes the same patterns and parameters as the rest of
+   PULSAR, so undo, save, MIDI export, the plug-in's automation and the multi-out all keep working. */
+Object.assign(ES, {
+  'LAB': 'LAB', 'QUICK START': 'INICIO R\u00c1PIDO', 'FAMILY': 'FAMILIA', 'DENSITY': 'DENSIDAD', 'KIT': 'KIT', 'PATTERNS': 'PATRONES',
+  'PREVIEW': 'ESCUCHAR', 'COMMIT': 'CONFIRMAR', 'CANCEL': 'CANCELAR', 'Previewing \u2014 COMMIT keeps it, CANCEL brings everything back': 'Escuchando \u2014 CONFIRMAR lo deja, CANCELAR regresa todo',
+  'Kept': 'Confirmado', 'Back as it was': 'De regreso como estaba', 'MACROS': 'MACROS', 'PUMP': 'BOMBEO', 'GLITCH': 'GLITCH', 'TENSION': 'TENSI\u00d3N', 'DROP': 'DROP',
+  'RECOVER': 'RECUPERAR', 'Back to the groove': 'De vuelta al groove', 'DIRTY VOLTAGE': 'VOLTAJE SUCIO', 'AMOUNT': 'CANTIDAD', 'LIMITER': 'LIMITADOR',
+  'level': 'nivel', 'limiter': 'limitador', 'loudness match': 'igualaci\u00f3n de volumen', 'latency': 'latencia', 'RAVE BUILDER': 'RAVE BUILDER', 'BARS': 'COMPASES',
+  'BUILD': 'CONSTRUIR', 'DROP NOW': 'DROP YA', 'Build-up': 'Subida', 'DNA MORPH': 'MORPH DE ADN', 'SOURCE A': 'FUENTE A', 'SOURCE B': 'FUENTE B', 'MORPH': 'MORPH',
+  'SEED': 'SEMILLA', 'LOCK KICK': 'FIJAR BOMBO', 'LOCK SNARE': 'FIJAR CAJA', 'FUSION MORPH': 'FUSI\u00d3N', 'RHYTHM A/B': 'RITMO A/B', 'TIMBRE A/B': 'TIMBRE A/B', 'ENERGY': 'ENERG\u00cdA',
+  'COMPLEXITY': 'COMPLEJIDAD', 'SCENES': 'ESCENAS', 'double-click a name to rename it': 'doble clic en un nombre para renombrarlo', 'Scene': 'Escena', 'on the next bar': 'en el siguiente comp\u00e1s',
+  'IMPORT MIDI': 'IMPORTAR MIDI', 'MIDI imported': 'MIDI importado', 'CONTROLLER': 'CONTROLADOR', 'NONE': 'NINGUNO', 'Profile': 'Perfil', 'pattern': 'patr\u00f3n', 'into': 'en',
+  'morph is a step blend (notes, velocity, chance, rolls, timing), not an audio crossfade': 'el morph mezcla pasos (notas, velocidad, probabilidad, redobles, tiempo), no es un crossfade de audio',
+  'MIDI DIN / USB': 'MIDI DIN / USB', 'Rename the scene': 'Renombra la escena', 'empty slot': 'espacio vac\u00edo'
+});
+
+const Lab = {
+  fam: 'DIRTY VOLTAGE', kit: 'DIRTY VOLTAGE', density: .5, preview: null, mac: null, macVal: {}, bars: 4, build: null,
+  morph: { a: 0, b: 1, amt: .5, seed: 1, lockK: true, lockS: false }, fusion: { a: 'ROBOT DISCO', b: 'DIRTY VOLTAGE', rhythm: .5, timbre: .5, energy: .6, cplx: .5, seed: 7, lockK: true },
+  scenes: null, sceneSlot: 10, pendingScene: null, profile: LS.get('pulsar.ctl') || 'NONE', keylab: LS.get('pulsar.keylab') || 'ESSENTIAL',
+};
+PARAMS[XGID(6)] = .6; PARAMS[XGID(7)] = 1;   // PULSAR 3 defaults: DIRTY VOLTAGE tone, the safety limiter on (older projects keep what they saved)
+const PREVIEW_SLOT = 15, MORPH_SLOT = 14, BUILD_SLOT = 13;
+const XGL = { DV: 5, DVTONE: 6, LIMIT: 7 };
+// the 16 scenes: names from the Polaris community (editable), each a family pattern, a tempo and an energy
+const SCENE_DEFAULT = [
+  ['DFD CORE', 'DIRTY VOLTAGE', 0, .6], ['POLARIS LAB', 'FRACTAL RHYTHM', 2, .45], ['CHEMBECH', 'CHEMICAL PRESSURE', 1, .7], ['PETER PALM', 'ROBOT DISCO', 0, .55],
+  ['DEEP ARCHIE', 'FRACTAL RHYTHM', 0, .35], ['QUESA DJ', 'ROBOT DISCO', 2, .65], ['TERE', 'CHEMICAL PRESSURE', 0, .5], ['GAMBU GALU', 'HYPERBREAK', 1, .7],
+  ['KARL COTBRUM', 'RIOT MACHINE', 2, .75], ['MANU', 'HYPERBREAK', 0, .55], ['MENI', 'ROBOT DISCO', 3, .6], ['RUFI', 'RIOT MACHINE', 0, .6],
+  ['BARRY SOUND', 'CHEMICAL PRESSURE', 3, .8], ['ALEX 413X', 'DIRTY VOLTAGE', 3, .85], ['OSCAR', 'HYPERBREAK', 4, .9], ['RADIO POLARIS', 'DIRTY VOLTAGE', 1, .5]];
+function loadScenes() { try { const s = JSON.parse(LS.get('pulsar.scenes') || 'null'); if (Array.isArray(s) && s.length === 16) return s; } catch (e) {} return SCENE_DEFAULT.map(x => ({ name: x[0], fam: x[1], pat: x[2], energy: x[3] })); }
+function saveScenes() { LS.set('pulsar.scenes', JSON.stringify(Lab.scenes)); }
+
+// ------------------------------------------------------------------ applying a family: kit, tempo, feel, DIRTY VOLTAGE and the pump
+function applyFamily(fam, kit, bpm) {
+  const st = STYLES[fam];
+  applyKit(kit || fam);
+  setP(G.BPM, bpm); setP(G.SWING, st.swing); setP(G.DRIVE, st.drive); setP(G.COMP, st.comp); setP(G.HUMAN, st.human);
+  setP(XGID(XGL.DV), st.dv || 0); setP(XGID(XGL.LIMIT), 1);
+  if (st.duck) for (const t of [3, 4, 5, 6, 10, 13, 15]) setTP(t, T.DUCK, st.duck);
+  UI.style = fam; if ($('#style')) $('#style').value = fam;
+}
+function pushAndPlay(slots) { slots.forEach(p => pushPat(p)); Bridge.params([...PARAMS].map((v, i) => [i, v])); renderRows(); renderPanel(); renderMacros(); if (!UI.playing) togglePlay(); }
+
+// preview: the change is made (so you hear it at once) and a snapshot is kept; COMMIT forgets the snapshot, CANCEL restores it
+function startPreview(label) { if (!Lab.preview) Lab.preview = { snap: Undo.snap(), cur: UI.cur, label }; else Lab.preview.label = label; Lab.render(); toast(label + ' \u00b7 ' + tr('Previewing \u2014 COMMIT keeps it, CANCEL brings everything back')); }
+function commitPreview() { if (!Lab.preview) return; Undo.stack.push(Lab.preview.snap); Undo.last = Undo.snap(); Undo.paint(); Lab.preview = null; Lab.render(); toast(tr('Kept')); }
+function cancelPreview() { if (!Lab.preview) return; const p = Lab.preview; Lab.preview = null; Undo.apply(p.snap); UI.cur = p.cur; Bridge.post({ t: 'select', p: UI.cur, bar: true }); renderPats(); Lab.render(); toast(tr('Back as it was')); }
+
+function loadFamilyPattern(fam, i) {
+  startPreview(fam + ' \u00b7 ' + FAM_PATTERNS[fam][i][0]);
+  const { A, B, F } = famPatternSet(fam, i), c = UI.cur;
+  applyFamily(fam, Lab.kit && (Lab.kit === fam || HYBRID_KITS.includes(Lab.kit)) ? Lab.kit : fam, famPatternBPM(fam, i));
+  UI.pats[c] = A; UI.pats[(c + 1) % NPAT] = B; UI.pats[(c + 2) % NPAT] = F;
+  pushAndPlay([c, (c + 1) % NPAT, (c + 2) % NPAT]);
+}
+function quickGenerate() {
+  const fam = Lab.fam, st = STYLES[fam], seed = genSeed(), r = RNG(seed);
+  startPreview(tr('GENERATE') + ' \u00b7 ' + tr(fam));
+  applyFamily(fam, Lab.kit, Math.round(PARAMS[G.BPM] && Lab.keepBpm ? PARAMS[G.BPM] : st.bpm[0] + r() * (st.bpm[1] - st.bpm[0])));
+  UI.cplx = Lab.density; UI.pats[UI.cur] = generate(fam, seed, Lab.density); pushAndPlay([UI.cur]);
+}
+
+// ------------------------------------------------------------------ the macros: musical results on top of a snapshot; RECOVER returns to it
+const MACROS = [['DRIVE', 0], ['PUMP', 0], ['GLITCH', 0], ['FILTER', .5], ['TENSION', 0], ['DENSITY', 1], ['HUMAN', 0]];
+function macroBase() {
+  if (Lab.mac) return Lab.mac;
+  const b = UI.pats[UI.cur]; Lab.mac = { params: PARAMS.slice(), fx: UI.fx, mutes: [...Array(NT)].map((_, t) => trkMute(b, t)), pat: UI.cur };
+  Lab.macVal.HUMAN = PARAMS[G.HUMAN] / .6; return Lab.mac;
+}
+function macroFX() { const v = Lab.macVal; let m = 0;
+  if ((v.GLITCH || 0) > .3) m |= 1 << 3; if ((v.GLITCH || 0) > .65) m |= 1 << 0; if ((v.GLITCH || 0) > .9) m |= 1 << 6;
+  if ((v.TENSION || 0) > .5) m |= 1 << 8; if (Lab.dropHeld) m |= 1 << 14; return m; }
+function setMacro(name, v) {
+  const base = macroBase(), P0 = base.params; Lab.macVal[name] = v;
+  switch (name) {
+    case 'DRIVE': setP(G.DRIVE, P0[G.DRIVE] + (1 - P0[G.DRIVE]) * v * .7); setP(XGID(XGL.DV), Math.max(P0[XGID(XGL.DV)], v * .85)); setP(XGID(XGL.LIMIT), 1); break;
+    case 'PUMP': for (let t = 1; t < NT; t++) if (tp(t, T.ROLE) !== 0 || t === 10) setTP(t, T.DUCK, P0[TPID(t, T.DUCK)] + (.85 - P0[TPID(t, T.DUCK)]) * v); setP(G.DUCKTIME, .25 + .35 * v); break;
+    case 'FILTER': { const on = Math.abs(v - .5) > .03; setP(XGID(XG.XYON), on ? 1 : P0[XGID(XG.XYON)]); setP(XGID(XG.XYX), on ? (v - .5) * 2 : P0[XGID(XG.XYX)]); break; }
+    case 'TENSION': setP(XGID(XG.XYON), 1); setP(XGID(XG.XYY), v * .6); break;
+    case 'HUMAN': setP(G.HUMAN, v * .6); break;
+    case 'DENSITY': { const b = UI.pats[base.pat], hits = [...Array(NT)].map((_, t) => { let n = 0; for (let s = 0; s < trkLen(b, t); s++) if (getStep(b, t, s).vel) n++; return [t, n]; });
+      const order = hits.filter(([t, n]) => n && t > 1).sort((x, y) => x[1] - y[1]).map(x => x[0]);   // the sparsest parts go first; kick and snare stay
+      const cut = Math.round((1 - v) * order.length); order.forEach((t, i) => setTrkMute(b, t, i < cut ? 1 : base.mutes[t])); pushPat(base.pat); renderRows(); break; }
+  }
+  setFX((base.fx & ~((1 << 3) | (1 << 0) | (1 << 6) | (1 << 8) | (1 << 14))) | macroFX());
+  if (name === 'GLITCH' || name === 'TENSION') {}
+}
+function recover() {
+  const base = Lab.mac; Lab.dropHeld = false; if (!base) { Lab.macVal = {}; Lab.render(); return; }
+  const keep = [XGID(XG.XYON), XGID(XG.XYX), XGID(XG.XYY), G.DRIVE, G.HUMAN, G.DUCKTIME, XGID(XGL.DV), XGID(XGL.LIMIT)];
+  keep.forEach(id => setP(id, base.params[id])); for (let t = 0; t < NT; t++) setTP(t, T.DUCK, base.params[TPID(t, T.DUCK)]);
+  const b = UI.pats[base.pat]; base.mutes.forEach((m, t) => setTrkMute(b, t, m)); pushPat(base.pat);
+  setFX(base.fx); Lab.mac = null; Lab.macVal = {}; renderRows(); renderMacros(); Lab.render(); toast('\u21ba ' + tr('Back to the groove'));
+}
+
+// ------------------------------------------------------------------ RAVE BUILDER: a build-up of 1-16 bars, then the drop back into the groove on the bar
+function raveBuild(bars) {
+  startPreview(tr('RAVE BUILDER') + ' \u00b7 ' + bars + ' ' + tr('BARS'));
+  const src = UI.pats[UI.cur], b = src.slice(), L = Math.min(bars, 4) * 16, rep = bars > 4 ? bars / 4 : 1, back = UI.cur;
+  b[0] = L; for (let t = 0; t < NT; t++) setTrkLen(b, t, Math.min(64, Math.max(trkLen(src, t), 16)));
+  // copy the groove across the bars, then: snare from quarters to 8ths to 16ths to rolls, hats rising, the sub and kick out in the last bar
+  for (let t = 0; t < NT; t++) { const l0 = trkLen(src, t); for (let s = l0; s < L; s++) { const x = getStep(src, t, s % l0); clearStep(b, t, s); if (x.vel) setStep(b, t, s, x); } }
+  for (let t = 0; t < NT; t++) setTrkLen(b, t, L);
+  const snare = 1, hat = 3;
+  for (let s = 0; s < L; s++) { const ph = s / L, last = s >= L - 16;
+    const every = ph < .25 ? 4 : ph < .5 ? 2 : 1;
+    clearStep(b, snare, s); if (s % every === 0) setStep(b, snare, s, { vel: Math.round(60 + 60 * ph), rat: ph > .85 ? 4 : ph > .7 ? 2 : 1, rmode: 1 });
+    if (getStep(b, hat, s).vel || s % 2 === 0) setStep(b, hat, s, { vel: Math.round(40 + 80 * ph) });
+    if (last) { clearStep(b, 0, s); clearStep(b, 10, s); }
+    // the performance lane: RISE in the second half, FILTER (low-pass) in the last beat before the drop
+    const o = PAT.PERF + s * 2; let m = b[o] | (b[o + 1] << 8); if (ph >= .5) m |= 1 << 8; if (s >= L - 4) m |= 1 << 7; b[o] = m & 255; b[o + 1] = m >> 8; }
+  if (getStep(b, 14, 0) !== undefined) { clearStep(b, 14, Math.max(0, L - 16)); setStep(b, 14, Math.max(0, L - 16), { vel: 100 }); }
+  UI.pats[BUILD_SLOT] = b; pushPat(BUILD_SLOT);
+  Lab.build = { back, rep, seen: 0, cur: -1 };
+  Bridge.post({ t: 'select', p: BUILD_SLOT, bar: true }); if (!UI.playing) togglePlay();
+  toast(tr('Build-up') + ' \u00b7 ' + bars + ' ' + tr('BARS') + ' \u2192 ' + tr('DROP'));
+}
+function dropNow() { const back = Lab.build ? Lab.build.back : UI.cur; Lab.build = null; Bridge.post({ t: 'select', p: back, bar: true }); UI.cur = back; renderPats(); }
+
+// ------------------------------------------------------------------ DNA MORPH A/B: a step blend, reproducible with the seed; A and B are never changed
+function morphPatterns(A, B, amt, seed, lockK, lockS) {
+  const r = RNG(seed), out = A.slice();
+  for (let t = 0; t < NT; t++) { if ((lockK && t === 0) || (lockS && t === 1)) continue;
+    const L = Math.max(trkLen(A, t), trkLen(B, t)); setTrkLen(out, t, r() < amt ? trkLen(B, t) : trkLen(A, t));
+    for (let s = 0; s < L; s++) { const a = getStep(A, t, s), b = getStep(B, t, s), take = r() < amt;
+      if (!a.vel && !b.vel) { clearStep(out, t, s); continue; }
+      const src = take ? b : a, oth = take ? a : b;
+      if (!src.vel) { clearStep(out, t, s); continue; }
+      const mix = (x, y) => Math.round(x + (y - x) * amt);
+      setStep(out, t, s, { vel: oth.vel ? mix(a.vel || 0, b.vel || 0) : src.vel, prob: oth.vel ? mix(a.prob, b.prob) : src.prob, rat: src.rat, rmode: src.rmode, rprob: src.rprob,
+        mic: oth.vel ? mix(a.mic, b.mic) : src.mic, pit: src.pit, cond: src.cond, slice: src.slice }); } }
+  return out;
+}
+function doMorph() { const m = Lab.morph; startPreview(tr('DNA MORPH') + ' ' + (m.a + 1) + '\u00b7' + (m.b + 1) + ' ' + Math.round(m.amt * 100) + '%');
+  UI.pats[MORPH_SLOT] = morphPatterns(UI.pats[m.a], UI.pats[m.b], m.amt, m.seed, m.lockK, m.lockS); pushPat(MORPH_SLOT); UI.cur = MORPH_SLOT; Bridge.post({ t: 'select', p: MORPH_SLOT, bar: true }); renderPats(); if (!UI.playing) togglePlay(); }
+// FUSION MORPH: the rhythm of two families blended track by track, the timbre (kit) taken track by track from one or the other
+function doFusion() { const f = Lab.fusion; startPreview(tr('FUSION MORPH') + ' \u00b7 ' + tr(f.a) + ' \u00d7 ' + tr(f.b));
+  const A = generate(f.a, f.seed, f.cplx), B = generate(f.b, f.seed + 11, f.cplx), out = morphPatterns(A, B, f.rhythm, f.seed, f.lockK, false);
+  for (let t = 0; t < NT; t++) for (let s = 0; s < NS; s++) { const x = getStep(out, t, s); if (x.vel) setStep(out, t, s, { vel: Math.max(1, Math.min(127, Math.round(x.vel * (.6 + .6 * f.energy)))) }); }
+  const r = RNG(f.seed * 31 + 1), kit = KITS[f.a].map((x, t) => (t === 0 && f.lockK) ? x : (r() < f.timbre ? KITS[f.b][t] : x));
+  kit.forEach((s, t) => applySound(t, s));
+  const sa = STYLES[f.a], sb = STYLES[f.b], mixv = (x, y) => x + (y - x) * f.rhythm;
+  setP(G.BPM, Math.round(mixv((sa.bpm[0] + sa.bpm[1]) / 2, (sb.bpm[0] + sb.bpm[1]) / 2))); setP(G.SWING, mixv(sa.swing, sb.swing));
+  setP(G.DRIVE, mixv(sa.drive, sb.drive) * (.6 + .6 * f.energy)); setP(XGID(XGL.DV), mixv(sa.dv, sb.dv) * (.5 + f.energy)); setP(XGID(XGL.LIMIT), 1);
+  UI.pats[UI.cur] = out; pushAndPlay([UI.cur]); }
+
+// ------------------------------------------------------------------ scenes: the pattern goes to a free slot, the switch happens on the bar, the kit with it
+function launchScene(i) {
+  const sc = Lab.scenes[i], fam = FAMILIES.includes(sc.fam) ? sc.fam : 'DIRTY VOLTAGE', k = Math.max(0, Math.min(5, sc.pat | 0));
+  const slot = Lab.sceneSlot = Lab.sceneSlot === 10 ? 11 : 10;
+  const set = famPatternSet(fam, k); const A = sc.energy > .75 ? vary(set.A, k + 99, (sc.energy - .75) * 2) : set.A;
+  for (let t = 0; t < NT; t++) for (let s = 0; s < NS; s++) { const x = getStep(A, t, s); if (x.vel) setStep(A, t, s, { vel: Math.max(1, Math.min(127, Math.round(x.vel * (.7 + .45 * sc.energy)))) }); }
+  UI.pats[slot] = A; pushPat(slot);
+  if (!UI.playing) { applyFamily(fam, fam, famPatternBPM(fam, k)); UI.cur = slot; Bridge.post({ t: 'select', p: slot, now: true }); pushAndPlay([slot]); }
+  else { Lab.pendingScene = { slot, fam, bpm: famPatternBPM(fam, k) }; Bridge.post({ t: 'select', p: slot, bar: true }); }
+  Lab.lastScene = i; Lab.render(); toast(tr('Scene') + ' \u00b7 ' + sc.name + (UI.playing ? ' \u00b7 ' + tr('on the next bar') : ''));
+}
+
+// ------------------------------------------------------------------ MIDI file import: SMF 0 / 1, running status, meta and SysEx skipped, any PPQ
+function parseSMF(bytes) {
+  const d = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes); let p = 0;
+  const u32 = () => (d[p++] << 24 | d[p++] << 16 | d[p++] << 8 | d[p++]) >>> 0, u16 = () => (d[p++] << 8 | d[p++]);
+  const vlq = () => { let v = 0, b, n = 0; do { if (p >= d.length || ++n > 4) throw new Error('bad variable length'); b = d[p++]; v = (v << 7) | (b & 127); } while (b & 128); return v; };
+  if (d.length < 14 || String.fromCharCode(...d.slice(0, 4)) !== 'MThd') throw new Error('not a MIDI file (no MThd)');
+  p = 4; const hl = u32(), fmt = u16(), ntr = u16(), div = u16(); p = 8 + hl;
+  if (fmt > 1) throw new Error('MIDI format ' + fmt + ' is not supported (0 and 1 are)');
+  if (div & 0x8000) throw new Error('SMPTE time is not supported (PPQ files are)');
+  const ppq = div || 96, notes = []; let tempo = 0;
+  for (let k = 0; k < ntr && p + 8 <= d.length; k++) {
+    if (String.fromCharCode(...d.slice(p, p + 4)) !== 'MTrk') { p += 8 + ((d[p + 4] << 24 | d[p + 5] << 16 | d[p + 6] << 8 | d[p + 7]) >>> 0); continue; }
+    p += 4; const len = u32(), end = Math.min(d.length, p + len); let tick = 0, run = 0;
+    while (p < end) { tick += vlq(); let st = d[p];
+      if (st === 0xff) { p++; const type = d[p++], l = vlq(); if (type === 0x51 && l === 3 && !tempo) tempo = 60000000 / (d[p] << 16 | d[p + 1] << 8 | d[p + 2]); if (type === 0x2f) { p += l; break; } p += l; continue; }
+      if (st === 0xf0 || st === 0xf7) { p++; const l = vlq(); p += l; continue; }   /* (not p += vlq(): p would be read before vlq moves it) */
+      if (st & 0x80) { run = st; p++; } else if (!run) throw new Error('data byte without status'); else st = run;
+      const hi = st & 0xf0, a = d[p++], b = (hi === 0xc0 || hi === 0xd0) ? 0 : d[p++];
+      if (hi === 0x90 && b > 0) notes.push({ tick, note: a, vel: b, ch: st & 15 }); }
+    p = end; }
+  return { format: fmt, tracks: ntr, ppq, bpm: tempo ? Math.round(tempo * 10) / 10 : 0, notes };
+}
+// the drum notes (General MIDI, notes 35-81; 36-51 also as PULSAR's own pads) onto the 16 tracks, quantized to 1/16, up to 64 steps
+const GM_TRACK = { 35: 0, 36: 0, 37: 7, 38: 1, 40: 1, 39: 2, 42: 3, 44: 3, 46: 4, 41: 8, 43: 8, 45: 8, 47: 8, 48: 8, 50: 8, 49: 9, 57: 9, 51: 9, 59: 9, 53: 9, 55: 9, 52: 9,
+  54: 13, 69: 13, 70: 13, 56: 7, 60: 7, 61: 7, 62: 7, 63: 7, 64: 7, 75: 12, 76: 12, 77: 12, 31: 12, 81: 4 };
+function midiToPattern(smf, mode = 'gm') {
+  const b = patNew(), perStep = smf.ppq / 4; let maxStep = 0, used = 0, skipped = 0;
+  for (let t = 0; t < NT; t++) for (let s = 0; s < NS; s++) clearStep(b, t, s);
+  for (const n of smf.notes) { const t = mode === 'pads' && n.note >= 36 && n.note <= 51 ? n.note - 36 : GM_TRACK[n.note];
+    if (t === undefined) { skipped++; continue; }
+    const exact = n.tick / perStep, s = Math.round(exact); if (s >= NS) { skipped++; continue; }
+    const mic = Math.max(-50, Math.min(50, Math.round((exact - s) * 100)));
+    const old = getStep(b, t, s); if (old.vel && old.vel >= n.vel) continue;       // two notes on one step: the louder one
+    setStep(b, t, s, { vel: n.vel, mic }); used++; maxStep = Math.max(maxStep, s); }
+  const L = Math.min(64, Math.max(16, Math.ceil((maxStep + 1) / 16) * 16)); b[0] = L; for (let t = 0; t < NT; t++) setTrkLen(b, t, L);
+  return { bytes: b, used, skipped, steps: L };
+}
+function importMidiFile(file) {
+  file.arrayBuffer().then(buf => { let smf; try { smf = parseSMF(new Uint8Array(buf)); } catch (e) { toast('\u2715 MIDI: ' + e.message); return; }
+    const mode = smf.notes.some(n => n.ch === 9) || smf.notes.some(n => n.note < 36 || n.note > 51) ? 'gm' : 'pads';
+    const r = midiToPattern(smf, mode); if (!r.used) { toast('\u2715 MIDI: no drum notes (GM 35-81 or 36-51)'); return; }
+    startPreview(tr('IMPORT MIDI') + ' \u00b7 ' + file.name);
+    UI.pats[UI.cur] = r.bytes; if (smf.bpm) setP(G.BPM, smf.bpm); pushAndPlay([UI.cur]);
+    toast(`${tr('MIDI imported')}: ${r.used} notes, ${r.steps} steps${r.skipped ? `, ${r.skipped} skipped` : ''}${smf.bpm ? ', ' + smf.bpm + ' BPM' : ''}`); });
+}
+
+// ------------------------------------------------------------------ controller profiles (written into MIDI learn: you can still change any mapping)
+const PROFILES = {
+  'FM-1': { info: ['M-VAVE FM-1 over USB, channel 16: notes 36-51 = the 16 pads; CC 20-23 = cutoff, decay, drive, delay send of the selected track (CC 24 picks the track in the web version).', 'M-VAVE FM-1 por USB, canal 16: notas 36-51 = los 16 pads; CC 20-23 = corte, ca\u00edda, saturaci\u00f3n y env\u00edo de delay de la pista elegida (CC 24 elige la pista en la versi\u00f3n web).'],
+    map: () => { const t = UI.sel + 1; return { 20: `t${t}cut`, 21: `t${t}dec`, 22: `t${t}drv`, 23: `t${t}dly` }; } },
+  'KEYLAB': { info: ['Arturia KeyLab (Essential, MkII or Mk3 \u2014 choose yours): set its 8 encoders to CC 21-28 and its 8 faders to CC 41-48 in Arturia MIDI Control Center. Encoders: drive, comp, swing, human, filter, space, reverb, delay; faders: levels of tracks 1-8. Pads play notes 36-51.', 'Arturia KeyLab (Essential, MkII o Mk3 \u2014 elige el tuyo): pon sus 8 encoders en CC 21-28 y sus 8 faders en CC 41-48 con Arturia MIDI Control Center. Encoders: saturaci\u00f3n, compresi\u00f3n, swing, humano, filtro, espacio, reverb, delay; faders: niveles de las pistas 1-8. Los pads tocan las notas 36-51.'],
+    map: () => { const m = { 21: 'drive', 22: 'comp', 23: 'swing', 24: 'human', 25: 'xyx', 26: 'xyy', 27: 'revsize', 28: 'dlyfb' }; for (let i = 0; i < 8; i++) m[41 + i] = `t${i + 1}lvl`; return m; } },
+};
+function applyProfile(name) {
+  Lab.profile = name; LS.set('pulsar.ctl', name);
+  const old = Lab.profileMap || {}; for (const cc of Object.keys(old)) { if (Bridge.kind === 'plugin') Bridge.post({ t: 'learn', key: 'forget:' + old[cc] }); else if (Learn.web[cc] === old[cc]) delete Learn.web[cc]; }
+  const map = PROFILES[name] ? PROFILES[name].map() : {}; Lab.profileMap = map;
+  for (const [cc, key] of Object.entries(map)) { if (Bridge.kind === 'plugin') { Bridge.post({ t: 'learnSet', key, cc: +cc }); UI.learn = UI.learn || {}; UI.learn[key] = +cc; } else Learn.web[cc] = key; }
+  if (Bridge.kind !== 'plugin') LS.set('pulsar.learn', JSON.stringify(Learn.web));
+  Lab.render(); if (name !== 'NONE') toast(tr('Profile') + ': ' + name);
+}
+
+// ------------------------------------------------------------------ the LAB view
+Lab.render = function () {
+  const v = $('#labV'); if (!v || UI.view !== 'LAB') return; v.innerHTML = '';
+  const sec = (title, cls, ...kids) => h('section', { class: 'lsec ' + (cls || '') }, h('h3', {}, tr(title)), ...kids);
+  const btn = (label, on, fn, cls = '') => { const b = h('button', { class: (on ? 'on ' : '') + cls }, label); b.onclick = fn; return b; };
+  const slider = (label, get, set, fmt = pct) => { const k = knob(label, get, x => { set(x); }, 0, 1, fmt); return k; };
+  // preview bar
+  if (Lab.preview) v.append(h('div', { class: 'lprev' }, h('span', {}, '\u25c9 ' + Lab.preview.label), btn('\u2713 ' + tr('COMMIT'), true, commitPreview, 'ok'), btn('\u2715 ' + tr('CANCEL'), false, cancelPreview)));
+  // quick start
+  const fams = h('div', { class: 'lfams' }); FAMILIES.forEach(f => { const b = btn(tr(f), Lab.fam === f, () => { Lab.fam = f; Lab.kit = f; Lab.render(); }); b.style.setProperty('--fc', FAM_COLOR[f]); fams.append(b); });
+  const kits = h('select', { class: 'lkit' }); [...FAMILIES, ...HYBRID_KITS].forEach(k => kits.append(h('option', { value: k }, tr(k)))); kits.value = Lab.kit; kits.onchange = () => { Lab.kit = kits.value; };
+  const dens = slider('DENSITY', () => Lab.density, x => (Lab.density = x));
+  const genL = () => '\u26a1 ' + tr('GENERATE').replace('\u26a1 ', ''); const gen = btn(genL(), false, quickGenerate, 'big');
+  v.append(sec('QUICK START', 'qs', fams, h('div', { class: 'lrow' }, h('label', {}, tr('KIT')), kits, dens, gen), h('p', { class: 'ldesc' }, STYLES[Lab.fam].desc[LANG === 'es' ? 1 : 0])));
+  // the bank: 6 x 6
+  const bank = h('div', { class: 'lbank' });
+  FAMILIES.forEach(f => { const col = h('div', { class: 'lcol', style: '--fc:' + FAM_COLOR[f] }, h('b', {}, tr(f)));
+    FAM_PATTERNS[f].forEach((p, i) => { const b = btn('', false, () => loadFamilyPattern(f, i), 'lpat'); b.append(h('span', {}, p[0]), h('small', {}, tr(FAM_LEVELS[i]) + ' \u00b7 ' + famPatternBPM(f, i))); col.append(b); });
+    bank.append(col); });
+  v.append(sec('PATTERNS', 'bank', bank, h('p', { class: 'ldesc' }, LANG === 'es' ? 'Cada uno carga A (patr\u00f3n), B (variaci\u00f3n) y un FILL en los tres espacios a partir del actual, con su kit y tempo. CANCELAR lo regresa todo.' : 'Each loads A (the pattern), B (a variation) and a FILL into three slots from the current one, with its kit and tempo. CANCEL brings everything back.')));
+  // macros
+  const mac = h('div', { class: 'lmacs' });
+  MACROS.forEach(([n, d]) => { const k = knob(n, () => Lab.macVal[n] ?? d, x => setMacro(n, x), 0, 1, pct, d); mac.append(k); });
+  const drop = h('button', { class: 'lhold' + (Lab.dropHeld ? ' on' : '') }, tr('DROP'));
+  drop.onpointerdown = e => { e.preventDefault(); macroBase(); Lab.dropHeld = true; setMacro('GLITCH', Lab.macVal.GLITCH || 0); drop.classList.add('on'); };
+  drop.onpointerup = drop.onpointerleave = () => { if (!Lab.dropHeld) return; Lab.dropHeld = false; setMacro('GLITCH', Lab.macVal.GLITCH || 0); drop.classList.remove('on'); };
+  mac.append(drop, btn('\u21ba ' + tr('RECOVER'), !!Lab.mac, recover, 'rec'));
+  v.append(sec('MACROS', 'macs', mac));
+  // DIRTY VOLTAGE
+  const dv = h('div', { class: 'lrow' }, gknob(XGID(XGL.DV), 'AMOUNT', 0, 1, pct, 0), gknob(XGID(XGL.DVTONE), 'TONE', 0, 1, pct, .6),
+    btn(tr('LIMITER') + ' -1 dB', PARAMS[XGID(XGL.LIMIT)] > .5, () => { setP(XGID(XGL.LIMIT), PARAMS[XGID(XGL.LIMIT)] > .5 ? 0 : 1); Lab.render(); }),
+    h('div', { class: 'lmeter', id: 'labMeter' }));
+  v.append(sec('DIRTY VOLTAGE', 'dv', dv, h('p', { class: 'ldesc' }, LANG === 'es' ? 'Pasa-altos de seguridad 30 Hz \u2192 graves bajo 140 Hz en mono \u2192 dos etapas de saturaci\u00f3n a doble frecuencia de muestreo \u2192 tono \u2192 igualaci\u00f3n de volumen (m\u00e1s saturaci\u00f3n no es simplemente m\u00e1s fuerte) \u2192 limitador \u22121 dBFS. Latencia: 0 muestras.' : 'Safety high-pass 30 Hz \u2192 lows below 140 Hz in mono \u2192 two saturation stages at twice the sample rate \u2192 tone \u2192 loudness match (more drive is not simply louder) \u2192 \u22121 dBFS limiter. Latency: 0 samples.')));
+  // RAVE BUILDER
+  const bars = h('div', { class: 'chips' }); [1, 2, 4, 8, 16].forEach(n => bars.append(btn(String(n), Lab.bars === n, () => { Lab.bars = n; Lab.render(); })));
+  v.append(sec('RAVE BUILDER', 'rave', h('div', { class: 'lrow' }, h('label', {}, tr('BARS')), bars, btn('\u25b2 ' + tr('BUILD'), false, () => raveBuild(Lab.bars), 'big'), btn('\u25bc ' + tr('DROP NOW'), !!Lab.build, dropNow, 'big hot'))));
+  // morphs
+  const m = Lab.morph, pats = (get, set) => { const s = h('select', {}); for (let i = 0; i < NPAT; i++) s.append(h('option', { value: i }, String.fromCharCode(65 + i))); s.value = get(); s.onchange = () => set(+s.value); return s; };
+  v.append(sec('DNA MORPH', 'morph', h('div', { class: 'lrow' }, h('label', {}, tr('SOURCE A')), pats(() => m.a, x => (m.a = x)), h('label', {}, tr('SOURCE B')), pats(() => m.b, x => (m.b = x)),
+    slider('MORPH', () => m.amt, x => (m.amt = x)), h('label', {}, tr('SEED')), (() => { const i = h('input', { type: 'number', value: m.seed, min: 1, max: 9999 }); i.onchange = () => (m.seed = +i.value || 1); return i; })(),
+    btn(tr('LOCK KICK'), m.lockK, () => { m.lockK = !m.lockK; Lab.render(); }), btn(tr('LOCK SNARE'), m.lockS, () => { m.lockS = !m.lockS; Lab.render(); }), btn('\u25c9 ' + tr('PREVIEW'), false, doMorph, 'big')),
+    h('p', { class: 'ldesc' }, tr('morph is a step blend (notes, velocity, chance, rolls, timing), not an audio crossfade') + ' \u00b7 ' + (LANG === 'es' ? 'suena en el patr\u00f3n O' : 'it plays in pattern O'))));
+  const f = Lab.fusion, famSel = (get, set) => { const s = h('select', {}); FAMILIES.forEach(x => s.append(h('option', { value: x }, tr(x)))); s.value = get(); s.onchange = () => set(s.value); return s; };
+  v.append(sec('FUSION MORPH', 'fusion', h('div', { class: 'lrow' }, famSel(() => f.a, x => (f.a = x)), h('span', {}, '\u00d7'), famSel(() => f.b, x => (f.b = x)),
+    slider('RHYTHM A/B', () => f.rhythm, x => (f.rhythm = x)), slider('TIMBRE A/B', () => f.timbre, x => (f.timbre = x)), slider('ENERGY', () => f.energy, x => (f.energy = x)), slider('COMPLEXITY', () => f.cplx, x => (f.cplx = x)),
+    (() => { const i = h('input', { type: 'number', value: f.seed, min: 1, max: 9999 }); i.onchange = () => (f.seed = +i.value || 1); return i; })(), btn(tr('LOCK KICK'), f.lockK, () => { f.lockK = !f.lockK; Lab.render(); }), btn('\u26a1 ' + tr('GENERATE').replace('\u26a1 ', ''), false, doFusion, 'big'))));
+  // scenes
+  const sc = h('div', { class: 'lscenes' });
+  Lab.scenes.forEach((s, i) => { const b = btn('', Lab.lastScene === i, () => launchScene(i), 'lscene'); b.style.setProperty('--fc', FAM_COLOR[s.fam] || '#46e0ff');
+    b.append(h('span', {}, s.name), h('small', {}, tr(s.fam)));
+    b.ondblclick = e => { e.preventDefault(); const n = prompt(tr('Rename the scene'), s.name); if (n && n.trim()) { s.name = n.trim().slice(0, 18).toUpperCase(); saveScenes(); Lab.render(); } };
+    sc.append(b); });
+  v.append(sec('SCENES', 'scenes', sc, h('p', { class: 'ldesc' }, tr('double-click a name to rename it') + ' \u00b7 ' + tr('on the next bar'))));
+  // MIDI import and controllers
+  const mi = h('input', { type: 'file', accept: '.mid,.midi,audio/midi', style: 'display:none' }); mi.onchange = () => { if (mi.files[0]) importMidiFile(mi.files[0]); mi.value = ''; };
+  const ctl = h('div', { class: 'chips' }); ['NONE', 'FM-1', 'KEYLAB'].forEach(n => ctl.append(btn(tr(n), Lab.profile === n, () => applyProfile(n))));
+  if (Lab.profile === 'KEYLAB') ['ESSENTIAL', 'MK2', 'MK3'].forEach(g => ctl.append(btn(g, Lab.keylab === g, () => { Lab.keylab = g; LS.set('pulsar.keylab', g); Lab.render(); }, 'small')));
+  v.append(sec('MIDI', 'midi', h('div', { class: 'lrow' }, btn('\u2912 ' + tr('IMPORT MIDI'), false, () => mi.click()), mi, h('label', {}, tr('CONTROLLER')), ctl),
+    h('p', { class: 'ldesc' }, PROFILES[Lab.profile] ? PROFILES[Lab.profile].info[LANG === 'es' ? 1 : 0] : (LANG === 'es' ? 'IMPORTAR MIDI: archivos .mid formato 0 o 1; notas de bater\u00eda GM (35-81) o 36-51 a las 16 pistas, cuantizadas a 1/16 (el resto queda como micro-tiempo), hasta 64 pasos.' : 'IMPORT MIDI: .mid files, format 0 or 1; GM drum notes (35-81) or 36-51 onto the 16 tracks, quantized to 1/16 (the rest kept as micro timing), up to 64 steps.'))));
+};
+Lab.tele = function (tele) {
+  if (Lab.pendingScene && tele[2] === Lab.pendingScene.slot) { const p = Lab.pendingScene; Lab.pendingScene = null; applyFamily(p.fam, p.fam, p.bpm); UI.cur = p.slot; Bridge.params([...PARAMS].map((v, i) => [i, v])); renderRows(); renderPats(); }
+  if (Lab.build) { const cur = tele[2] | 0, loop = tele[48] | 0;
+    if (cur === BUILD_SLOT) { if (loop >= Lab.build.rep - 1 && !Lab.build.queued) { Lab.build.queued = true; Bridge.post({ t: 'select', p: Lab.build.back }); } }
+    else if (Lab.build.queued) { Lab.build = null; Lab.render(); } }
+  const m = $('#labMeter'); if (m) { const rms = tele[50], gr = tele[51], mk = tele[52];
+    m.innerHTML = `<i style="width:${Math.max(0, Math.min(100, (rms + 40) / 40 * 100))}%"></i><span>${tr('level')} ${rms > -90 ? rms.toFixed(1) : '\u2212\u221e'} dBFS \u00b7 ${tr('limiter')} ${gr < -0.05 ? gr.toFixed(1) + ' dB' : '0 dB'} \u00b7 ${tr('loudness match')} ${(20 * Math.log10(Math.max(mk, 1e-3))).toFixed(1)} dB</span>`; }
+};
+Lab.boot = function () {
+  Lab.scenes = loadScenes();
+  const sw = $('#viewSw'); if (sw && !$('#vLab')) { const b = h('button', { id: 'vLab' }, 'LAB'); b.onclick = () => setView('LAB'); sw.append(b); }
+  if (!$('#labV')) $('#seq').append(h('div', { id: 'labV' }));
+  const base = setView;
+  setView = function (v) { if (v === 'LAB') { UI.view = 'LAB'; LS.set('pulsar.view', 'LAB'); $('#vLive').classList.remove('on'); $('#vGrid').classList.remove('on'); $('#vLab').classList.add('on');
+      $('#live').classList.remove('show'); $('#gridV').style.display = 'none'; $('#labV').style.display = ''; Lab.render(); return; }
+    $('#vLab').classList.remove('on'); $('#labV').style.display = 'none'; base(v); };
+  $('#vLive').onclick = () => setView('LIVE'); $('#vGrid').onclick = () => setView('GRID');
+  if (UI.view === 'LAB') setView('LAB'); else $('#labV').style.display = 'none';
+  const t0 = Bridge.onTele; Bridge.onTele = (tele, scope) => { t0 && t0(tele, scope); Lab.tele(tele); };
+  if (Lab.profile !== 'NONE') setTimeout(() => applyProfile(Lab.profile), 400);
+  // the FM-1 profile follows the selected track; the web version reads CC 24 (track) and channel 16 notes as pads
+  let lastSel = UI.sel; setInterval(() => { if (Lab.profile === 'FM-1' && UI.sel !== lastSel) { lastSel = UI.sel; applyProfile('FM-1'); } }, 300);
+  const cc0 = Learn.webCC; Learn.webCC = (cc, v) => { if (Lab.profile === 'FM-1' && cc === 24) { UI.sel = Math.min(15, Math.floor(v / 8)); renderRows(); renderPanel(); return; } cc0(cc, v); };
+};
+window.Lab = Lab;
+
+/* ---- hyperlink.js ---- */
+/* hyperlink.js \u2014 PULSAR 3 \u00b7 HYPERLINK // DUAL-ENGINE: PULSAR and an original Roland TR-8 (not TR-8S) as one instrument.
+   Built from Roland's TR-8 MIDI implementation chart (channel 10 by default; BD 36, SD 38, LT 43, MT 47, HT 50, RS 37, HC 39,
+   CH 42, OH 46, CC 49, RC 51; Scatter: CC 68 type, CC 69 depth, CC 70 on, which the TR-8 RECEIVES; SysEx not supported).
+   What it does, and only that:
+   - the KIT MATRIX: every track plays on PULSAR, on the TR-8 (over MIDI), on both, alternating, or nowhere;
+   - CONNECT: the channel, a test note, MIDI clock (off by default: the DAW may already send it), an offset to line them up;
+   - SCATTER DIRECTOR: Scatter type, depth and on / off sent on the bar, with an automatic return;
+   - GHOST GROOVE: what the TR-8 sends (if it is set to transmit its notes) is heard, never doubled on PULSAR's pads,
+     and PULSAR writes an answer around it (ghost notes, off-beats, a fill) \u2014 from the notes received, not its memory;
+   - a MIDI MONITOR, PANIC, and the status: PULSAR only / MIDI only / TR-8 heard.
+   Audio from the TR-8 comes into PULSAR only as your DAW or interface routes it (USB-MIDI carries no audio): the guide
+   says how. Nothing here assumes the TR-8 is there: PULSAR plays the same without it. Loaded after lab.js. */
+Object.assign(ES, {
+  'HYPERLINK \u00b7 TR-8': 'HYPERLINK \u00b7 TR-8', 'OFF': 'APAGADO', 'ON': 'ENCENDIDO', 'CHANNEL': 'CANAL', 'TEST NOTE': 'NOTA DE PRUEBA', 'SEND CLOCK': 'MANDAR RELOJ',
+  'OFFSET': 'DESFASE', 'KIT MATRIX': 'MATRIZ DE KIT', 'SCATTER DIRECTOR': 'DIRECTOR DE SCATTER', 'TYPE': 'TIPO', 'DEPTH': 'PROFUNDIDAD', 'EVERY': 'CADA',
+  'bars, for one bar': 'compases, durante un comp\u00e1s', 'SCATTER NOW': 'SCATTER YA', 'AUTO': 'AUTO', 'GHOST GROOVE': 'GHOST GROOVE', 'LISTEN': 'ESCUCHAR',
+  'WRITE THE ANSWER': 'ESCRIBIR LA RESPUESTA', 'MIDI MONITOR': 'MONITOR MIDI', 'PANIC': 'P\u00c1NICO', 'PULSAR only': 'Solo PULSAR', 'MIDI only (nothing heard from the TR-8 yet)': 'Solo MIDI (a\u00fan no se oye nada de la TR-8)',
+  'TR-8 heard over MIDI': 'TR-8 escuchada por MIDI', 'MIDI OUT': 'SALIDA MIDI', 'MIDI IN': 'ENTRADA MIDI', 'none': 'ninguna', 'PRESETS': 'PRESETS',
+  'PULSAR ONLY': 'SOLO PULSAR', 'TR-8 DRUMS \u00b7 PULSAR BREAKS': 'BATER\u00cdA TR-8 \u00b7 BREAKS PULSAR', 'LAYER THE KICK': 'BOMBO EN CAPAS', 'CALL & RESPONSE': 'PREGUNTA Y RESPUESTA',
+  'Clock is off: start the TR-8 yourself, or let the DAW send it clock \u2014 never both': 'El reloj est\u00e1 apagado: arranca la TR-8 t\u00fa, o deja que el DAW le mande reloj \u2014 nunca los dos',
+});
+const ROUTES = ['PULSAR', 'TR-8', 'BOTH', 'ALT', 'MUTE'];
+const TR8_VOICES = [['BD', 36], ['SD', 38], ['LT', 43], ['MT', 47], ['HT', 50], ['RS', 37], ['HC', 39], ['CH', 42], ['OH', 46], ['CC', 49], ['RC', 51], ['\u2014', 0]];
+const TR8_DEFAULT = [36, 38, 39, 42, 46, 0, 0, 37, 43, 49, 0, 47, 51, 0, 0, 50];
+const XT_ROUTE = 6, XT_HWNOTE = 7;
+// the TR-8 voice that fits a track: by its sound's name and role (a clap to HC, a crash to CC, a bass to none \u2026)
+function tr8Voice(t) { const k = UI.kit[t], n = ((k && k.n) || '').toUpperCase(), role = tp(t, T.ROLE) | 0;
+  if (/BASS|SUB|REESE|DROP|STAB|PLUCK|RISER|BREAK/.test(n)) return 0;
+  if (/CLAP/.test(n)) return 39; if (/RIM|STICK/.test(n)) return 37; if (/CRASH/.test(n)) return 49; if (/RIDE/.test(n)) return 51; if (/OPEN/.test(n)) return 46;
+  if (/TOM|CONGA|KNOCK/.test(n)) return [43, 47, 50][t % 3]; if (/COWBELL|BLOCK/.test(n)) return 37; if (/METAL|ANVIL|FM|ZAP|BLIP|GLASS|TICK/.test(n)) return 0;   // PULSAR's own colours stay on PULSAR
+  return [36, 38, 42, 0, 0, 46][role] ?? 0; }
+const Hyper = {
+  st: Object.assign({ on: false, ch: 10, clock: false, off: 0, scType: 1, scDepth: 64, scEvery: 4, scAuto: false, out: '', in: '' }, JSON.parse(LS.get('pulsar.hyper') || '{}')),
+  mon: [], heardAt: 0, heard: [], webOut: null, webIn: null, access: null, lastBar: -1, barCount: 0, scOn: false,
+};
+function hyperSave() { LS.set('pulsar.hyper', JSON.stringify(Hyper.st)); }
+function hyperPush() { const s = Hyper.st; Bridge.post({ t: 'hyperlink', on: s.on, ch: s.ch, clock: s.clock, off: s.off }); hyperSave(); }
+function monitor(dir, bytes) { Hyper.mon.unshift([dir, [...bytes].map(b => b.toString(16).padStart(2, '0')).join(' '), performance.now()]); Hyper.mon.length = Math.min(Hyper.mon.length, 24); const m = $('#hlMon'); if (m) Hyper.paintMon(m); }
+Hyper.paintMon = m => { m.textContent = Hyper.mon.map(([d, b]) => (d === 'out' ? '\u2192 ' : '\u2190 ') + b).join('\n') || '\u2014'; };
+function hwSendNow(bytes) { monitor('out', bytes); if (Bridge.kind === 'plugin') return; if (Hyper.webOut) try { Hyper.webOut.send(bytes); } catch (e) {} }
+function sendCC(cc, v, bar) { const ch = Hyper.st.ch - 1; monitor('out', [0xb0 | ch, cc, v]); Bridge.post({ t: 'hwcc', cc, v, bar: !!bar }); }
+
+// the web version: Web MIDI out / in (the plug-in uses the DAW's MIDI routing instead)
+function hyperWebMidi() {
+  if (Bridge.kind === 'plugin' || !navigator.requestMIDIAccess) return;
+  navigator.requestMIDIAccess({ sysex: false }).then(acc => { Hyper.access = acc; const pick = () => {
+      const outs = [...acc.outputs.values()], ins = [...acc.inputs.values()];
+      Hyper.webOut = outs.find(o => o.id === Hyper.st.out) || outs.find(o => /TR-8/i.test(o.name)) || null;
+      if (Hyper.webIn) Hyper.webIn.removeEventListener('midimessage', Hyper.onIn);
+      Hyper.webIn = ins.find(i => i.id === Hyper.st.in) || ins.find(i => /TR-8/i.test(i.name)) || null;
+      if (Hyper.webIn) Hyper.webIn.addEventListener('midimessage', Hyper.onIn); Lab.render(); };
+    pick(); acc.onstatechange = pick; }).catch(() => {});
+}
+Hyper.onIn = ev => { const [s, n, v] = ev.data; if ((s & 0xf0) === 0x90 && v > 0 && (s & 15) === Hyper.st.ch - 1) Hyper.hear([[n, v, (Hyper.tele ? Hyper.tele[4] | 0 : 0)]]); if (s < 0xf8) monitor('in', ev.data); };
+Hyper.hear = list => { Hyper.heardAt = performance.now(); for (const [n, v, st] of list) { Hyper.heard.push({ n, v, st: st % 16, at: performance.now() }); monitor('in', [0x90 | (Hyper.st.ch - 1), n, v]); }
+  if (Hyper.heard.length > 256) Hyper.heard.splice(0, Hyper.heard.length - 256); };
+// the engine's hits for the TR-8, in the web: sent with Web MIDI at the right time (the audio clock and the output latency)
+Hyper.onHw = d => { if (!Hyper.st.on || !Hyper.webOut) return; const ctx = Bridge.ctx, lat = ((ctx && (ctx.outputLatency || ctx.baseLatency)) || 0) * 1000;
+  const base = performance.now() + (d.time - (ctx ? ctx.currentTime : d.time)) * 1000 + lat + Hyper.st.off, ch = Hyper.st.ch - 1;
+  for (const [kind, a, v, at] of d.list) { const t = base + at / d.sr * 1000, msg = kind === 1 ? [0xb0 | ch, a, v] : [0x90 | ch, a, v];
+    try { Hyper.webOut.send(msg, t); if (!kind) Hyper.webOut.send([0x80 | ch, a, 0], t + 60); } catch (e) {} monitor('out', msg); } };
+
+// presets for the matrix
+function routePreset(name) {
+  startPreview(tr('KIT MATRIX') + ' \u00b7 ' + tr(name));
+  for (let t = 0; t < NT; t++) { let r = 0;
+    if (name === 'TR-8 DRUMS \u00b7 PULSAR BREAKS') r = tr8Voice(t) && (tp(t, T.ROLE) | 0) !== 4 && !/BASS|SUB/.test(((UI.kit[t] || {}).n || '').toUpperCase()) ? 1 : 0;
+    if (name === 'LAYER THE KICK') r = t === 0 ? 2 : 0;
+    if (name === 'CALL & RESPONSE') r = [0, 1, 3].includes(t) ? 3 : 0;
+    const v = tr8Voice(t); if (r === 1 || r === 3) { if (!v) r = 0; } setP(TXID(t, XT_ROUTE), r); setP(TXID(t, XT_HWNOTE), v); }
+  Lab.render();
+}
+// GHOST GROOVE: from the TR-8's last bars, PULSAR writes ghost snares before its snares, hats on the off-beats it leaves free,
+// percussion answering its kick, and a fill in the last beat. Only on PULSAR's own tracks routed to PULSAR.
+function ghostGroove() {
+  const recent = Hyper.heard.filter(x => performance.now() - x.at < 16000); if (!recent.length) { toast(LANG === 'es' ? 'A\u00fan no llega nada de la TR-8: pon su MIDI OUT a mandar notas (TX) y t\u00f3cala' : 'Nothing from the TR-8 yet: set it to transmit its notes (MIDI TX) and play it'); return; }
+  const kick = new Set(), snare = new Set(), hat = new Set();
+  for (const x of recent) { if (x.n === 35 || x.n === 36) kick.add(x.st); else if ([38, 40, 39].includes(x.n)) snare.add(x.st); else if ([42, 44, 46].includes(x.n)) hat.add(x.st); }
+  startPreview(tr('GHOST GROOVE'));
+  const b = UI.pats[UI.cur], free = t => PARAMS[TXID(t, XT_ROUTE)] === 0, r = RNG(genSeed());
+  if (free(12)) for (const s of snare) { const g = (s + 15) % 16; if (!snare.has(g)) setStep(b, 12, g, { vel: 28 + r.int(14) }); }
+  if (free(13)) for (let s = 0; s < 16; s++) if (s % 2 === 1 && !hat.has(s) && r() < .8) setStep(b, 13, s, { vel: 40 + r.int(40), mic: r.int(10) - 5 });
+  if (free(8)) for (const s of kick) { const a = (s + 3) % 16; if (!kick.has(a) && r() < .6) setStep(b, 8, a, { vel: 60 + r.int(40), pit: r.pick([0, 5, 7]) }); }
+  if (free(7)) for (let s = 12; s < 16; s++) setStep(b, 7, s, { vel: 60 + (s - 12) * 15, rat: s > 13 ? 2 : 1 });
+  pushPat(UI.cur); renderRows(); toast(tr('GHOST GROOVE') + ' \u00b7 ' + recent.length + ' TR-8 hits');
+}
+Hyper.tick = function (tele) {   // the bar clock for SCATTER AUTO
+  Hyper.tele = tele; const step = tele[4] | 0, bar = Math.floor(step / 16), playing = tele[0] > .5;
+  if (!playing) { Hyper.lastBar = -1; return; }
+  if ((step & 15) === 15 && Hyper.lastBar !== step) { Hyper.lastBar = step; Hyper.barCount++;
+    const s = Hyper.st; if (s.on && s.scAuto) { const go = Hyper.barCount % s.scEvery === 0;
+      if (go && !Hyper.scOn) { sendCC(68, Math.round((s.scType - 1) * 127 / 9), true); sendCC(69, s.scDepth, true); sendCC(70, 127, true); Hyper.scOn = true; }
+      else if (Hyper.scOn) { sendCC(70, 0, true); Hyper.scOn = false; } } }
+  void bar;
+};
+Hyper.status = () => !Hyper.st.on ? tr('PULSAR only') : performance.now() - Hyper.heardAt < 4000 ? tr('TR-8 heard over MIDI') : tr('MIDI only (nothing heard from the TR-8 yet)');
+
+Hyper.render = function (v) {
+  const s = Hyper.st, sec = (title, cls, ...kids) => h('section', { class: 'lsec ' + (cls || '') }, h('h3', {}, tr(title)), ...kids);
+  const btn = (label, on, fn, cls = '') => { const b = h('button', { class: (on ? 'on ' : '') + cls }, label); b.onclick = fn; return b; };
+  const num = (val, min, max, set, w = 56) => { const i = h('input', { type: 'number', value: val, min, max, style: `width:${w}px` }); i.onchange = () => { set(Math.max(min, Math.min(max, +i.value || min))); }; return i; };
+  const status = h('span', { class: 'hlstat ' + (s.on ? 'on' : '') }, '\u25cf ' + Hyper.status());
+  const conn = h('div', { class: 'lrow' }, btn(s.on ? tr('ON') : tr('OFF'), s.on, () => { s.on = !s.on; hyperPush(); Lab.render(); }, 'big'), status,
+    h('label', {}, tr('CHANNEL')), num(s.ch, 1, 16, x => { s.ch = x; hyperPush(); }),
+    btn(tr('TEST NOTE'), false, () => { const ch = s.ch - 1; if (Bridge.kind === 'plugin') Bridge.post({ t: 'hwtest', note: 36 }); else { hwSendNow([0x90 | ch, 36, 100]); setTimeout(() => hwSendNow([0x80 | ch, 36, 0]), 80); } monitor('out', [0x90 | ch, 36, 100]); }),
+    btn(tr('SEND CLOCK'), s.clock, () => { s.clock = !s.clock; hyperPush(); Lab.render(); }),
+    h('label', {}, tr('OFFSET')), num(s.off, 0, 80, x => { s.off = x; hyperPush(); }), h('span', { class: 'ldesc' }, 'ms'),
+    btn('\u26d4 ' + tr('PANIC'), false, () => { const ch = s.ch - 1; Bridge.post({ t: 'panicHw' }); hwSendNow([0xb0 | ch, 123, 0]); hwSendNow([0xb0 | ch, 120, 0]); }));
+  if (Bridge.kind !== 'plugin' && Hyper.access) { const outs = [...Hyper.access.outputs.values()], ins = [...Hyper.access.inputs.values()];
+    const sel = (list, cur, set, label) => { const x = h('select', {}); x.append(h('option', { value: '' }, tr('none'))); list.forEach(p => x.append(h('option', { value: p.id }, p.name))); x.value = cur || ''; x.onchange = () => { set(x.value); hyperSave(); hyperWebMidi(); }; return [h('label', {}, tr(label)), x]; };
+    conn.append(...sel(outs, Hyper.webOut && Hyper.webOut.id, x => (s.out = x), 'MIDI OUT'), ...sel(ins, Hyper.webIn && Hyper.webIn.id, x => (s.in = x), 'MIDI IN')); }
+  const guide = h('p', { class: 'ldesc' }, LANG === 'es'
+    ? (Bridge.kind === 'plugin' ? 'Ableton: crea una pista MIDI \u2192 MIDI From: PULSAR, MIDI To: TR-8 (canal 10). Para o\u00edr la TR-8 dentro de la mezcla: su audio USB o sus salidas a tu interfaz, en una pista de audio. Para GHOST GROOVE: otra pista MIDI con MIDI From: TR-8 \u2192 MIDI To: PULSAR (en la TR-8, que transmita sus notas). ' : 'Elige la TR-8 en SALIDA MIDI (y ENTRADA MIDI para GHOST GROOVE). El audio de la TR-8 suena por sus propias salidas: el navegador no lo mezcla. ') + 'Si suena doble: no actives el reloj aqu\u00ed y en el DAW a la vez, y en la matriz usa BOTH solo donde quieras capas.'
+    : (Bridge.kind === 'plugin' ? 'Ableton: make a MIDI track \u2192 MIDI From: PULSAR, MIDI To: TR-8 (channel 10). To hear the TR-8 in the mix: its USB audio or its outputs into your interface, on an audio track. For GHOST GROOVE: another MIDI track, MIDI From: TR-8 \u2192 MIDI To: PULSAR (set the TR-8 to transmit its notes). ' : 'Pick the TR-8 as MIDI OUT (and MIDI IN for GHOST GROOVE). The TR-8 sounds from its own outputs: the browser does not mix it. ') + 'If it doubles: never clock it from here and from the DAW at once, and use BOTH in the matrix only where you want layers.');
+  if (!s.clock) guide.append(h('br'), h('b', {}, tr('Clock is off: start the TR-8 yourself, or let the DAW send it clock \u2014 never both')));
+  // the matrix
+  const mx = h('div', { class: 'hlmx' });
+  for (let t = 0; t < NT; t++) { const r = PARAMS[TXID(t, XT_ROUTE)] | 0, note = PARAMS[TXID(t, XT_HWNOTE)] || tr8Voice(t);
+    const row = h('div', { class: 'hlrow' }, h('b', { style: 'color:' + stepColor(t) }, (t + 1) + ' ' + (UI.kit[t] ? UI.kit[t].n : '')));
+    const ch = h('div', { class: 'chips' }); ROUTES.forEach((n, i) => ch.append(btn(n, r === i, () => { setP(TXID(t, XT_ROUTE), i); if (!PARAMS[TXID(t, XT_HWNOTE)]) setP(TXID(t, XT_HWNOTE), tr8Voice(t)); Lab.render(); }, 'r' + i)));
+    const vs = h('select', {}); TR8_VOICES.forEach(([n, nn]) => vs.append(h('option', { value: nn }, n + (nn ? ' ' + nn : '')))); vs.value = String(note); vs.disabled = r === 0 || r === 4;
+    vs.onchange = () => setP(TXID(t, XT_HWNOTE), +vs.value);
+    row.append(ch, vs); mx.append(row); }
+  const pre = h('div', { class: 'chips' }); ['PULSAR ONLY', 'TR-8 DRUMS \u00b7 PULSAR BREAKS', 'LAYER THE KICK', 'CALL & RESPONSE'].forEach(n => pre.append(btn(tr(n), false, () => routePreset(n))));
+  // Scatter
+  const sc = h('div', { class: 'lrow' }, h('label', {}, tr('TYPE')), num(s.scType, 1, 10, x => { s.scType = x; hyperSave(); }), h('label', {}, tr('DEPTH')), num(s.scDepth, 0, 127, x => { s.scDepth = x; hyperSave(); }),
+    btn('\u25b6 ' + tr('SCATTER NOW'), false, () => { sendCC(68, Math.round((s.scType - 1) * 127 / 9), true); sendCC(69, s.scDepth, true); sendCC(70, 127, true); setTimeout(() => sendCC(70, 0, true), Math.max(500, 60 / Math.max(40, PARAMS[G.BPM]) * 4000)); }, 'big'),
+    btn(tr('AUTO'), s.scAuto, () => { s.scAuto = !s.scAuto; hyperSave(); Lab.render(); }), h('label', {}, tr('EVERY')), num(s.scEvery, 2, 16, x => { s.scEvery = x; hyperSave(); }), h('span', { class: 'ldesc' }, tr('bars, for one bar')));
+  const gg = h('div', { class: 'lrow' }, btn('\u270e ' + tr('WRITE THE ANSWER'), false, ghostGroove, 'big'), h('span', { class: 'ldesc' }, (LANG === 'es' ? 'golpes de la TR-8 escuchados: ' : 'TR-8 hits heard: ') + Hyper.heard.filter(x => performance.now() - x.at < 16000).length));
+  const mon = h('pre', { class: 'hlmon', id: 'hlMon' }); Hyper.paintMon(mon);
+  v.append(sec('HYPERLINK \u00b7 TR-8', 'hyper', conn, guide, h('h3', { class: 'sub' }, tr('KIT MATRIX')), pre, mx,
+    h('h3', { class: 'sub' }, tr('SCATTER DIRECTOR')), sc, h('p', { class: 'ldesc' }, LANG === 'es' ? 'CC 68 tipo \u00b7 CC 69 profundidad \u00b7 CC 70 encendido, en el siguiente comp\u00e1s; AUTO lo enciende cada N compases durante uno y regresa. La TR-8 recibe estos CC; no los manda.' : 'CC 68 type \u00b7 CC 69 depth \u00b7 CC 70 on, on the next bar; AUTO turns it on every N bars for one and back. The TR-8 receives these CCs; it does not send them.'),
+    h('h3', { class: 'sub' }, tr('GHOST GROOVE')), gg, h('h3', { class: 'sub' }, tr('MIDI MONITOR')), mon));
+};
+Hyper.boot = function () {
+  hyperPush(); hyperWebMidi();
+  Bridge.onHwIn = list => Hyper.hear(list); Bridge.onHw = d => Hyper.onHw(d);
+  const r0 = Lab.render; Lab.render = function () { r0(); const v = $('#labV'); if (v && UI.view === 'LAB') Hyper.render(v); };
+  const t0 = Lab.tele; Lab.tele = function (tele) { t0(tele); Hyper.tick(tele); const st = $('.hlstat'); if (st) st.textContent = '\u25cf ' + Hyper.status(); };
+  if (UI.view === 'LAB') Lab.render();
+};
+window.Hyper = Hyper;
+
+/* ---- coach.js ---- */
+/* coach.js \u2014 the first time PULSAR opens: three moves to a groove (and the guide stays one click away on ?) */
+Object.assign(ES, {
+  'WELCOME': 'BIENVENIDA', 'Three moves to a groove.': 'Tres movimientos y ya hay groove.',
+  'Pick a family and press \u26a1 GENERATE.': 'Elige una familia y pulsa \u26a1 GENERAR.', 'You get a kit and a pattern that fit together, already mixed.': 'Obtienes un kit y un patr\u00f3n que encajan, ya mezclados.',
+  'Turn the macros.': 'Gira las macros.', 'DRIVE, PUMP, FILTER, TENSION\u2026 each one is a musical move. Went too far? RECOVER brings the groove back.': 'SATURACI\u00d3N, BOMBEO, FILTRO, TENSI\u00d3N\u2026 cada una es un movimiento musical. \u00bfTe pasaste? RECUPERAR regresa el groove.',
+  'Launch scenes on the bar.': 'Lanza escenas en el comp\u00e1s.', 'Press a scene: it changes on the next bar, always in time. The 36 patterns of the bank preview before you keep them.': 'Pulsa una escena: cambia en el siguiente comp\u00e1s, siempre a tiempo. Los 36 patrones del banco se escuchan antes de quedarte con ellos.',
+  'Start': 'Empezar', 'Later': 'Despu\u00e9s' });
+const Coach = {
+  show() {
+    if (LS.get('pulsar.coach')) return;
+    const d = document.createElement('div'); d.id = 'coach';
+    d.style.cssText = 'position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:#030405d9;padding:20px';
+    const step = (n, a, b) => `<div style="display:flex;gap:12px;margin:14px 0;align-items:flex-start"><b style="flex:none;width:30px;height:30px;border-radius:50%;background:var(--beam);color:#050607;display:grid;place-items:center;font-weight:800">${n}</b><div><b>${tr(a)}</b> <span style="color:var(--dim)">${tr(b)}</span></div></div>`;
+    d.innerHTML = `<div style="max-width:560px;background:#0d1116;border:1px solid #ffffff22;border-radius:14px;padding:24px 26px;line-height:1.5;font-size:14px">
+      <div style="letter-spacing:.2em;font-size:11px;color:var(--dim)">${tr('WELCOME')}</div><h2 style="margin:4px 0 6px;font-size:26px">${tr('Three moves to a groove.')}</h2>
+      ${step(1, 'Pick a family and press \u26a1 GENERATE.', 'You get a kit and a pattern that fit together, already mixed.')}
+      ${step(2, 'Turn the macros.', 'DRIVE, PUMP, FILTER, TENSION\u2026 each one is a musical move. Went too far? RECOVER brings the groove back.')}
+      ${step(3, 'Launch scenes on the bar.', 'Press a scene: it changes on the next bar, always in time. The 36 patterns of the bank preview before you keep them.')}
+      <div style="display:flex;gap:8px;margin-top:16px"><button id="coachGo" class="big">${tr('Start')}</button><button id="coachLater">${tr('Later')}</button></div></div>`;
+    document.body.append(d);
+    const close = () => { LS.set('pulsar.coach', '1'); d.remove(); };
+    d.querySelector('#coachLater').onclick = close;
+    d.querySelector('#coachGo').onclick = () => { close(); if (typeof quickGenerate === 'function') quickGenerate(); };
+  }
+};
 
 </script>
 </body>

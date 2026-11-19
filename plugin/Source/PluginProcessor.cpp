@@ -17,7 +17,7 @@ juce::AudioProcessor::BusesProperties PulsarProcessor::busesProps() {
 
 PulsarProcessor::PulsarProcessor()
   : AudioProcessor(busesProps()) {
-  learn.fill(-1); offs.reserve(2048);
+  learn.fill(-1); offs.reserve(2048); later.reserve(1024); hwIn.reserve(512);
   // ---- the library, in the same slots the web page gives it
   juce::MemoryInputStream gz(BinaryData::sounds_bin_gz, (size_t)BinaryData::sounds_bin_gzSize, false);
   juce::GZIPDecompressorInputStream in(&gz, false, juce::GZIPDecompressorInputStream::gzipFormat);
@@ -176,10 +176,17 @@ void PulsarProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiB
       int i0 = len; if (rsArm) { if (E.loopAt >= 0) { rsArm = false; i0 = E.loopAt; } } else i0 = 0;
       for (int i = i0; i < len && rsN < rsLen; i++) rsBuf[(size_t)rsN++] = (L[from + i] + RR[from + i]) * 0.5f;
       if (!rsArm && rsN >= rsLen) rsDone = true; }
-    // what played goes out as MIDI too (note 36 + track, channel 10): drive other instruments or record it in the DAW
-    for (int e = 0; e < E.nev; e++) { const int at = from + juce::jlimit(0, len - 1, E.ev[e].at), note = 36 + E.ev[e].t;
-      out.addEvent(juce::MidiMessage::noteOn(10, note, (juce::uint8)E.ev[e].vel), at);
-      if (offs.size() < 2000) offs.push_back({ note, at + (int)(sr * 0.06) }); }
+    // what played goes out as MIDI too (note 36 + track, channel 10): drive other instruments or record it in the DAW.
+    // With HYPERLINK on, only the tracks routed to the TR-8 go out, on its notes and channel (and never PULSAR's own 36-51 on 10:
+    // that would play the TR-8's kick twice), after the offset.
+    const int off = hl.on ? (int)(sr * hl.offMs / 1000.0) : 0;
+    auto send = [&](const juce::MidiMessage& m, int at) { if (at < n) out.addEvent(m, at); else if (later.size() < 1000) later.push_back({ m, at - n }); };
+    for (int e = 0; e < E.nev; e++) { const auto& ev = E.ev[e]; const int at = from + juce::jlimit(0, len - 1, ev.at);
+      if (ev.kind == 1) { if (hl.on) send(juce::MidiMessage::controllerEvent(hl.ch, ev.cc, ev.vel), at + off); continue; }
+      if (hl.on) { if (ev.hw) { send(juce::MidiMessage::noteOn(hl.ch, ev.note, (juce::uint8)ev.vel), at + off); if (offs.size() < 2000) offs.push_back({ ev.note, at + off + (int)(sr * 0.06), hl.ch }); } continue; }
+      const int note = 36 + ev.t;
+      out.addEvent(juce::MidiMessage::noteOn(10, note, (juce::uint8)ev.vel), at);
+      if (offs.size() < 2000) offs.push_back({ note, at + (int)(sr * 0.06), 10 }); }
     E.nev = 0;
   };
   int done = 0;
@@ -187,13 +194,24 @@ void PulsarProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiB
     const int at = juce::jlimit(0, n, meta.samplePosition);
     if (at > done) { run(done, at - done); done = at; }
     const auto m = meta.getMessage();
+    if (hl.on && m.getChannel() == hl.ch && (m.isNoteOn() || m.isNoteOff())) {     // the TR-8 playing: heard (GHOST GROOVE), never doubled on PULSAR's pads
+      if (m.isNoteOn()) { const juce::SpinLock::ScopedLockType l(hwLock); if (hwIn.size() < 512) hwIn.push_back({ m.getNoteNumber(), m.getVelocity(), E.mStep }); }
+      continue; }
     if (m.isNoteOn() && m.getNoteNumber() >= 36 && m.getNoteNumber() < 36 + NT) E.padDown(m.getNoteNumber() - 36, m.getVelocity());
     else if (m.isNoteOff() && m.getNoteNumber() >= 36 && m.getNoteNumber() < 36 + NT) E.padUp(m.getNoteNumber() - 36);
     else if (m.isController()) midiCC(m.getControllerNumber(), m.getControllerValue());
   }
   if (n > done) run(done, n - done);
   // note-offs due in this block; the rest wait for the next ones
-  for (size_t i = 0; i < offs.size();) { if (offs[i].at < n) { out.addEvent(juce::MidiMessage::noteOff(10, offs[i].note), juce::jmax(0, offs[i].at)); offs[i] = offs.back(); offs.pop_back(); } else { offs[i].at -= n; i++; } }
+  for (size_t i = 0; i < offs.size();) { if (offs[i].at < n) { out.addEvent(juce::MidiMessage::noteOff(offs[i].ch, offs[i].note), juce::jmax(0, offs[i].at)); offs[i] = offs.back(); offs.pop_back(); } else { offs[i].at -= n; i++; } }
+  // HYPERLINK: what waited for the offset; MIDI clock and start / stop to the TR-8 (only if asked: the DAW may be sending its own)
+  for (size_t i = 0; i < later.size();) { if (later[i].at < n) { out.addEvent(later[i].m, juce::jmax(0, later[i].at)); later[i] = later.back(); later.pop_back(); } else { later[i].at -= n; i++; } }
+  if (hl.on && hl.clock) {
+    if (E.playing && !wasPlaying) { out.addEvent(juce::MidiMessage::midiStart(), 0); clkPh = 0; }
+    if (!E.playing && wasPlaying) out.addEvent(juce::MidiMessage::midiStop(), 0);
+    if (E.playing) { const double tick = sr * 60.0 / juce::jmax(20.f, E.bpm()) / 24.0; for (double t = clkPh; t < n; t += tick) { out.addEvent(juce::MidiMessage::midiClock(), (int)t); clkPh = t + tick - n; } if (clkPh >= n) clkPh -= n; }
+  }
+  wasPlaying = E.playing;
   midi.swapWith(out);
 }
 
@@ -218,7 +236,7 @@ void PulsarProcessor::message(const juce::var& m) {
     else if (t == "params") { if (auto* a = m["list"].getArray()) for (auto& e : *a) { int id = (int)e[0]; E.setParam(id, (float)(double)e[1]); if (id >= 0 && id < P_COUNT && hostOf[id] >= 0) touched.push_back(-1 - hostOf[id]); } }
     else if (t == "play") { E.play(); hostStarted = false; }
     else if (t == "stop") { E.stop(); hostStarted = false; }
-    else if (t == "select") { E.select((int)m["p"], (bool)m["now"]); }
+    else if (t == "select") { E.select((int)m["p"], (bool)m["now"], (bool)m.getProperty("bar", false)); }
     else if (t == "rec") { E.rec = (bool)m["on"]; E.perfTake = false; }
     else if (t == "fx") { const int mask = (int)m["mask"]; const uint16_t old = uiFX; uiFX = (uint16_t)mask; E.liveFX = uiFX; if (!E.playing) E.fxNow = uiFX;
       for (int k = 0; k < 16; k++) if (((old ^ uiFX) >> k) & 1) for (size_t i = 0; i < hp.size(); i++) if (hp[i].eng == -1 - k) touched.push_back((int)i); }
@@ -226,6 +244,14 @@ void PulsarProcessor::message(const juce::var& m) {
     else if (t == "pad") { E.padDown((int)m["t2"], (int)m["vel"]); }
     else if (t == "padUp") { E.padUp((int)m["t2"]); }
     else if (t == "resample") { const int len = juce::jlimit(256, (int)(sr * 30), (int)m["len"]); if (!rsDone.load()) { rsBuf.assign((size_t)len, 0.f); rsLen = len; rsN = 0; rsArm = true; } }
+    else if (t == "hyperlink") { hl.on = (bool)m["on"]; hl.ch = juce::jlimit(1, 16, (int)m["ch"]); hl.clock = (bool)m["clock"]; hl.offMs = juce::jlimit(0, 80, (int)m["off"]);
+      if (!hl.on) later.push_back({ juce::MidiMessage::controllerEvent(hl.ch, 123, 0), 0 }); }   /* off: all notes off on its channel */
+    else if (t == "hwcc") { E.hwCC((int)m["cc"], (int)m["v"], (bool)m["bar"]); }
+    else if (t == "hwtest") { const int nn = juce::jlimit(0, 127, (int)m["note"]); later.push_back({ juce::MidiMessage::noteOn(hl.ch, nn, (juce::uint8)100), 0 }); later.push_back({ juce::MidiMessage::noteOff(hl.ch, nn), (int)(sr * 0.08) }); }
+    else if (t == "panicHw") { for (int c : { 123, 120 }) later.push_back({ juce::MidiMessage::controllerEvent(hl.ch, c, 0), 0 }); }
+    else if (t == "learnSet") {       // PULSAR 3: a controller profile writes its mappings straight into MIDI learn
+      const juce::String key = m["key"].toString(); const int cc = (int)m["cc"];
+      if (cc >= 0 && cc < 128) for (size_t i = 0; i < hp.size(); i++) if (params[i]->getParameterID() == key) { for (auto& x : learn) if (x == (int)i) x = -1; learn[(size_t)cc] = (int)i; break; } }
     else if (t == "learn") { const juce::String key = m["key"].toString(); learnArm = -1;
       for (size_t i = 0; i < hp.size(); i++) if (params[i]->getParameterID() == key) learnArm = (int)i;
       if (key == "clear") { learn.fill(-1); } else if (key.startsWith("forget:")) { for (auto& x : learn) if (x >= 0 && params[(size_t)x]->getParameterID() == key.substring(7)) x = -1; } }
@@ -331,6 +357,8 @@ void PulsarProcessor::getStateInformation(juce::MemoryBlock& dest) {
   // 2.0: the MIDI learn map (CC -> parameter ID), after everything 1.0 wrote
   o.writeInt(0x4c524e32); int nl = 0; for (int x : learn) if (x >= 0) nl++; o.writeInt(nl);
   for (int c = 0; c < 128; c++) if (learn[(size_t)c] >= 0) { o.writeInt(c); o.writeString(params[(size_t)learn[(size_t)c]]->getParameterID()); }
+  // 3.0: HYPERLINK (the TR-8's channel, clock, offset), after everything 2.0 wrote
+  o.writeInt(0x48594c33); o.writeBool(hl.on); o.writeInt(hl.ch); o.writeBool(hl.clock); o.writeInt(hl.offMs);
 }
 void PulsarProcessor::setStateInformation(const void* data, int size) {
   juce::MemoryInputStream in(data, (size_t)size, false);
@@ -349,6 +377,8 @@ void PulsarProcessor::setStateInformation(const void* data, int size) {
   if (!in.isExhausted() && in.readInt() == 0x4c524e32) { const int nl = in.readInt();
     for (int i = 0; i < nl && !in.isExhausted(); i++) { const int c = in.readInt(); const juce::String id = in.readString();
       for (size_t k = 0; k < params.size(); k++) if (params[k]->getParameterID() == id && c >= 0 && c < 128) lm[(size_t)c] = (int)k; } }
+  Hyper h; if (!in.isExhausted() && in.readInt() == 0x48594c33) { h.on = in.readBool(); h.ch = juce::jlimit(1, 16, in.readInt()); h.clock = in.readBool(); h.offMs = juce::jlimit(0, 80, in.readInt()); }
+  hl = h;
   { const juce::SpinLock::ScopedLockType sl(lock); Engine& E = *eng;
     E.stop(); for (int i = 0; i < juce::jmin(np, P_COUNT); i++) E.params[i] = ps[(size_t)i];
     std::memcpy(E.pat, pats.get(), sizeof(E.pat)); std::memcpy(E.song, song, sizeof(song)); E.songLen = juce::jlimit(0, SONGMAX, songLen); E.songOn = songOn;

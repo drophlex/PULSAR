@@ -74,7 +74,15 @@ private:
   void midiCC(int cc, int v);
   std::array<int, 128> learn;                                 // CC -> host parameter index, -1 none
   int learnArm = -1; std::atomic<int> learnDone { -1 }; std::atomic<int> ccTouched { -1 };
-  struct Off { int note, at; }; std::vector<Off> offs;
+  struct Off { int note, at, ch = 10; }; std::vector<Off> offs;
+  // PULSAR 3 HYPERLINK (the original TR-8): on, MIDI channel, MIDI clock out, the offset that lines the TR-8 up with PULSAR
+  struct Hyper { bool on = false, clock = false; int ch = 10, offMs = 0; } hl;
+  struct Later { juce::MidiMessage m; int at; }; std::vector<Later> later;     // MIDI waiting for the offset
+  double clkPh = 0; bool wasPlaying = false;
+  struct HwIn { int note, vel, step; }; std::vector<HwIn> hwIn; juce::SpinLock hwLock;   // what the TR-8 played (GHOST GROOVE)
+public:
+  std::vector<HwIn> takeHwIn() { const juce::SpinLock::ScopedLockType l(hwLock); std::vector<HwIn> v; v.swap(hwIn); return v; }
+private:
   std::vector<float> rsBuf; int rsLen = 0, rsN = 0; bool rsArm = false; std::atomic<bool> rsDone { false };
 public:
   juce::var takeResample();                                  // message thread: a finished resample becomes one of your samples
