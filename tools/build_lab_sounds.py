@@ -9,7 +9,9 @@ import json, sys, wave, pathlib
 import numpy as np
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SND = ROOT / 'sounds'
-SR = 44100
+OUT_SR = 44100
+OS = 4                      # PULSAR 3.4: everything is made at 4 x 44.1 kHz and filtered down, so the saws, squares, noise
+SR = OUT_SR * OS            # and every tanh stay clean (made at 44.1 kHz they folded back as hiss and grit over the whole mix)
 LIC = 'CC0'
 SRC = 'PULSAR 3 synthesis (tools/build_lab_sounds.py)'
 lab = []
@@ -37,22 +39,25 @@ def noise(sec, seed): return np.random.default_rng(seed).uniform(-1, 1, len(t(se
 def drive(x, g): return np.tanh(x * g) / np.tanh(g)
 def fit(x, peak=0.92):
     x = x - np.mean(x[: min(len(x), 64)]) * 0  # (no DC shift: the generators are DC-free)
-    n = len(x); fade = int(0.004 * SR); x = x.copy(); x[-fade:] *= np.linspace(1, 0, fade)
+    n = len(x); fade = int(0.004 * OUT_SR); x = x.copy(); x[-fade:] *= np.linspace(1, 0, fade)
     m = np.max(np.abs(x)) or 1; return x / m * peak
 
-def save(group, name, x, cat, how, extra=None):
+def down(x):                # 4 x -> 44.1 kHz through a long low-pass (flat to 19 kHz)
+    from scipy.signal import resample_poly
+    return resample_poly(x, 1, OS, window=('kaiser', 10.0))
+def save(group, name, x, cat, how, extra=None, made_here=True):
     d = SND / group; d.mkdir(parents=True, exist_ok=True)
-    y = np.clip(fit(x), -1, 1); pcm = (y * 32767).astype('<i2')
-    with wave.open(str(d / f'{name}.wav'), 'wb') as w: w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm.tobytes())
-    e = {'id': f'{group}/{name}', 'group': group, 'name': name, 'cat': cat, 'len': round(len(y) / SR, 3), 'src': SRC, 'lic': LIC}
+    y = np.clip(fit(down(x) if made_here else x), -1, 1); pcm = (y * 32767).astype('<i2')
+    with wave.open(str(d / f'{name}.wav'), 'wb') as w: w.setnchannels(1); w.setsampwidth(2); w.setframerate(OUT_SR); w.writeframes(pcm.tobytes())
+    e = {'id': f'{group}/{name}', 'group': group, 'name': name, 'cat': cat, 'len': round(len(y) / OUT_SR, 3), 'src': SRC, 'lic': LIC}
     if extra: e.update(extra)
-    lab.append((e, {'file': f'sounds/{group}/{name}.wav', 'made_by': how, 'seconds': e['len'], 'rate': SR, 'bits': 16, 'channels': 1,
+    lab.append((e, {'file': f'sounds/{group}/{name}.wav', 'made_by': how, 'seconds': e['len'], 'rate': OUT_SR, 'bits': 16, 'channels': 1,
                     'licence': LIC, 'third_party_audio': False}))
 
 # ---------------------------------------------------------------- kicks
 def kick(sec, f0, f1, k, click, sat, body_d, seed):
     ph = sweep(sec, f0, f1, k); b = np.sin(ph) * env(sec, 0.0005, body_d)
-    c = hp(noise(0.012, seed), 1800) * env(0.012, 0.0002, 0.003) * click
+    c = lp(hp(noise(0.012, seed), 1800), 12000) * env(0.012, 0.0002, 0.003) * click
     b[: len(c)] += c
     return drive(b, sat)
 save('lab', 'kick riot', kick(0.55, 260, 46, 0.03, 0.9, 6.0, 0.16, 1) + 0.25 * drive(hp(noise(0.55, 2), 300) * env(0.55, 0.0005, 0.03), 3), 'kick',
@@ -84,7 +89,7 @@ def metal(sec, f, d, ratios=(1, 1.48, 1.91, 2.53, 3.11, 4.17)):
     x = t(sec); y = sum(np.sign(np.sin(2 * np.pi * f * r * x)) for r in ratios) / len(ratios); return hp(y, 2000) * env(sec, 0.0005, d)
 save('lab', 'metal hit', metal(0.6, 410, 0.12), 'perc', 'metal(): six square partials at inharmonic ratios from 410 Hz, high-passed, 120 ms')
 save('lab', 'metal anvil', drive(metal(0.9, 290, 0.25, (1, 1.33, 2.07, 2.71, 3.73)), 2.5), 'perc', 'metal(): five partials from 290 Hz, 250 ms, tanh x2.5')
-def tick(sec, seed): x = noise(sec, seed) * env(sec, 0.0001, 0.002); return hp(x, 3000)
+def tick(sec, seed): x = noise(sec, seed) * env(sec, 0.0001, 0.002); return lp(hp(x, 3000), 14000)
 save('lab', 'tick fractal', tick(0.05, 41), 'perc', 'tick(): 2 ms noise click high-passed at 3 kHz; seed 41')
 def fmperc(sec, fc, ratio, idx, d):
     x = t(sec); m = np.sin(2 * np.pi * fc * ratio * x) * idx * env(sec, 0.0005, d * 0.5); return np.sin(2 * np.pi * fc * x + m) * env(sec, 0.0005, d)
@@ -124,15 +129,16 @@ if pack and pack.is_dir():
         with wave.open(str(f)) as w: a = np.frombuffer(w.readframes(w.getnframes()), '<i2').astype(float) / 32768; r = w.getframerate()
         cat = 'kick' if 'kick' in f.stem else 'snare' if ('snare' in f.stem or 'clap' in f.stem) else 'hat' if 'hat' in f.stem and 'open' not in f.stem else 'cymbal' if ('crash' in f.stem or 'open' in f.stem) else 'perc'
         save('dfd pack', f.stem.replace('-', ' '), a, cat, f'one-shot from the DFD LIVE PACK ({f.name}), peak-normalized to 0.92, 4 ms end fade',
-             {'src': 'DFD LIVE PACK, Polaris Sound Lab (original synthesis)'})
+             {'src': 'DFD LIVE PACK, Polaris Sound Lab (original synthesis)'}, made_here=False)
 
 # ---------------------------------------------------------------- the manifest: replace our own entries, append (old numbers stay)
 man = json.loads((SND / 'manifest.json').read_text())
-ours = {e['id'] for e, _ in lab}
-keep = [m for m in man if m['id'] not in ours]
-if len(keep) != len(man) and any(m['id'] in ours for m in man[:len(keep)]): pass
-man = keep + [e for e, _ in lab]
+new = {e['id']: e for e, _ in lab}
+# a sound already in the library is replaced where it is (its number never moves); a new one is appended
+man = [new.pop(m['id']) if m['id'] in new else m for m in man] + list(new.values())
 (SND / 'manifest.json').write_text(json.dumps(man, indent=1))
 (SND / 'lab').mkdir(exist_ok=True)
-(SND / 'lab' / 'MANIFEST-LAB.json').write_text(json.dumps([a for _, a in lab], indent=1))
+mf = SND / 'lab' / 'MANIFEST-LAB.json'; made = {a['file']: a for _, a in lab}
+old = json.loads(mf.read_text()) if mf.exists() else []                       # what this run did not remake (the pack) keeps its entry
+mf.write_text(json.dumps([made.pop(a['file']) if a['file'] in made else a for a in old] + list(made.values()), indent=1))
 print(len(lab), 'lab sounds;', len(man), 'in the library')

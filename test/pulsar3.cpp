@@ -55,8 +55,8 @@ int main() {
   {
     run(*groove(1.0f, 1, 1.0f), bL, bR);
     check("safety limiter on: peak at or under -1 dBFS (0.891)", peak(bL) <= 0.8915 && peak(bR) <= 0.8915);
-    Engine& E = *groove(0, 1, 0.1f); E.params[G_MASTER] = 0.3f; run(E, aL, aR);
-    Engine& F = *groove(0, 0, 0.1f); F.params[G_MASTER] = 0.3f; run(F, bL, bR);
+    Engine& E = *groove(0, 1, 0.1f); E.params[G_MASTER] = 0.16f; run(E, aL, aR);
+    Engine& F = *groove(0, 0, 0.1f); F.params[G_MASTER] = 0.16f; run(F, bL, bR);   // (3.4: quiet = under the leveler's -4 dBFS)
     bool same2 = true; for (int i = 0; i < N; i++) if (aL[i] != bL[i]) { same2 = false; break; }
     check("safety limiter: a quiet mix is untouched", same2);
     const float* tl = E.tele; check("the meter reports RMS in dBFS (between -60 and 0)", tl[50] < 0 && tl[50] > -60);
@@ -100,6 +100,16 @@ int main() {
     E.hwCC(69, 100, true); int seen = -1, blocks = 0;
     for (int k = 0; k < 400 && seen < 0; k++, blocks++) { E.nev = 0; E.process(L.data(), R.data(), 256); for (int j = 0; j < E.nev; j++) if (E.ev[j].kind == 1 && E.ev[j].cc == 69 && E.ev[j].vel == 100) seen = E.mStep; }
     check("Scatter CC on the bar: sent at the downbeat (step 1 of the next bar)", seen == 1);
+  }
+  // ---- 3.4: at DRIVE 0 the master is linear (no waveshaper on the bus): half the master is exactly half the output
+  {
+    std::vector<float> L1(N), R1(N), L2(N), R2(N);
+    { Engine& E = *groove(0, 1, 0); E.params[G_COMP] = 0; E.params[G_MASTER] = 0.16f; run(E, L1, R1); }
+    { Engine& E = *groove(0, 1, 0); E.params[G_COMP] = 0; E.params[G_MASTER] = 0.08f; run(E, L2, R2); }
+    double err = 0; for (int i = 0; i < N; i++) err = std::fmax(err, std::fabs(L1[i] - 2.f * L2[i]));
+    check("3.4: master at DRIVE 0 is linear below the leveler (no bus waveshaping)", peak(L1) < 0.6 && err < 1e-4);
+    Engine& E = *groove(0, 1, 0); for (int t = 0; t < 4; t++) E.params[TPID(t, T_LEVEL)] = 1; E.params[G_MASTER] = 1; run(E, L1, R1);
+    check("3.4: everything up: under -1 dBFS, finite", peak(L1) <= 0.8915 && std::isfinite(rms(L1)));
   }
   printf(fails ? "pulsar3 FAILED (%d)\n" : "pulsar3 ok\n", fails);
   return fails ? 1 : 0;

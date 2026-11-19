@@ -398,7 +398,11 @@ struct Engine {
 
   // sample read with the sampler's era (the box it came through)
   inline float readS(const Sample& S, double pos) const {
-    int i = (int)pos; if (i < 0 || i >= S.len - 1) return 0.f; float f = (float)(pos - i); const float* d = pool + S.off; return d[i] + (d[i + 1] - d[i]) * f; }
+    // PULSAR 3.4: 4-point Hermite (was linear): a sample tuned or played at another rate keeps its top clean instead of grainy
+    int i = (int)pos; if (i < 0 || i >= S.len - 1) return 0.f; float f = (float)(pos - i); const float* d = pool + S.off;
+    const float y0 = i > 0 ? d[i - 1] : d[i], y1 = d[i], y2 = d[i + 1], y3 = i + 2 < S.len ? d[i + 2] : y2;
+    const float c1 = 0.5f * (y2 - y0), c2 = y0 - 2.5f * y1 + 2.f * y2 - 0.5f * y3, c3 = 0.5f * (y3 - y0) + 1.5f * (y1 - y2);
+    return ((c3 * f + c2) * f + c1) * f + y1; }
   inline float readNear(const Sample& S, double pos) const { int i = (int)pos; if (i < 0 || i >= S.len) return 0.f; return pool[S.off + i]; }
 
   inline float sampleVoice(Voice& v, int t) {
@@ -523,13 +527,15 @@ struct Engine {
       float thr = 0.5f - params[G_COMP] * 0.25f; float g = compEnv > thr ? powf_(thr / compEnv, params[G_COMP] * 0.5f) : 1.f;   // gentle glue: at most ~2:1
       mixL *= g; mixR *= g;
       const float drv = clampf(params[G_DRIVE], 0.f, 1.f), dr = 1.f + drv * 1.6f, mv = params[G_MASTER] * 1.4f;    // (was 1.6: the mix sat on the limiter)
-      // the drive blends in: at 0 the glue is clean (only a soft knee near full scale), turned up it saturates
+      // PULSAR 3.4: the glue is linear at DRIVE 0. Its old soft knee (from 0.6) was a waveshaper on the whole drum bus: with
+      // several tracks up, every hit went through it and the mix turned to noise. Peaks are now the leveler's and the
+      // look-ahead limiter's job, which turn the level down instead of bending the waveform. DRIVE still adds its colour.
       auto glue = [&](float x) {
-        const float ax = absf(x), soft = ax < 0.6f ? x : (x > 0 ? 1.f : -1.f) * (0.6f + 0.4f * tanhf_((ax - 0.6f) / 0.4f));   // clean, a soft knee near full scale
-        const float hot = tanhf_(x * dr) / tanhf_(dr) * 0.9f;                                                               // the drive's colour
-        return soft + (hot - soft) * minf(0.6f, drv * 1.2f); };                             // at most 60 % of the drive's colour
+        if (drv < 0.001f) return x;
+        const float hot = tanhf_(x * dr) / tanhf_(dr) * 0.9f;                               // the drive's colour
+        return x + (hot - x) * minf(0.6f, drv * 1.2f); };                                   // at most 60 % of it
       float oL = glue(mixL) * mv, oR = glue(mixR) * mv;
-      limiter(oL, oR); outL[i] = oL; outR[i] = oR;
+      leveler(oL, oR); limiter(oL, oR); outL[i] = oL; outR[i] = oR;
       if ((i & 3) == 0) { scope[scopeW] = (outL[i] + outR[i]) * 0.5f; scopeW = (scopeW + 1) & 511; }
     }
     teleUpdate();
@@ -567,6 +573,18 @@ struct Engine {
     dvMk += (want - dvMk) * (1.f / (0.05f * sr));
     const float wet = clampf(amt * 3.f, 0.f, 1.f);             // the first third of the knob fades the chain in
     L = L * (1.f - wet) + o[0] * dvMk * wet; R = R * (1.f - wet) + o[1] * dvMk * wet;
+  }
+  // PULSAR 3.4 · the leveler: when the whole mix runs hot (many tracks, levels up) it turns it down smoothly, a few dB over
+  // ~half a second, so the limiter only has the odd peak to catch and never squashes every hit. Under -4 dBFS it does nothing.
+  float lvEnv = 0, lvG = 1;
+  void leveler(float& L, float& R) {
+    if (params[XG_ID(XG_LIMIT)] < 0.5f) { lvG = 1; lvEnv = 0; return; }
+    const float pk = maxf(absf(L), absf(R));
+    lvEnv += (pk - lvEnv) * (pk > lvEnv ? 1.f / (0.004f * sr) : 1.f / (0.35f * sr));     // peak follower: quick up, slow down
+    const float th = 0.63f;                                                               // -4 dBFS
+    const float want = lvEnv > th ? powf_(th / lvEnv, 0.75f) : 1.f;                       // 4:1 above it
+    lvG += (want - lvG) * (want < lvG ? 1.f / (0.02f * sr) : 1.f / (0.6f * sr));          // 20 ms down, 600 ms back up
+    L *= lvG; R *= lvG;
   }
   // the safety limiter: -1 dBFS ceiling, instant attack, 80 ms release; and the meter (RMS, dBFS, 300 ms)
   static constexpr int LA_N = 1024; float laL[LA_N] = {}, laR[LA_N] = {}, laPk = 0, laStep = 0; int laW = 0, laHold = 0;
