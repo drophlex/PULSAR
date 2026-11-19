@@ -522,7 +522,7 @@ struct Engine {
       compEnv += (lvl - compEnv) * (lvl > compEnv ? kMcA : kMcR);                // (PULSAR 3.1: this line had been swallowed by the comment above, so COMP did nothing)
       float thr = 0.5f - params[G_COMP] * 0.25f; float g = compEnv > thr ? powf_(thr / compEnv, params[G_COMP] * 0.5f) : 1.f;   // gentle glue: at most ~2:1
       mixL *= g; mixR *= g;
-      const float drv = clampf(params[G_DRIVE], 0.f, 1.f), dr = 1.f + drv * 1.6f, mv = params[G_MASTER] * 1.25f;   // (was 1.6: the mix sat on the limiter)
+      const float drv = clampf(params[G_DRIVE], 0.f, 1.f), dr = 1.f + drv * 1.6f, mv = params[G_MASTER] * 1.4f;    // (was 1.6: the mix sat on the limiter)
       // the drive blends in: at 0 the glue is clean (only a soft knee near full scale), turned up it saturates
       auto glue = [&](float x) {
         const float ax = absf(x), soft = ax < 0.6f ? x : (x > 0 ? 1.f : -1.f) * (0.6f + 0.4f * tanhf_((ax - 0.6f) / 0.4f));   // clean, a soft knee near full scale
