@@ -35,15 +35,25 @@ int main() {
     int ne = (int)u32(); for (int k = 0; k < ne; k++) { int id = (int)u32(); float v = f32(); E.setParam(id, v); }
     for (int k = 0; k < 3; k++) { uint32_t n = u32(); if (n != sizeof(Pattern)) { printf("pattern size %u vs %zu\n", n, sizeof(Pattern)); return 1; } memcpy(&E.pat[k], &B[at], n); at += n; }
     E.song[0] = { 0, 4 }; E.song[1] = { 1, 3 }; E.song[2] = { 2, 1 }; E.songLen = 3; E.songOn = true;
+    if (getenv("RENDERLOOP") && p < 3) {   // the plug-in's ⇱ WAV path (PulsarProcessor::renderLoop), measured
+      static Engine R; R.init(48000, POOLMEM); std::copy(E.params, E.params + P_COUNT, R.params); memcpy(R.pat, E.pat, sizeof(R.pat)); memcpy(R.song, E.song, sizeof(R.song));
+      std::copy(E.smp, E.smp + MAXSMP, R.smp); R.nSmp = E.nSmp; R.poolUsed = E.poolUsed; R.songLen = E.songLen; R.songOn = false; R.cur = 0;
+      const double bpm = E.bpm(); const int steps = std::max(1, (int)E.pat[0].len);
+      R.hostSync = true; R.hostBpm = (float)bpm; R.hostPlaying = false; R.liveFX = 0; R.play();
+      const int len = (int)std::round(48000 * 60.0 / bpm / 4.0 * steps); std::vector<float> l(256), r(256); double dc = 0, e2 = 0; int n = 0;
+      while (n < 2 * len) { const int k = std::min(256, 2 * len - n); R.nev = 0; R.process(l.data(), r.data(), k, nullptr, nullptr); for (int i = 0; i < k; i++) if (n + i >= len) { dc += l[i]; e2 += l[i] * l[i]; } n += k; }
+      printf("renderLoop %s: dc %+.3f rms %.1f dB (bpm %.0f, %d steps)\n", name.c_str(), dc / len, 10 * log10(e2 / len + 1e-12), bpm, steps);
+    }
     const float bp = E.params[G_BPM]; const int N = (int)(48000.0 * 60.0 / bp * 4 * 8);
     std::vector<float> L(N), R(N); E.play();
     float mpk = -90; for (int i = 0; i < N; i += 128) { E.process(&L[i], &R[i], std::min(128, N - i)); if (E.tele[53] > mpk) mpk = E.tele[53]; }
     double e = 0, pk = 0; int nan = 0; for (int i = 0; i < N; i++) { if (!std::isfinite(L[i])) nan++; e += L[i] * L[i] + R[i] * R[i]; pk = fmax(pk, fmax(fabs(L[i]), fabs(R[i]))); }
     int hits = 0; for (int t = 0; t < NT; t++) for (int s = 0; s < 16; s++) if (E.pat[0].t[t].s[s].vel) hits++;
     const double rms = 10 * log10(e / (2.0 * N) + 1e-12);
-    const bool ok = nan == 0 && pk <= 0.8915 && rms > -26 && rms < -6 && hits >= 12;   // (-26: trip hop at 90 BPM is sparse; since 3.3 the output stage leaves real headroom)
+    double dc = 0; for (int i = 0; i < N; i++) dc += L[i] + R[i]; dc /= 2.0 * N;
+    const bool ok = std::fabs(dc) < 0.01 && nan == 0 && pk <= 0.8915 && rms > -26 && rms < -6 && hits >= 12;   // (-26: trip hop at 90 BPM is sparse; since 3.3 the output stage leaves real headroom)
     if (!ok) fails++;
-    printf("%-52s %6.1f %6.1f %6.3f %7d %5d %+6.1fdB %s\n", name.c_str(), bp, rms, pk, hits, nan, mpk, ok ? "" : " <-- check");
+    printf("%-52s %6.1f %6.1f %6.3f %7d %5d %+6.1fdB dc %+.3f%s\n", name.c_str(), bp, rms, pk, hits, nan, mpk, dc, ok ? "" : " <-- check");
     char fn[64]; snprintf(fn, sizeof fn, "/tmp/lab/%02d.wav", p + 1); wav(fn, L, R);
   }
   printf(fails ? "lab_render: %d to check\n" : "lab_render ok (36 patterns: audible, no clip over -1 dBFS, no NaN)\n", fails);

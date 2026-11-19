@@ -18,6 +18,7 @@ jobs:
       - name: PULSAR 3 tests (DIRTY VOLTAGE, limiter, bar switch; MIDI import; the 36 family patterns through the engine)
         run: |
           clang++ -std=c++20 -O2 -o pulsar3 test/pulsar3.cpp && ./pulsar3
+          clang++ -O2 -o plugin_library test/plugin_library.cpp -lz && ./plugin_library   # the plug-in's own sound library decodes signed, no DC
           node test/midi_import.test.mjs
           node test/lab_dump.mjs && clang++ -std=c++20 -O2 -o lab_render test/lab_render.cpp && ./lab_render
           node test/lab_dump.mjs --classic && ./lab_render     # the 13 classic styles too: headroom into the master, no clip

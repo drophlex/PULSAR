@@ -33,7 +33,7 @@ PulsarProcessor::PulsarProcessor()
     float r, bpm; int slices, len;
     std::memcpy(&r, b + o, 4); std::memcpy(&bpm, b + o + 4, 4); std::memcpy(&slices, b + o + 8, 4); std::memcpy(&len, b + o + 12, 4); o += 16;
     float* w = eng->poolWrite(); const int16_t* pcm = (const int16_t*)(b + o);
-    for (int k = 0; k < len; k++) w[k] = (float)juce::ByteOrder::swapIfBigEndian((uint16_t)pcm[k]) / 32768.f;
+    for (int k = 0; k < len; k++) w[k] = (float)(int16_t)juce::ByteOrder::swapIfBigEndian((uint16_t)pcm[k]) / 32768.f;   // signed: (it was read unsigned, which turned every negative half-wave into +1..+2: the plug-in's whole library distorted, with DC)
     o += (size_t)len * 2; eng->addSample(len, r, bpm, slices);
   }
   bundled = eng->nSmp; bundledUsed = eng->poolUsed;
