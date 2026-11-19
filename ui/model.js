@@ -236,7 +236,7 @@ function buildSong(style, seed, complexity) {
   return { pats, song };
 }
 
-// ------------------------------------------------------------------ MIDI export (General MIDI drums on channel 10, one note per track)
+// ------------------------------------------------------------------ MIDI export (one track, one channel: channel 1; General MIDI notes, or PULSAR's own 36 + track)
 const GM = { KICK: 36, SNARE: 38, HAT: 42, PERC: 39, BREAK: 40, CYMBAL: 46 };
 const TRACK_NOTES = [36, 38, 39, 42, 46, 40, 41, 37, 45, 51, 35, 56, 62, 54, 49, 75];
 function midiFile(patList, bpm, names, own, only) {   // patList: [{bytes, rep}]; own: PULSAR's own notes (36 + track), only: one track
@@ -248,11 +248,11 @@ function midiFile(patList, bpm, names, own, only) {   // patList: [{bytes, rep}]
       for (let t = 0; t < NT; t++) { if (only !== undefined && t !== only) continue; if (trkMute(bytes, t)) continue; const note = own ? 36 + t : TRACK_NOTES[t]; const L = trkLen(bytes, t), spd = sm[trkSpeed(bytes, t)] || 1, stepT = perStep * spd, total = plen * perStep;
         for (let i = 0; i * stepT < total; i++) { const st = getStep(bytes, t, i % L); if (!st.vel) continue;
           const n = Math.max(1, st.rat); for (let j = 0; j < n; j++) { const at = t0 + i * stepT + st.mic / 100 * stepT * 0.5 + j * stepT / n; const v = Math.max(1, Math.min(127, st.vel * (st.rmode === 1 ? .35 + .65 * (j + 1) / n : 1)));
-            ev.push([Math.max(0, Math.round(at)), 0x99, note, Math.round(v)], [Math.round(at + Math.max(2, stepT / n * .8)), 0x89, note, 0]); } } }
+            ev.push([Math.max(0, Math.round(at)), 0x90, note, Math.round(v)], [Math.round(at + Math.max(2, stepT / n * .8)), 0x80, note, 0]); } } }
       t0 += plen * perStep;
     }
   }
-  ev.sort((a, b) => a[0] - b[0] || (a[1] === 0x89 ? -1 : 1));
+  ev.sort((a, b) => a[0] - b[0] || (a[1] === 0x80 ? -1 : 1));
   const vlq = n => { const out = [n & 0x7f]; while ((n >>= 7)) out.unshift((n & 0x7f) | 0x80); return out; };
   const tr = [0, 0xff, 0x51, 3, ...[16, 8, 0].map(sh => (Math.round(60000000 / bpm) >> sh) & 255)];
   const name = 'PULSAR'; tr.push(0, 0xff, 0x03, name.length, ...[...name].map(c => c.charCodeAt(0)));

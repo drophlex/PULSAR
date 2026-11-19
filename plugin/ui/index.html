@@ -139,6 +139,7 @@ button:disabled{opacity:.35;cursor:default}
 #macros .knob svg{width:38px;height:38px}
 #scope{width:120px;height:46px}
 /* overlays */
+body.filedrop{outline:3px dashed var(--beam);outline-offset:-6px}
 #splash{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#0e1a22 0,#050607 70%);cursor:pointer}
 #splash .in{text-align:center}
 #splash canvas{width:240px;height:240px}
@@ -485,7 +486,7 @@ function buildSong(style, seed, complexity) {
   return { pats, song };
 }
 
-// ------------------------------------------------------------------ MIDI export (General MIDI drums on channel 10, one note per track)
+// ------------------------------------------------------------------ MIDI export (one track, one channel: channel 1; General MIDI notes, or PULSAR's own 36 + track)
 const GM = { KICK: 36, SNARE: 38, HAT: 42, PERC: 39, BREAK: 40, CYMBAL: 46 };
 const TRACK_NOTES = [36, 38, 39, 42, 46, 40, 41, 37, 45, 51, 35, 56, 62, 54, 49, 75];
 function midiFile(patList, bpm, names, own, only) {   // patList: [{bytes, rep}]; own: PULSAR's own notes (36 + track), only: one track
@@ -497,11 +498,11 @@ function midiFile(patList, bpm, names, own, only) {   // patList: [{bytes, rep}]
       for (let t = 0; t < NT; t++) { if (only !== undefined && t !== only) continue; if (trkMute(bytes, t)) continue; const note = own ? 36 + t : TRACK_NOTES[t]; const L = trkLen(bytes, t), spd = sm[trkSpeed(bytes, t)] || 1, stepT = perStep * spd, total = plen * perStep;
         for (let i = 0; i * stepT < total; i++) { const st = getStep(bytes, t, i % L); if (!st.vel) continue;
           const n = Math.max(1, st.rat); for (let j = 0; j < n; j++) { const at = t0 + i * stepT + st.mic / 100 * stepT * 0.5 + j * stepT / n; const v = Math.max(1, Math.min(127, st.vel * (st.rmode === 1 ? .35 + .65 * (j + 1) / n : 1)));
-            ev.push([Math.max(0, Math.round(at)), 0x99, note, Math.round(v)], [Math.round(at + Math.max(2, stepT / n * .8)), 0x89, note, 0]); } } }
+            ev.push([Math.max(0, Math.round(at)), 0x90, note, Math.round(v)], [Math.round(at + Math.max(2, stepT / n * .8)), 0x80, note, 0]); } } }
       t0 += plen * perStep;
     }
   }
-  ev.sort((a, b) => a[0] - b[0] || (a[1] === 0x89 ? -1 : 1));
+  ev.sort((a, b) => a[0] - b[0] || (a[1] === 0x80 ? -1 : 1));
   const vlq = n => { const out = [n & 0x7f]; while ((n >>= 7)) out.unshift((n & 0x7f) | 0x80); return out; };
   const tr = [0, 0xff, 0x51, 3, ...[16, 8, 0].map(sh => (Math.round(60000000 / bpm) >> sh) & 255)];
   const name = 'PULSAR'; tr.push(0, 0xff, 0x03, name.length, ...[...name].map(c => c.charCodeAt(0)));
@@ -1027,14 +1028,14 @@ function renderHelp() {
 <h3>BREAKS</h3><p>BREAK tracks play one slice of a breakbeat per step (32 slices = 2 bars). STRETCH TO TEMPO keeps their pitch at any tempo; REPITCH speeds them up like a sampler did (jungle!). LOAD YOUR SAMPLE: any loop is measured and sliced automatically.</p>
 <h3>PERFORM</h3><p>Sixteen tricks under the grid. <b>Tap</b> = on until you tap again; <b>hold</b> = only while held. Keys <kbd>1</kbd>\u2026<kbd>0</kbd> <kbd>Z</kbd>\u2026<kbd>N</kbd>. With <b>\u25cf REC</b> on, the FX you play, the knobs you turn and the pads you hit are written into the pattern (a red line marks recorded FX). MASTER \u203a CLEAR MOTION erases the moves.</p>
 <h3>KEYS</h3><p><kbd>Space</kbd> play/stop \u00b7 <kbd>R</kbd> record \u00b7 <kbd>G</kbd> generate \u00b7 <kbd>V</kbd> vary \u00b7 <kbd>\u2191</kbd><kbd>\u2193</kbd> track \u00b7 tracks play on a click on their name and on MIDI notes 36\u201351.</p>
-<h3>EXPORT</h3><p><b>\u2913 MIDI</b> saves the pattern (or the whole song when SONG is on) as a MIDI file for any DAW. <b>\u25cf WAV</b> records the audio. SAVE / OPEN keep your project.</p>`;
+<h3>EXPORT</h3><p><b>\u2913 MIDI</b> saves the pattern (or the whole song when SONG is on) as a MIDI file for any DAW, on one channel (1). In the plug-in, <b>\u21f1 MIDI</b> and <b>\u21f1 WAV</b> are dragged straight onto a track; drop a .mid on PULSAR and it becomes the pattern. PLAY and STOP are PULSAR's own (like XO): it plays with the DAW stopped, always at the DAW's tempo. <b>\u25cf WAV</b> records the audio. SAVE / OPEN keep your project.</p>`;
   const es = `<h2>PULSAR</h2><p>Una caja de ritmos para beats rotos: breakbeats que puedes picar y estirar, diecis\u00e9is pistas, y los trucos del big beat, el braindance y el drill'n'bass a un bot\u00f3n cada uno.</p>
 <h3>EMPIEZA EN 10 SEGUNDOS</h3><p>Elige un estilo (arriba) y presiona <b>\u26a1 GENERAR</b>. Otra vez para otra idea, <b>VARIAR</b> para tocarlo distinto, <b>ARMAR TEMA</b> para una canci\u00f3n completa (intro, groove, break, remates, drop).</p>
 <h3>LA CUADR\u00cdCULA</h3><p>Clic en un paso lo enciende o apaga. Arrastra arriba o abajo sobre un paso para su velocidad. <b>Clic derecho o mantener</b> un paso para editarlo: probabilidad, micro tiempo, tono, corte, redoble (\u00d72\u2026\u00d78) y condiciones (1:2, 1:4, FILL\u2026). El n\u00famero a la derecha de cada fila es su largo: arr\u00e1stralo. M = silencio, S = solo. Clic en el nombre de una pista para o\u00edrla y editar su sonido.</p>
 <h3>BREAKS</h3><p>Las pistas BREAK tocan un corte de un breakbeat por paso (32 cortes = 2 compases). AJUSTAR AL TEMPO mantiene su tono a cualquier tempo; RE-AFINAR los acelera como lo hac\u00eda un sampler (\u00a1jungle!). CARGA TU SAMPLE: cualquier loop se mide y se corta solo.</p>
 <h3>TOCAR EN VIVO</h3><p>Diecis\u00e9is trucos bajo la cuadr\u00edcula. <b>Toque</b> = encendido hasta que lo vuelvas a tocar; <b>mantener</b> = solo mientras lo sostienes. Teclas <kbd>1</kbd>\u2026<kbd>0</kbd> <kbd>Z</kbd>\u2026<kbd>N</kbd>. Con <b>\u25cf REC</b> encendido, los efectos, las perillas y los pads que tocas se escriben en el patr\u00f3n (una l\u00ednea roja marca los efectos grabados). MASTER \u203a BORRAR MOVIMIENTOS los quita.</p>
 <h3>TECLAS</h3><p><kbd>Espacio</kbd> tocar/parar \u00b7 <kbd>R</kbd> grabar \u00b7 <kbd>G</kbd> generar \u00b7 <kbd>V</kbd> variar \u00b7 las pistas suenan con clic en su nombre y con notas MIDI 36\u201351.</p>
-<h3>EXPORTAR</h3><p><b>\u2913 MIDI</b> guarda el patr\u00f3n (o la canci\u00f3n si SONG est\u00e1 encendido) como archivo MIDI para cualquier DAW. <b>\u25cf WAV</b> graba el audio. GUARDAR / ABRIR conservan tu proyecto.</p>`;
+<h3>EXPORTAR</h3><p><b>\u2913 MIDI</b> guarda el patr\u00f3n (o la canci\u00f3n si SONG est\u00e1 encendido) como archivo MIDI para cualquier DAW, en un solo canal (1). En el plug-in, <b>\u21f1 MIDI</b> y <b>\u21f1 WAV</b> se arrastran directo a una pista; suelta un .mid sobre PULSAR y se vuelve el patr\u00f3n. TOCAR y DETENER son de PULSAR (como XO): suena con el DAW detenido, siempre al tempo del DAW. <b>\u25cf WAV</b> graba el audio. GUARDAR / ABRIR conservan tu proyecto.</p>`;
   const man = `<p style="margin-top:14px">\ud83d\udcd8 <a style="color:var(--beam)" target="_blank" rel="noopener" href="https://github.com/drophlex/PULSAR/raw/main/manual/PULSAR-Manual-${LANG === 'es' ? 'ES' : 'EN'}.pdf">${LANG === 'es' ? 'Manual completo (PDF)' : 'Full manual (PDF)'}</a> \u00b7 <a style="color:var(--dim)" target="_blank" rel="noopener" href="https://github.com/drophlex/PULSAR">github.com/drophlex/PULSAR</a></p>`;
   $('#helpBox').innerHTML = (LANG === 'es' ? es : en) + man;
 }
@@ -1511,6 +1512,10 @@ const Pro = {
     u.onclick = () => Undo.undo(); r.onclick = () => Undo.again();
     const dm = dragMidiEl(h('button', { id: 'dragMidi', class: 'drag' }, '\u21f1 MIDI'));
     $('#play').before(u, r); $('#midiBtn').after(dm);
+    if (Bridge.kind === 'plugin') {   // the loop as audio, dragged onto an audio track (rendered by the plug-in, twice through so the tails loop)
+      const dw = h('button', { id: 'dragWav', class: 'drag', title: 'Drag the loop as audio (WAV) onto a track' }, '\u21f1 WAV');
+      dw.onpointerdown = e => { e.preventDefault(); toast(tr('Drag it onto a track in your DAW')); Bridge._call('dragWav', []); };
+      dm.after(dw); }
   },
   boot() {
     Pro.topBar(); Pro.renderPerf(); Undo.start();
@@ -1566,6 +1571,7 @@ function renderHelp2() {
    (FM-1, Arturia KeyLab). Loaded after pro.js. Everything here writes the same patterns and parameters as the rest of
    PULSAR, so undo, save, MIDI export, the plug-in's automation and the multi-out all keep working. */
 Object.assign(ES, {
+  'Drag it onto a track in your DAW': 'Arr\u00e1stralo a una pista de tu DAW',
   'LAB': 'LAB', 'QUICK START': 'INICIO R\u00c1PIDO', 'FAMILY': 'FAMILIA', 'DENSITY': 'DENSIDAD', 'KIT': 'KIT', 'PATTERNS': 'PATRONES',
   'PREVIEW': 'ESCUCHAR', 'COMMIT': 'CONFIRMAR', 'CANCEL': 'CANCELAR', 'Previewing \u2014 COMMIT keeps it, CANCEL brings everything back': 'Escuchando \u2014 CONFIRMAR lo deja, CANCELAR regresa todo',
   'Kept': 'Confirmado', 'Back as it was': 'De regreso como estaba', 'MACROS': 'MACROS', 'PUMP': 'BOMBEO', 'GLITCH': 'GLITCH', 'TENSION': 'TENSI\u00d3N', 'DROP': 'DROP',
@@ -1759,6 +1765,12 @@ function midiToPattern(smf, mode = 'gm') {
   const L = Math.min(64, Math.max(16, Math.ceil((maxStep + 1) / 16) * 16)); b[0] = L; for (let t = 0; t < NT; t++) setTrkLen(b, t, L);
   return { bytes: b, used, skipped, steps: L };
 }
+// a MIDI clip dropped anywhere on PULSAR (from the Finder or the DAW) becomes the current pattern, as IMPORT MIDI does
+if (typeof addEventListener === 'function') {
+  addEventListener('dragover', e => { if ([...(e.dataTransfer.items || [])].some(i => i.kind === 'file')) { e.preventDefault(); document.body.classList.add('filedrop'); } });
+  addEventListener('dragleave', e => { if (!e.relatedTarget) document.body.classList.remove('filedrop'); });
+  addEventListener('drop', e => { const f = [...(e.dataTransfer.files || [])].find(x => /\.midi?$/i.test(x.name)); document.body.classList.remove('filedrop');
+    if (f) { e.preventDefault(); importMidiFile(f); } }); }
 function importMidiFile(file) {
   file.arrayBuffer().then(buf => { let smf; try { smf = parseSMF(new Uint8Array(buf)); } catch (e) { toast('\u2715 MIDI: ' + e.message); return; }
     const mode = smf.notes.some(n => n.ch === 9) || smf.notes.some(n => n.note < 36 || n.note > 51) ? 'gm' : 'pads';

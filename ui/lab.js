@@ -4,6 +4,7 @@
    (FM-1, Arturia KeyLab). Loaded after pro.js. Everything here writes the same patterns and parameters as the rest of
    PULSAR, so undo, save, MIDI export, the plug-in's automation and the multi-out all keep working. */
 Object.assign(ES, {
+  'Drag it onto a track in your DAW': 'Arrástralo a una pista de tu DAW',
   'LAB': 'LAB', 'QUICK START': 'INICIO RÁPIDO', 'FAMILY': 'FAMILIA', 'DENSITY': 'DENSIDAD', 'KIT': 'KIT', 'PATTERNS': 'PATRONES',
   'PREVIEW': 'ESCUCHAR', 'COMMIT': 'CONFIRMAR', 'CANCEL': 'CANCELAR', 'Previewing — COMMIT keeps it, CANCEL brings everything back': 'Escuchando — CONFIRMAR lo deja, CANCELAR regresa todo',
   'Kept': 'Confirmado', 'Back as it was': 'De regreso como estaba', 'MACROS': 'MACROS', 'PUMP': 'BOMBEO', 'GLITCH': 'GLITCH', 'TENSION': 'TENSIÓN', 'DROP': 'DROP',
@@ -197,6 +198,12 @@ function midiToPattern(smf, mode = 'gm') {
   const L = Math.min(64, Math.max(16, Math.ceil((maxStep + 1) / 16) * 16)); b[0] = L; for (let t = 0; t < NT; t++) setTrkLen(b, t, L);
   return { bytes: b, used, skipped, steps: L };
 }
+// a MIDI clip dropped anywhere on PULSAR (from the Finder or the DAW) becomes the current pattern, as IMPORT MIDI does
+if (typeof addEventListener === 'function') {
+  addEventListener('dragover', e => { if ([...(e.dataTransfer.items || [])].some(i => i.kind === 'file')) { e.preventDefault(); document.body.classList.add('filedrop'); } });
+  addEventListener('dragleave', e => { if (!e.relatedTarget) document.body.classList.remove('filedrop'); });
+  addEventListener('drop', e => { const f = [...(e.dataTransfer.files || [])].find(x => /\.midi?$/i.test(x.name)); document.body.classList.remove('filedrop');
+    if (f) { e.preventDefault(); importMidiFile(f); } }); }
 function importMidiFile(file) {
   file.arrayBuffer().then(buf => { let smf; try { smf = parseSMF(new Uint8Array(buf)); } catch (e) { toast('✕ MIDI: ' + e.message); return; }
     const mode = smf.notes.some(n => n.ch === 9) || smf.notes.some(n => n.note < 36 || n.note > 51) ? 'gm' : 'pads';

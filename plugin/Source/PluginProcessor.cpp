@@ -150,8 +150,10 @@ void PulsarProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiB
   if (auto* ph = getPlayHead()) if (auto pos = ph->getPosition()) {
     hpl = pos->getIsPlaying(); if (auto b = pos->getBpm()) bpm = *b; if (auto q = pos->getPpqPosition()) { ppq = *q; hasPpq = true; } }
   bpm = juce::jlimit(20.0, 400.0, bpm);
-  E.hostSync = hpl; E.hostPlaying = hpl; E.hostBpm = (float)bpm;
-  if (hpl && !hostWasPlaying) { startAt(hasPpq ? ppq : 0, bpm); hostStarted = true; }
+  // like XO: PULSAR's own PLAY and STOP are independent of the DAW, and it always runs at the DAW's tempo. The DAW's play
+  // starts it on the bar; the DAW's stop stops it only if the DAW started it (not if you pressed PLAY yourself).
+  E.hostSync = true; E.hostPlaying = hpl; E.hostBpm = (float)bpm;
+  if (hpl && !hostWasPlaying) { startAt(hasPpq ? ppq : 0, bpm); hostStarted = !ownPlay; }
   else if (hpl && hasPpq && std::abs(ppq - (lastPpq + lastBlockBeats)) > 0.2) startAt(ppq, bpm);     // a loop or a jump in the arrangement
   else if (!hpl && hostWasPlaying && hostStarted) { E.stop(); hostStarted = false; }
   hostWasPlaying = hpl; lastPpq = ppq; lastBlockBeats = n / sr * bpm / 60.0;
@@ -184,9 +186,9 @@ void PulsarProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiB
     for (int e = 0; e < E.nev; e++) { const auto& ev = E.ev[e]; const int at = from + juce::jlimit(0, len - 1, ev.at);
       if (ev.kind == 1) { if (hl.on) send(juce::MidiMessage::controllerEvent(hl.ch, ev.cc, ev.vel), at + off); continue; }
       if (hl.on) { if (ev.hw) { send(juce::MidiMessage::noteOn(hl.ch, ev.note, (juce::uint8)ev.vel), at + off); if (offs.size() < 2000) offs.push_back({ ev.note, at + off + (int)(sr * 0.06), hl.ch }); } continue; }
-      const int note = 36 + ev.t;
-      out.addEvent(juce::MidiMessage::noteOn(10, note, (juce::uint8)ev.vel), at);
-      if (offs.size() < 2000) offs.push_back({ note, at + (int)(sr * 0.06), 10 }); }
+      const int note = 36 + ev.t;   // one channel (1), PULSAR's pad notes: a Drum Rack plays them as they are
+      out.addEvent(juce::MidiMessage::noteOn(1, note, (juce::uint8)ev.vel), at);
+      if (offs.size() < 2000) offs.push_back({ note, at + (int)(sr * 0.06), 1 }); }
     E.nev = 0;
   };
   int done = 0;
@@ -234,8 +236,8 @@ void PulsarProcessor::message(const juce::var& m) {
   { const juce::SpinLock::ScopedLockType sl(lock); Engine& E = *eng;
     if (t == "param") { int id = (int)m["id"]; E.setParam(id, (float)(double)m["v"]); if (id >= 0 && id < P_COUNT && hostOf[id] >= 0) touched.push_back(hostOf[id]); }
     else if (t == "params") { if (auto* a = m["list"].getArray()) for (auto& e : *a) { int id = (int)e[0]; E.setParam(id, (float)(double)e[1]); if (id >= 0 && id < P_COUNT && hostOf[id] >= 0) touched.push_back(-1 - hostOf[id]); } }
-    else if (t == "play") { E.play(); hostStarted = false; }
-    else if (t == "stop") { E.stop(); hostStarted = false; }
+    else if (t == "play") { E.play(); hostStarted = false; ownPlay = true; }
+    else if (t == "stop") { E.stop(); hostStarted = false; ownPlay = false; }
     else if (t == "select") { E.select((int)m["p"], (bool)m["now"], (bool)m.getProperty("bar", false)); }
     else if (t == "rec") { E.rec = (bool)m["on"]; E.perfTake = false; }
     else if (t == "fx") { const int mask = (int)m["mask"]; const uint16_t old = uiFX; uiFX = (uint16_t)mask; E.liveFX = uiFX; if (!E.playing) E.fxNow = uiFX;
@@ -321,6 +323,33 @@ juce::var PulsarProcessor::ccInfo(int i) {
   const auto& h = hp[(size_t)i]; o->setProperty("key", paramKey(i)); o->setProperty("id", h.eng);
   o->setProperty("v", h.eng >= 0 ? (double)eng->params[h.eng] : h.eng == -100 ? (double)eng->cur : 0.0); o->setProperty("fx", (int)uiFX);
   return juce::var(o.get());
+}
+
+// the loop as audio, for dragging onto a track: a fresh engine with the same project plays the pattern (or the song) twice
+// from its start and the second pass is kept, so the echo and reverb tails of the end ring into the start and the file loops
+juce::File PulsarProcessor::renderLoop() {
+  auto R = std::make_unique<Engine>();
+  int steps = 16; double bpm = 120;
+  { const juce::SpinLock::ScopedLockType sl(lock);
+    R->init((float)sr, pool.data());
+    std::copy(eng->params, eng->params + P_COUNT, R->params);
+    std::memcpy(R->pat, eng->pat, sizeof(R->pat)); std::memcpy(R->song, eng->song, sizeof(R->song));
+    std::copy(eng->smp, eng->smp + MAXSMP, R->smp); R->nSmp = eng->nSmp; R->poolUsed = eng->poolUsed;
+    R->songLen = eng->songLen; R->songOn = eng->songOn; R->cur = eng->cur; bpm = eng->bpm();
+    steps = juce::jmax(1, (int)eng->pat[eng->cur].len);
+    if (R->songOn && R->songLen > 0) { steps = 0; for (int k = 0; k < R->songLen; k++) steps += juce::jmax(1, (int)R->pat[R->song[k].pat].len) * juce::jmax(1, (int)R->song[k].rep); } }
+  R->hostSync = true; R->hostBpm = (float)bpm; R->hostPlaying = false; R->liveFX = 0; R->play();
+  const int len = (int)std::round(sr * 60.0 / bpm / 4.0 * steps);
+  juce::AudioBuffer<float> out(2, len); float l[256], r[256]; int n = 0;
+  while (n < 2 * len) { const int k = juce::jmin(256, 2 * len - n); R->nev = 0; R->process(l, r, k, nullptr, nullptr);
+    for (int i = 0; i < k; i++) { const int j = n + i - len; if (j >= 0) { out.setSample(0, j, l[i]); out.setSample(1, j, r[i]); } } n += k; }
+  auto dir = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("PULSAR clips"); dir.createDirectory();
+  auto f = dir.getChildFile("PULSAR " + juce::String(R->songOn ? "song" : "pattern " + juce::String(R->cur + 1)) + " " + juce::String(juce::roundToInt(bpm)) + "bpm.wav");
+  f.deleteFile();
+  juce::WavAudioFormat wav;
+  if (auto os = std::unique_ptr<juce::OutputStream>(f.createOutputStream()))
+    if (auto w = std::unique_ptr<juce::AudioFormatWriter>(wav.createWriterFor(os.get(), sr, 2, 24, {}, 0))) { os.release(); w->writeFromAudioSampleBuffer(out, 0, len); }
+  return f;
 }
 
 juce::var PulsarProcessor::takeResample() {

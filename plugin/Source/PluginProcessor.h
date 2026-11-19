@@ -66,7 +66,7 @@ private:
   juce::String uiJson;
   juce::SpinLock lock;
   double sr = 48000;
-  bool hostWasPlaying = false, hostStarted = false; double lastPpq = 0, lastBlockBeats = 0;
+  bool hostWasPlaying = false, hostStarted = false, ownPlay = false; double lastPpq = 0, lastBlockBeats = 0;
   uint16_t uiFX = 0;
   juce::AudioFormatManager formats;
   static BusesProperties busesProps();
@@ -85,7 +85,8 @@ public:
 private:
   std::vector<float> rsBuf; int rsLen = 0, rsN = 0; bool rsArm = false; std::atomic<bool> rsDone { false };
 public:
-  juce::var takeResample();                                  // message thread: a finished resample becomes one of your samples
+  juce::var takeResample();
+  juce::File renderLoop();                                   // message thread: the loop as a WAV in a temporary folder                                  // message thread: a finished resample becomes one of your samples
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PulsarProcessor)
 };

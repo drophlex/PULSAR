@@ -67,6 +67,11 @@ juce::WebBrowserComponent::Options PulsarEditor::makeOptions() {
         auto f = fc.getResult(); bool ok = f != juce::File() && f.replaceWithData(bytes->getData(), bytes->getDataSize());
         if (ok) f.revealToUser();
         done(ok); }); })
+    .withNativeFunction("dragWav", [this](const juce::Array<juce::var>&, Completion done) {
+      // the loop rendered as audio and dragged out of the plug-in onto an audio track
+      auto f = proc.renderLoop(); const bool ok = f.existsAsFile();
+      if (ok) juce::DragAndDropContainer::performExternalDragDropOfFiles({ f.getFullPathName() }, false, this);
+      done(ok); })
     .withNativeFunction("dragMidi", [this](const juce::Array<juce::var>& a, Completion done) {
       // a[0] file name, a[1] base64 .mid: written to a temporary folder and dragged out of the plug-in, onto a track in the DAW
       if (a.size() < 2) { done(false); return; }

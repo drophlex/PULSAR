@@ -194,6 +194,10 @@ const Pro = {
     u.onclick = () => Undo.undo(); r.onclick = () => Undo.again();
     const dm = dragMidiEl(h('button', { id: 'dragMidi', class: 'drag' }, '⇱ MIDI'));
     $('#play').before(u, r); $('#midiBtn').after(dm);
+    if (Bridge.kind === 'plugin') {   // the loop as audio, dragged onto an audio track (rendered by the plug-in, twice through so the tails loop)
+      const dw = h('button', { id: 'dragWav', class: 'drag', title: 'Drag the loop as audio (WAV) onto a track' }, '⇱ WAV');
+      dw.onpointerdown = e => { e.preventDefault(); toast(tr('Drag it onto a track in your DAW')); Bridge._call('dragWav', []); };
+      dm.after(dw); }
   },
   boot() {
     Pro.topBar(); Pro.renderPerf(); Undo.start();
