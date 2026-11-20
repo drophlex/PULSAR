@@ -1,6 +1,6 @@
 /* lab.js — PULSAR 3 · DFD LIVE LAB: a third view (LAB) beside LIVE and GRID. It has the six families and their 36 starting
    patterns (preview, commit, cancel), nine macros with RECOVER, the DIRTY VOLTAGE module with its meter, RAVE BUILDER,
-   DNA MORPH A/B, FUSION MORPH, 16 editable scenes launched on the bar, MIDI file import (SMF 0/1) and controller profiles
+   DNA MORPH A/B, FUSION MORPH, 18 editable scenes launched on the bar, MIDI file import (SMF 0/1) and controller profiles
    (FM-1, Arturia KeyLab). Loaded after pro.js. Everything here writes the same patterns and parameters as the rest of
    PULSAR, so undo, save, MIDI export, the plug-in's automation and the multi-out all keep working. */
 Object.assign(ES, {
@@ -26,13 +26,17 @@ const Lab = {
 PARAMS[XGID(6)] = .6; PARAMS[XGID(7)] = 1;   // PULSAR 3 defaults: DIRTY VOLTAGE tone, the safety limiter on (older projects keep what they saved)
 const PREVIEW_SLOT = 15, MORPH_SLOT = 14, BUILD_SLOT = 13;
 const XGL = { DV: 5, DVTONE: 6, LIMIT: 7 };
-// the 16 scenes: names from the Polaris community (editable), each a family pattern, a tempo and an energy
+// the 18 scenes: names from the Polaris community (editable), each a family pattern, a tempo and an energy
 const SCENE_DEFAULT = [
   ['DFD CORE', 'DIRTY VOLTAGE', 0, .6], ['POLARIS LAB', 'FRACTAL RHYTHM', 2, .45], ['CHEMBECH', 'CHEMICAL PRESSURE', 1, .7], ['PETER PALM', 'ROBOT DISCO', 0, .55],
   ['DEEP ARCHIE', 'FRACTAL RHYTHM', 0, .35], ['QUESA DJ', 'ROBOT DISCO', 2, .65], ['TERE', 'CHEMICAL PRESSURE', 0, .5], ['GAMBU GALU', 'HYPERBREAK', 1, .7],
   ['KARL COTBRUM', 'RIOT MACHINE', 2, .75], ['MANU', 'HYPERBREAK', 0, .55], ['MENI', 'ROBOT DISCO', 3, .6], ['RUFI', 'RIOT MACHINE', 0, .6],
-  ['BARRY SOUND', 'CHEMICAL PRESSURE', 3, .8], ['ALEX 413X', 'DIRTY VOLTAGE', 3, .85], ['OSCAR', 'HYPERBREAK', 4, .9], ['RADIO POLARIS', 'DIRTY VOLTAGE', 1, .5]];
-function loadScenes() { try { const s = JSON.parse(LS.get('pulsar.scenes') || 'null'); if (Array.isArray(s) && s.length === 16) return s; } catch (e) {} return SCENE_DEFAULT.map(x => ({ name: x[0], fam: x[1], pat: x[2], energy: x[3] })); }
+  ['BARRY SOUND', 'CHEMICAL PRESSURE', 3, .8], ['ALEX 413X', 'DIRTY VOLTAGE', 3, .85], ['OSCAR', 'HYPERBREAK', 4, .9], ['RADIO POLARIS', 'DIRTY VOLTAGE', 1, .5],
+  ['BARRY', 'RIOT MACHINE', 1, .7], ['BARRY SOUND', 'ROBOT DISCO', 1, .75]];
+const SCENE_COUNT = SCENE_DEFAULT.length;
+const sceneOf = x => ({ name: x[0], fam: x[1], pat: x[2], energy: x[3] });
+// saved sets from older versions (16 scenes) keep their names and get the new scenes appended
+function loadScenes() { try { const s = JSON.parse(LS.get('pulsar.scenes') || 'null'); if (Array.isArray(s) && s.length >= 16 && s.length <= SCENE_COUNT) return s.concat(SCENE_DEFAULT.slice(s.length).map(sceneOf)); } catch (e) {} return SCENE_DEFAULT.map(sceneOf); }
 function saveScenes() { LS.set('pulsar.scenes', JSON.stringify(Lab.scenes)); }
 
 // ------------------------------------------------------------------ applying a family: kit, tempo, feel, DIRTY VOLTAGE and the pump
